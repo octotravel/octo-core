@@ -3,16 +3,6 @@
   "version": "1.0.5",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "require": "./dist/index.js",
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
-    }
-  },
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "build": "tsc",
     "watch": "npm run build -- --watch src",
