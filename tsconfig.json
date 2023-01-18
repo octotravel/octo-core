@@ -4,7 +4,6 @@
       "strict": true,
       "esModuleInterop": true,
       "forceConsistentCasingInFileNames": true,
-      "emitDeclarationOnly": true,
       "skipLibCheck": true,
       "checkJs": true,
       "allowJs": true,
@@ -12,6 +11,7 @@
       "declarationMap": true,
       "allowSyntheticDefaultImports": true,
       "target": "ESNext",
+      "module": "ES6",
       "typeRoots": [
         "./src/global.d.ts",
         "node_modules/@types",
@@ -21,4 +21,6 @@
       "experimentalDecorators": true
     },
     "files": ["./src/index.ts"],
+    "include": ["src/**/**.ts"],
+    "exclude": ["node_modules"]
   }
