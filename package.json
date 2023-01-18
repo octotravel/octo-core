@@ -15,7 +15,7 @@
     "build": "tsup src/index.ts --format cjs,esm --dts --clean",
     "watch": "npm run build -- --watch src",
     "prepublishOnly": "npm run build",
-    "prepare": "npm run buld",
+    "prepare": "npm run build",
     "test": "jest",
     "test:coverage": "jest --coverage"
   },
