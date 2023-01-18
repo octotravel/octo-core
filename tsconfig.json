@@ -10,6 +10,7 @@
       "allowJs": true,
       "declaration": true,
       "declarationMap": true,
+      "sourceMap": true,
       "allowSyntheticDefaultImports": true,
       "target": "es2017",
       "module": "commonjs",
@@ -18,7 +19,6 @@
         "node_modules/@types",
       ],
       "types": ["jest"],
-      "moduleResolution": "node",
       "experimentalDecorators": true
     },
     "include": ["src/**/**.ts"],
