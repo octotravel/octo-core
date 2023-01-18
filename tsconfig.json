@@ -1,14 +1,17 @@
 {
     "compilerOptions": {
+      "outDir": "dist",
       "strict": true,
       "esModuleInterop": true,
       "forceConsistentCasingInFileNames": true,
+      "emitDeclarationOnly": true,
       "skipLibCheck": true,
       "checkJs": true,
       "allowJs": true,
       "declaration": true,
       "declarationMap": true,
       "allowSyntheticDefaultImports": true,
+      "target": "ESNext",
       "typeRoots": [
         "./src/global.d.ts",
         "node_modules/@types",
@@ -17,5 +20,5 @@
       "moduleResolution": "node",
       "experimentalDecorators": true
     },
-    "files": ["../src/index.ts"],
+    "files": ["./src/index.ts"],
   }
