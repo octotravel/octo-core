@@ -1,7 +1,5 @@
 {
     "compilerOptions": {
-      "outDir": "dist",
-      "rootDir": ".",
       "strict": true,
       "esModuleInterop": true,
       "forceConsistentCasingInFileNames": true,
@@ -10,17 +8,14 @@
       "allowJs": true,
       "declaration": true,
       "declarationMap": true,
-      "sourceMap": true,
       "allowSyntheticDefaultImports": true,
-      "target": "es2017",
-      "module": "commonjs",
       "typeRoots": [
         "./src/global.d.ts",
         "node_modules/@types",
       ],
       "types": ["jest"],
+      "moduleResolution": "node",
       "experimentalDecorators": true
     },
-    "include": ["src/**/**.ts"],
-    "exclude": ["node_modules"]
+    "files": ["../src/index.ts"],
   }
