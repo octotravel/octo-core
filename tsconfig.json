@@ -17,5 +17,5 @@
       "moduleResolution": "node",
       "experimentalDecorators": true
     },
-    "files": ["../src/index.ts"],
+    "files": ["./src/index.ts"],
   }

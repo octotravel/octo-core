@@ -1,6 +1,6 @@
 {
   "name": "@octocloud/core",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -11,8 +11,11 @@
       "types": "./dist/index.d.ts"
     }
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
+    "build": "tsup src/index.ts --format cjs,esm --dts",
     "watch": "npm run build -- --watch src",
     "prepublishOnly": "npm run build",
     "prepare": "npm run build",
