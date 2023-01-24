@@ -1,11 +1,6 @@
 import { Repository } from "./../types/Repository";
 import { BaseConnection } from "../types/Connection";
-import {
-  ConnectionMetaData,
-  RequestData,
-  RequestMetaData,
-  SubRequestData,
-} from "./RequestData";
+import { ConnectionMetaData, RequestData, RequestMetaData, SubRequestData } from "./RequestData";
 import { DataGenerationService } from "../services/DataGenerationService";
 import { HttpError } from "./Error";
 import { Config } from "./Config";
@@ -46,7 +41,7 @@ export class RequestDataManager<Connection, Config> {
     accountId?: string;
     backend: Backend;
     connectionRepository: Repository<Connection>;
-    config: Config,
+    config: Config;
   }) {
     this.requestId = this.generateRequestId();
     this.request = request;
@@ -56,11 +51,10 @@ export class RequestDataManager<Connection, Config> {
     this.channel = channel;
     this._backend = backend;
     this._connectionRepository = connectionRepository;
-    this._config = config
+    this._config = config;
   }
 
-  private generateRequestId = (): string =>
-    this.dataGenerationService.generateUUID();
+  private generateRequestId = (): string => this.dataGenerationService.generateUUID();
 
   public addSearchKey = (key: string): void => {
     this.searchKeys.push(key);
@@ -110,7 +104,7 @@ export class RequestDataManager<Connection, Config> {
   }
 
   public get config(): Config {
-    return this._config
+    return this._config;
   }
 
   public get connectionRepository(): Repository<Connection> {
@@ -123,8 +117,7 @@ export class RequestDataManager<Connection, Config> {
 
   public isAlertEnabled = (): boolean => this.alertEnabled;
 
-  public getConnection = (): BaseConnection =>
-    this.connection as BaseConnection;
+  public getConnection = (): BaseConnection => this.connection as BaseConnection;
 
   public getAccountId = (): string => this.accountId as string;
 
@@ -134,8 +127,7 @@ export class RequestDataManager<Connection, Config> {
     return (end.getTime() - start.getTime()) / 1000;
   };
 
-  public getRequestDuration = (): number =>
-    this.getDuration(this.date, new Date());
+  public getRequestDuration = (): number => this.getDuration(this.date, new Date());
 
   public getRequestDurationMilliseconds = (): number => {
     const milliseconds = Math.ceil(this.getRequestDuration() * 100);

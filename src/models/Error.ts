@@ -10,8 +10,7 @@ export const MESSAGE_UNAUTHORIZED = "Unauthorized";
 export const MESSAGE_INTERNAL_SERVER_ERROR = "Internal Server Error";
 
 export const MESSAGE_NO_AVAILABILITY_ERROR = "No Availability";
-export const MESSAGE_OPTION_RESTRICTIONS_ERROR =
-  "Option Restrictions aren't met";
+export const MESSAGE_OPTION_RESTRICTIONS_ERROR = "Option Restrictions aren't met";
 export const MESSAGE_INVALID_UNITS_ERROR = "Invalid Units";
 export const MESSAGE_INVALID_UNIT_ERROR = "Invalid Unit";
 export const MESSAGE_EXTERNAL_API_ERROR = "External Api Error";
@@ -105,14 +104,7 @@ export class HttpError extends Error implements BaseError {
 
   constructor(
     status: number,
-    {
-      message = "",
-      body,
-      error = "",
-      requestId = null,
-      subRequestId = null,
-      statusLog,
-    }: HttpErrorParams,
+    { message = "", body, error = "", requestId = null, subRequestId = null, statusLog }: HttpErrorParams
   ) {
     super();
     const errorParams = {
@@ -187,8 +179,7 @@ export class AccountNotFound extends HttpNotFound {
 export class ConnectionUnauthorized extends HttpUnauthorized {
   constructor(connectionId: string, accountId: string) {
     const body = {
-      error:
-        `Connection:${connectionId} doesn't belong to Account:${accountId}`,
+      error: `Connection:${connectionId} doesn't belong to Account:${accountId}`,
     };
     super(body);
   }

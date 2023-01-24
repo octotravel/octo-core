@@ -11,8 +11,7 @@ export class SubRequestDataManager {
   private date: Date = new Date();
   private logsEnabled = true;
 
-  private generateRequestId = (): string =>
-    this.dataGenerationService.generateUUID();
+  private generateRequestId = (): string => this.dataGenerationService.generateUUID();
 
   public initRequestData = ({
     request,
@@ -44,10 +43,7 @@ export class SubRequestDataManager {
     return (end.getTime() - start.getTime()) / 1000;
   };
 
-  public getRequestData = (
-    response: Response,
-    error?: Error,
-  ): SubRequestData => {
+  public getRequestData = (response: Response, error?: Error): SubRequestData => {
     const id = `${this.accountId}/${this.requestId}/${this.subRequestId}`;
     const metadata: SubMetadata = {
       id: this.subRequestId,

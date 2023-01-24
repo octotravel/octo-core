@@ -1,8 +1,4 @@
-import {
-  HttpError,
-  STATUS_BAD_REQUEST,
-  STATUS_INTERNAL_SERVER_ERROR,
-} from "./Error";
+import { HttpError, STATUS_BAD_REQUEST, STATUS_INTERNAL_SERVER_ERROR } from "./Error";
 
 export const INVALID_PRODUCT_ID = "INVALID_PRODUCT_ID";
 export const INVALID_OPTION_ID = "INVALID_OPTION_ID";
@@ -15,24 +11,16 @@ export const INTERNAL_SERVER_ERROR = "INTERNAL_SERVER_ERROR";
 export const UNAUTHORIZED = "UNAUTHORIZED";
 export const FORBIDDEN = "FORBIDDEN";
 
-const ERROR_MESSAGE_INVALID_PRODUCT_ID =
-  `The productId was missing or invalid'`;
+const ERROR_MESSAGE_INVALID_PRODUCT_ID = `The productId was missing or invalid'`;
 const ERROR_MESSAGE_INVALID_OPTION_ID = `The optionId was missing or invalid'`;
 const ERROR_MESSAGE_INVALID_UNIT_ID = `The unitId was missing or invalid`;
-const ERROR_MESSAGE_INVALID_AVAILABILITY_ID =
-  `The availabilityId was missing or invalid`;
-const ERROR_MESSAGE_INVALID_BOOKING_UUID =
-  `The uuid was already used, missing or invalid`;
-const ERROR_MESSAGE_BAD_REQUEST =
-  `The request body is not formatted correctly, you have missing required fields or any of the data types are incorrect`;
-const ERROR_MESSAGE_UNPROCESSABLE_ENTITY =
-  `The request body is technically correct but cannot be processed for other reasons. e.g. you tried to cancel a booking after the cancellation cutoff had elapsed`;
-const ERROR_MESSAGE_INTERNAL_SERVER_ERROR =
-  `There was an un-recoverable error, please try again`;
-const ERROR_MESSAGE_UNAUTHORIZED =
-  `You didn't send the API Key in the Authorization header to an endpoint that requires authentication`;
-const ERROR_MESSAGE_FORBIDDEN =
-  `You sent an API Key that was invalid or has been revoked by the backend system. Or you're trying to access an endpoint/resource that you do not have access to`;
+const ERROR_MESSAGE_INVALID_AVAILABILITY_ID = `The availabilityId was missing or invalid`;
+const ERROR_MESSAGE_INVALID_BOOKING_UUID = `The uuid was already used, missing or invalid`;
+const ERROR_MESSAGE_BAD_REQUEST = `The request body is not formatted correctly, you have missing required fields or any of the data types are incorrect`;
+const ERROR_MESSAGE_UNPROCESSABLE_ENTITY = `The request body is technically correct but cannot be processed for other reasons. e.g. you tried to cancel a booking after the cancellation cutoff had elapsed`;
+const ERROR_MESSAGE_INTERNAL_SERVER_ERROR = `There was an un-recoverable error, please try again`;
+const ERROR_MESSAGE_UNAUTHORIZED = `You didn't send the API Key in the Authorization header to an endpoint that requires authentication`;
+const ERROR_MESSAGE_FORBIDDEN = `You sent an API Key that was invalid or has been revoked by the backend system. Or you're trying to access an endpoint/resource that you do not have access to`;
 
 export class OctoError extends HttpError {}
 

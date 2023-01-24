@@ -89,8 +89,7 @@ export class RequestData extends BaseRequestData implements IBaseRequestData {
   };
 }
 
-export class SubRequestData extends BaseRequestData
-  implements IBaseRequestData {
+export class SubRequestData extends BaseRequestData implements IBaseRequestData {
   public id: string;
   public request: Request;
   public response: Response;
