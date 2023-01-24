@@ -27,6 +27,9 @@ export class Money {
     return toSnapshot(zeroMoney).scale;
   };
 
+  /**
+   * @throws {Error}
+   */
   private getCurrency = (code: string): Currency<number> => {
     const currency = currencies[code];
     if (currency) {

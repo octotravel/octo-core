@@ -27,9 +27,9 @@ export const isBaseError = (err: Record<string, any>): err is BaseError => {
 };
 
 export class InternalError extends Error implements BaseError {
-  public message: string;
-  public error = MESSAGE_INTERNAL_SERVER_ERROR;
-  public status = STATUS_INTERNAL_SERVER_ERROR;
+  public readonly message: string;
+  public readonly error = MESSAGE_INTERNAL_SERVER_ERROR;
+  public readonly status = STATUS_INTERNAL_SERVER_ERROR;
 
   constructor(message: string) {
     super();
@@ -43,8 +43,8 @@ export class NoAvailabilityError extends InternalError {
   }
 }
 export class OptionRestrictionsError extends InternalError {
-  public minUnits: number;
-  public maxUnits: number | null;
+  public readonly minUnits: number;
+  public readonly maxUnits: number | null;
 
   constructor(minUnits: number, maxUnits: number | null) {
     super(MESSAGE_OPTION_RESTRICTIONS_ERROR);
@@ -54,34 +54,34 @@ export class OptionRestrictionsError extends InternalError {
 }
 
 export class ExternalApiError extends InternalError {
-  public httpError: HttpError;
+  public readonly httpError: HttpError;
   constructor(error: HttpError) {
     super(MESSAGE_EXTERNAL_API_ERROR);
     this.httpError = error;
   }
 }
 export class InvalidUnitsError extends InternalError {
-  public invalidUnits: Array<string>;
+  public readonly invalidUnits: Array<string>;
   constructor(invalidUnits: Array<string>) {
     super(MESSAGE_INVALID_UNITS_ERROR);
     this.invalidUnits = invalidUnits;
   }
 }
 export class InvalidUnitError extends InternalError {
-  public unit: string;
+  public readonly unit: string;
   constructor(unit: string) {
     super(MESSAGE_INVALID_UNITS_ERROR);
     this.unit = unit;
   }
 }
 
-export class InvalidProductId extends InternalError {
-  public productId: string;
-  public optionId: string;
-  constructor(productId: string, optionId: string) {
+export class InvalidOptionError extends InternalError {
+  public readonly optionId: string;
+  public readonly productId: string;
+  constructor(optionId: string, productId: string) {
     super(MESSAGE_INVALID_PRODUCT_ID);
-    this.productId = productId;
     this.optionId = optionId;
+    this.productId = productId;
   }
 }
 
@@ -94,13 +94,13 @@ export type HttpErrorParams = {
   statusLog?: number;
 };
 export class HttpError extends Error implements BaseError {
-  public status: number;
-  public statusLog: number;
-  public error: string;
-  public body: Record<string, any> = {};
-  public requestId: string | null;
-  public subRequestId: string | null;
-  public errorParams: HttpErrorParams;
+  public readonly status: number;
+  public readonly statusLog: number;
+  public readonly error: string;
+  public readonly body: Record<string, any> = {};
+  public readonly requestId: string | null;
+  public readonly subRequestId: string | null;
+  public readonly errorParams: HttpErrorParams;
 
   constructor(
     status: number,

@@ -2,6 +2,9 @@ import { Booking, UnitItem, UnitType } from "@octocloud/types";
 import { InvalidUnitError } from "./Error";
 
 export class BookingHelper {
+  /**
+   * @throws {InvalidUnitError}
+   */
   public static getUnitItemByType = (unitType: UnitType, booking: Booking): UnitItem => {
     const unitItem = booking.unitItems.find((item) => item.unit.type === unitType) ?? null;
     if (unitItem === null) {

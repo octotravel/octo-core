@@ -32,10 +32,12 @@ export class OctoInvalidProductIdError extends OctoError {
       errorMessage: message ?? ERROR_MESSAGE_INVALID_PRODUCT_ID,
       productId,
     };
-    super(STATUS_BAD_REQUEST, { body });
+    super(STATUS_BAD_REQUEST, {
+      body: body,
+      error: body.error,
+      message: body.errorMessage,
+    });
     this.productId = productId;
-    this.error = body.error;
-    this.message = body.errorMessage;
   }
 }
 
@@ -47,10 +49,12 @@ export class OctoInvalidOptionIdError extends OctoError {
       errorMessage: message ?? ERROR_MESSAGE_INVALID_OPTION_ID,
       optionId,
     };
-    super(STATUS_BAD_REQUEST, { body });
+    super(STATUS_BAD_REQUEST, {
+      body: body,
+      error: body.error,
+      message: body.errorMessage,
+    });
     this.optionId = optionId;
-    this.error = body.error;
-    this.message = body.errorMessage;
   }
 }
 
@@ -62,10 +66,12 @@ export class OctoInvalidUnitIdError extends OctoError {
       errorMessage: message ?? ERROR_MESSAGE_INVALID_UNIT_ID,
       unitId,
     };
-    super(STATUS_BAD_REQUEST, { body });
+    super(STATUS_BAD_REQUEST, {
+      body: body,
+      error: body.error,
+      message: body.errorMessage,
+    });
     this.unitId = unitId;
-    this.error = body.error;
-    this.message = body.errorMessage;
   }
 }
 
@@ -77,10 +83,12 @@ export class OctoInvalidAvailabilityIdError extends OctoError {
       errorMessage: message ?? ERROR_MESSAGE_INVALID_AVAILABILITY_ID,
       availabilityId,
     };
-    super(STATUS_BAD_REQUEST, { body });
+    super(STATUS_BAD_REQUEST, {
+      body: body,
+      error: body.error,
+      message: body.errorMessage,
+    });
     this.availabilityId = availabilityId;
-    this.error = body.error;
-    this.message = body.errorMessage;
   }
 }
 
@@ -92,23 +100,26 @@ export class OctoInvalidBookingUUIDError extends OctoError {
       errorMessage: message ?? ERROR_MESSAGE_INVALID_BOOKING_UUID,
       uuid,
     };
-    super(STATUS_BAD_REQUEST, { body });
+    super(STATUS_BAD_REQUEST, {
+      body: body,
+      error: body.error,
+      message: body.errorMessage,
+    });
     this.uuid = uuid;
-    this.error = body.error;
-    this.message = body.errorMessage;
   }
 }
 
 export class OctoBadRequestError extends OctoError {
   constructor(errorMessage: string) {
-    const message = errorMessage ?? ERROR_MESSAGE_BAD_REQUEST;
     const body = {
       error: BAD_REQUEST,
       errorMessage: errorMessage ?? ERROR_MESSAGE_BAD_REQUEST,
     };
-    super(STATUS_BAD_REQUEST, { body, message });
-    this.error = body.error;
-    this.message = body.errorMessage;
+    super(STATUS_BAD_REQUEST, {
+      body: body,
+      error: body.error,
+      message: body.errorMessage,
+    });
   }
 }
 
@@ -118,9 +129,11 @@ export class OctoUnprocessableEntityError extends OctoError {
       error: UNPROCESSABLE_ENTITY,
       errorMessage: message ?? ERROR_MESSAGE_UNPROCESSABLE_ENTITY,
     };
-    super(STATUS_BAD_REQUEST, { body });
-    this.error = body.error;
-    this.message = body.errorMessage;
+    super(STATUS_BAD_REQUEST, {
+      body: body,
+      error: body.error,
+      message: body.errorMessage,
+    });
   }
 }
 
@@ -130,9 +143,11 @@ export class OctoInternalServerError extends OctoError {
       error: INTERNAL_SERVER_ERROR,
       errorMessage: message ?? ERROR_MESSAGE_INTERNAL_SERVER_ERROR,
     };
-    super(STATUS_INTERNAL_SERVER_ERROR, { body });
-    this.error = body.error;
-    this.message = body.errorMessage;
+    super(STATUS_INTERNAL_SERVER_ERROR, {
+      body: body,
+      error: body.error,
+      message: body.errorMessage,
+    });
   }
 }
 
@@ -142,9 +157,11 @@ export class OctoUnauthorizedError extends OctoError {
       error: UNAUTHORIZED,
       errorMessage: message ?? ERROR_MESSAGE_UNAUTHORIZED,
     };
-    super(STATUS_BAD_REQUEST, { body });
-    this.error = body.error;
-    this.message = body.errorMessage;
+    super(STATUS_BAD_REQUEST, {
+      body: body,
+      error: body.error,
+      message: body.errorMessage,
+    });
   }
 }
 
@@ -154,8 +171,10 @@ export class OctoForbiddenError extends OctoError {
       error: FORBIDDEN,
       errorMessage: message ?? ERROR_MESSAGE_FORBIDDEN,
     };
-    super(STATUS_BAD_REQUEST, { body });
-    this.error = body.error;
-    this.message = body.errorMessage;
+    super(STATUS_BAD_REQUEST, {
+      body: body,
+      error: body.error,
+      message: body.errorMessage,
+    });
   }
 }

@@ -1,47 +1,78 @@
-describe("OptionHelper", () => {
-    const optionModelGenerator = new OptionModelGenerator();
-    const optionParser = new OptionParser();
-  
-    const firstUnitId = "firstUnitId";
-    const secondUnitId = "secondUnitId";
-    const usedUnitType = UnitType.ADULT;
-    const invalidUnitId = "invalidUnitId";
-    const unusedUnitType = UnitType.MILITARY;
-    const optionModel = optionModelGenerator.generateOption({
-      optionData: {
-        units: [
-          {
-            id: firstUnitId,
-            type: usedUnitType,
-          },
-          {
-            id: secondUnitId,
-            type: usedUnitType,
-            restrictions: {
-              minAge: 0,
-              maxAge: 99,
-              idRequired: false,
-              minQuantity: 2,
-              maxQuantity: 4,
-              paxCount: 0,
-              accompaniedBy: [],
+import { ProductModelGenerator, ProductParser } from "@octocloud/generators";
+import { ProductHelper } from "../ProductHelper";
+import { InvalidOptionError, InvalidUnitError } from "../Error";
+import { UnitType } from "@octocloud/types";
+
+describe("ProductHelper", () => {
+  const productModelGenerator = new ProductModelGenerator();
+  const productParser = new ProductParser();
+
+  const optionId = "optionId";
+  const invalidOptionId = "invalidOptionId";
+  const unitId = "unitId";
+  const invalidUnitId = "invalidUnitId";
+  const usedUnitType = UnitType.ADULT;
+  const unusedUnitType = UnitType.MILITARY;
+
+  const productModel = productModelGenerator.generateProduct({
+    productData: {
+      options: [
+        {
+          id: optionId,
+          units: [
+            {
+              id: unitId,
+              type: usedUnitType,
             },
-          },
-        ],
-      },
-    });
-    const option = optionParser.parseModelToPOJO(optionModel);
-    const optionModelWithoutUnits = optionModelGenerator.generateOption({
-      optionData: {
-        restrictions: {
-          minUnits: 1,
-          maxUnits: 2,
+          ],
         },
-      },
+      ],
+    },
+  });
+  const product = productParser.parseModelToPOJO(productModel);
+
+  describe("getUnit", () => {
+    it("should return option", async () => {
+      const option = ProductHelper.getUnit(optionId, product);
+      expect(option !== null);
     });
-    const optionWithoutUnits = optionParser.parseModelToPOJO(optionModelWithoutUnits);
-  
-    describe("checkUnits", () => {
-      it("should successfully pass check", async () => {
-      }
-      );
+
+    it("should fail and throw InvalidOptionError", async () => {
+      const findOption = () => {
+        ProductHelper.getUnit(invalidOptionId, product);
+      };
+
+      expect(findOption).toThrowError(InvalidOptionError);
+    });
+  });
+
+  describe("getUnitById", () => {
+    it("should return unit", async () => {
+      const unit = ProductHelper.getUnitById(optionId, unitId, product);
+      expect(unit !== null);
+    });
+
+    it("should fail and throw InvalidUnitError", async () => {
+      const getUnitById = () => {
+        ProductHelper.getUnitById(optionId, invalidUnitId, product);
+      };
+
+      expect(getUnitById).toThrowError(InvalidUnitError);
+    });
+  });
+
+  describe("getUnitByType", () => {
+    it("should return unit", async () => {
+      const unit = ProductHelper.getUnitByType(optionId, usedUnitType, product);
+      expect(unit !== null);
+    });
+
+    it("should fail and throw InvalidUnitError", async () => {
+      const getUnitById = () => {
+        ProductHelper.getUnitByType(optionId, unusedUnitType, product);
+      };
+
+      expect(getUnitById).toThrowError(InvalidUnitError);
+    });
+  });
+});
