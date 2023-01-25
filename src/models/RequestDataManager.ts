@@ -1,4 +1,4 @@
-import { Repository } from "./../types/Repository";
+import { IAccountRepository, Repository } from "./../types/Repository";
 import { BaseConnection } from "../types/Connection";
 import {
   ConnectionMetaData,
@@ -18,6 +18,7 @@ export class RequestDataManager<Connection, Config> {
   private date: Date;
   private _backend: Backend;
   private _connectionRepository: Repository<Connection>;
+  private _accountRepository: IAccountRepository;
   private connection: BaseConnection | null = null;
   private accountId: string | null = null;
   private request: Request;
@@ -38,6 +39,7 @@ export class RequestDataManager<Connection, Config> {
     accountId,
     backend,
     connectionRepository,
+    accountRepository,
     config,
   }: {
     request: Request;
@@ -46,6 +48,7 @@ export class RequestDataManager<Connection, Config> {
     accountId?: string;
     backend: Backend;
     connectionRepository: Repository<Connection>;
+    accountRepository: IAccountRepository;
     config: Config,
   }) {
     this.requestId = this.generateRequestId();
@@ -56,6 +59,7 @@ export class RequestDataManager<Connection, Config> {
     this.channel = channel;
     this._backend = backend;
     this._connectionRepository = connectionRepository;
+    this._accountRepository = accountRepository;
     this._config = config
   }
 
@@ -115,6 +119,10 @@ export class RequestDataManager<Connection, Config> {
 
   public get connectionRepository(): Repository<Connection> {
     return this._connectionRepository;
+  }
+
+  public get accountRepository(): IAccountRepository {
+    return this._accountRepository;
   }
 
   public getRequestId = (): string => this.requestId;
