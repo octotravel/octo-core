@@ -2,6 +2,7 @@
     "compilerOptions": {
       "strict": true,
       "esModuleInterop": true,
+      "target": "es2017",
       "forceConsistentCasingInFileNames": true,
       "skipLibCheck": true,
       "checkJs": true,
