@@ -1,3 +1,4 @@
+import { Account } from './Account';
 export interface PutOptions {
   expiration?: number;
   expirationTtl?: number;
@@ -20,4 +21,16 @@ export interface Repository<T> {
   set(key: string, value: T, options?: PutOptions): Promise<void>;
   get(key: string): Promise<T | null>;
   delete(key: string): Promise<void>;
+}
+
+export interface IAccountRepository extends Repository<Account> {
+  addConnection(
+    accountId: string,
+    connectionId: string,
+  ): Promise<Account | null>;
+  deleteConnection(
+    accountId: string,
+    connectionId: string,
+  ): Promise<Account | null>;
+  checkConnection(accountId: string, connectionId: string): Promise<void>;
 }
