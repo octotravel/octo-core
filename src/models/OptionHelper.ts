@@ -14,8 +14,10 @@ export class OptionHelper {
     const invalidUnits = units.reduce((acc: Array<string>, unit) => {
       try {
         this.getUnitByID(option, unit.id);
-      } catch (InvalidUnitError) {
-        return [...acc, unit.id];
+      } catch (error) {
+        if (error instanceof InvalidUnitError) {
+          return [...acc, unit.id];
+        }
       }
 
       return acc;
