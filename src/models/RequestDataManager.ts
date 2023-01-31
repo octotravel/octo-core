@@ -11,7 +11,7 @@ import { HttpError } from "./Error";
 import { Config } from "./Config";
 import { Backend } from "../types/Backend";
 
-export class RequestDataManager<Connection, Config> {
+export class RequestDataManager<Connection extends BaseConnection, Config> {
   private dataGenerationService = new DataGenerationService();
   private coreConfig = new Config();
 
@@ -19,7 +19,7 @@ export class RequestDataManager<Connection, Config> {
   private _backend: Backend;
   private _connectionRepository: Repository<Connection>;
   private _accountRepository: IAccountRepository;
-  private connection: BaseConnection | null = null;
+  private connection: Connection | null = null;
   private accountId: string | null = null;
   private request: Request;
   private requestId: string;
@@ -43,7 +43,7 @@ export class RequestDataManager<Connection, Config> {
     config,
   }: {
     request: Request;
-    connection: BaseConnection | null;
+    connection: Connection | null;
     channel: string;
     accountId?: string;
     backend: Backend;
@@ -70,7 +70,7 @@ export class RequestDataManager<Connection, Config> {
     this.searchKeys.push(key);
   };
 
-  public setConnection = (connection: BaseConnection): void => {
+  public setConnection = (connection: Connection): void => {
     this.connection = connection;
   };
 
@@ -131,8 +131,12 @@ export class RequestDataManager<Connection, Config> {
 
   public isAlertEnabled = (): boolean => this.alertEnabled;
 
-  public getConnection = (): BaseConnection =>
-    this.connection as BaseConnection;
+  public getConnection = (): Connection => {
+    if (this.connection === null) {
+      throw new Error("connection is not set")
+    }
+    return this.connection;
+  }
 
   public getAccountId = (): string => this.accountId as string;
 
