@@ -38,12 +38,12 @@ import {
   updateBookingBodySchema,
   updateBookingPathParamsSchema,
 } from "@octocloud/types";
-import { Config } from '../models/Config';
+import { BaseConfig } from '../models/Config';
 import * as yup from "yup";
 
 export interface BackendParams {
   locale?: string;
-  rdm: RequestDataManager<BaseConnection, Config>;
+  rdm: RequestDataManager<BaseConnection, BaseConfig>;
   capabilities?: CapabilityId[];
   useIdempotency?: boolean;
 };
