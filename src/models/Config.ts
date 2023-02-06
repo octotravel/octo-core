@@ -1,29 +1,44 @@
-// @ts-ignore
-const ENVIRONMENT: string = globalThis.ENVIRONMENT;
-// @ts-ignore
-const SUPABASE_URL: string = globalThis.SUPABASE_URL;
-// @ts-ignore
-const SUPABASE_KEY: string = globalThis.SUPABASE_KEY;
+export enum Environment {
+  Production = "production",
+  Test = "test",
+  Development = "development",
+  Staging = "staging",
+}
 
-export class Config {
-  public environment = ENVIRONMENT;
-  public isProduction = ENVIRONMENT === "production";
-  public isTest = ENVIRONMENT === "test";
-  public isDev = ENVIRONMENT === "dev";
-  public isStaging = ENVIRONMENT === "staging";
-  public cityconnectProductionUrl = "https://octo.ventrata.com";
-  public cityconnectStagingUrl = "https://staging.cityconnect.net";
-  public cityconnectUrl: string;
-  public cityconnectRootUrl: string;
-  public supabaseUrl = SUPABASE_URL;
-  public supabaseKey = SUPABASE_KEY;
+export class BaseConfig {
+  public environment: Environment;
+  public isProduction: boolean;
+  public isTest: boolean;
+  public isDevelopment: boolean;
+  public isStaging: boolean;
+  public productionURL: string;
+  public stagingURL: string;
 
-  constructor() {
-    this.cityconnectUrl = this.getUrl();
-    this.cityconnectRootUrl = `${this.cityconnectUrl}/octo`;
+  constructor({
+    environment,
+    productionURL,
+    stagingURL,
+  }: {
+    environment: Environment;
+    productionURL: string;
+    stagingURL: string;
+  }) {
+    this.environment = environment;
+    this.isProduction = environment === Environment.Production;
+    this.isTest = environment === Environment.Test;
+    this.isDevelopment = environment === Environment.Development;
+    this.isStaging = environment === Environment.Staging;
+    this.productionURL = productionURL;
+    this.stagingURL = stagingURL;
   }
 
-  private getUrl = (): string => {
-    return this.cityconnectProductionUrl;
+  public getURL = () => {
+    if (this.isProduction) {
+      return this.productionURL;
+    }
+    if (this.isStaging) {
+      return this.stagingURL;
+    }
+    return this.productionURL;
   };
 }

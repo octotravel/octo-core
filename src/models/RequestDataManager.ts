@@ -3,12 +3,11 @@ import { BaseConnection } from "../types/Connection";
 import { ConnectionMetaData, RequestData, RequestMetaData, SubRequestData } from "./RequestData";
 import { DataGenerationService } from "../services/DataGenerationService";
 import { HttpError } from "./Error";
-import { Config } from "./Config";
+import { BaseConfig } from "./Config";
 import { Backend } from "../types/Backend";
 
-export class RequestDataManager<Connection, Config> {
+export class RequestDataManager<Connection, Config extends BaseConfig> {
   private dataGenerationService = new DataGenerationService();
-  private coreConfig = new Config();
 
   private date: Date;
   private _backend: Backend;
@@ -93,7 +92,7 @@ export class RequestDataManager<Connection, Config> {
   };
 
   public enableAlert = (): void => {
-    if (!this.coreConfig.isDev) {
+    if (!this.config.isDevelopment) {
       this.alertEnabled = true;
       this.enableLogs();
     }
@@ -125,7 +124,12 @@ export class RequestDataManager<Connection, Config> {
 
   public isAlertEnabled = (): boolean => this.alertEnabled;
 
-  public getConnection = (): BaseConnection => this.connection as BaseConnection;
+  public getConnection = (): Connection => {
+    if (this.connection === null) {
+      throw new Error("connection is not set");
+    }
+    return this.connection as Connection;
+  };
 
   public getAccountId = (): string => this.accountId as string;
 
@@ -167,7 +171,7 @@ export class RequestDataManager<Connection, Config> {
       backend: backend?.type ?? "",
       endpoint: backend?.endpoint ?? "",
       account: this.accountId,
-      environment: this.coreConfig.environment,
+      environment: this.config.environment,
     };
 
     const metadata: RequestMetaData = {
@@ -178,7 +182,7 @@ export class RequestDataManager<Connection, Config> {
       status: response.status,
       success: response.ok,
       duration: this.getDuration(this.date, new Date()),
-      environment: this.coreConfig.environment,
+      environment: this.config.environment,
     };
     const requestData = new RequestData({
       id,
