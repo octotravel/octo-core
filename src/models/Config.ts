@@ -1,18 +1,17 @@
 export enum Environment {
-  Production = 'production',
-  Test = 'test',
-  Development = 'development',
-  Staging = 'staging',
-
+  Production = "production",
+  Test = "test",
+  Development = "development",
+  Staging = "staging",
 }
 
 export class BaseConfig {
   public environment: Environment;
-  public isProduction: boolean
-  public isTest: boolean
-  public isDevelopment: boolean
-  public isStaging: boolean
-  public productionURL: string
+  public isProduction: boolean;
+  public isTest: boolean;
+  public isDevelopment: boolean;
+  public isStaging: boolean;
+  public productionURL: string;
   public stagingURL: string;
 
   constructor({
@@ -20,7 +19,7 @@ export class BaseConfig {
     productionURL,
     stagingURL,
   }: {
-    environment: Environment
+    environment: Environment;
     productionURL: string;
     stagingURL: string;
   }) {
@@ -29,8 +28,8 @@ export class BaseConfig {
     this.isTest = environment === Environment.Test;
     this.isDevelopment = environment === Environment.Development;
     this.isStaging = environment === Environment.Staging;
-    this.productionURL = productionURL
-    this.stagingURL = stagingURL
+    this.productionURL = productionURL;
+    this.stagingURL = stagingURL;
   }
 
   public getURL = () => {
@@ -41,5 +40,5 @@ export class BaseConfig {
       return this.stagingURL;
     }
     return this.productionURL;
-  }
+  };
 }

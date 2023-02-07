@@ -1,11 +1,6 @@
 import { IAccountRepository, Repository } from "./../types/Repository";
 import { BaseConnection } from "../types/Connection";
-import {
-  ConnectionMetaData,
-  RequestData,
-  RequestMetaData,
-  SubRequestData,
-} from "./RequestData";
+import { ConnectionMetaData, RequestData, RequestMetaData, SubRequestData } from "./RequestData";
 import { DataGenerationService } from "../services/DataGenerationService";
 import { HttpError } from "./Error";
 import { BaseConfig } from "./Config";
@@ -48,7 +43,7 @@ export class RequestDataManager<Connection, Config extends BaseConfig> {
     backend: Backend;
     connectionRepository: Repository<Connection>;
     accountRepository: IAccountRepository;
-    config: Config,
+    config: Config;
   }) {
     this.requestId = this.generateRequestId();
     this.request = request;
@@ -59,11 +54,10 @@ export class RequestDataManager<Connection, Config extends BaseConfig> {
     this._backend = backend;
     this._connectionRepository = connectionRepository;
     this._accountRepository = accountRepository;
-    this._config = config
+    this._config = config;
   }
 
-  private generateRequestId = (): string =>
-    this.dataGenerationService.generateUUID();
+  private generateRequestId = (): string => this.dataGenerationService.generateUUID();
 
   public addSearchKey = (key: string): void => {
     this.searchKeys.push(key);
@@ -113,7 +107,7 @@ export class RequestDataManager<Connection, Config extends BaseConfig> {
   }
 
   public get config(): Config {
-    return this._config
+    return this._config;
   }
 
   public get connectionRepository(): Repository<Connection> {
@@ -132,10 +126,10 @@ export class RequestDataManager<Connection, Config extends BaseConfig> {
 
   public getConnection = (): Connection => {
     if (this.connection === null) {
-      throw new Error('connection is not set')
+      throw new Error("connection is not set");
     }
     return this.connection as Connection;
-  }
+  };
 
   public getAccountId = (): string => this.accountId as string;
 
@@ -145,8 +139,7 @@ export class RequestDataManager<Connection, Config extends BaseConfig> {
     return (end.getTime() - start.getTime()) / 1000;
   };
 
-  public getRequestDuration = (): number =>
-    this.getDuration(this.date, new Date());
+  public getRequestDuration = (): number => this.getDuration(this.date, new Date());
 
   public getRequestDurationMilliseconds = (): number => {
     const milliseconds = Math.ceil(this.getRequestDuration() * 100);

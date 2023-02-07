@@ -12,10 +12,7 @@ export abstract class DateHelper {
     return date.toISOString().split(".")[0] + "Z";
   };
 
-  public static availabilityIdFormat = (
-    date: Date | string,
-    timeZone: string,
-  ): string => {
+  public static availabilityIdFormat = (date: Date | string, timeZone: string): string => {
     const formatString = `yyyy-MM-dd'T'HH:mm:ssxxx`;
     if (typeof date === "string") {
       return format(toDate(date), formatString, {

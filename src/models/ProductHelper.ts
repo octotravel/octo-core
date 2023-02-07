@@ -1,32 +1,34 @@
 import { Option, Product, Unit, UnitType } from "@octocloud/types";
 import { OptionHelper } from "./OptionHelper";
-import { InvalidProductId } from "./Error";
+import { InvalidOptionError } from "./Error";
 
 export class ProductHelper {
-  public static findOption = (optionId: string, product: Product): Option => {
-    const option = product.options.find((option) => option.id === optionId) ??
-      null;
+  /**
+   * @throws {InvalidOptionError}
+   */
+  public static getUnit = (optionId: string, product: Product): Option => {
+    const option = product.options.find((option) => option.id === optionId) ?? null;
     if (option === null) {
-      throw new InvalidProductId(product.id, optionId);
+      throw new InvalidOptionError(optionId, product.id);
     }
     return option;
   };
 
-  public static getUnitById = (
-    optionId: string,
-    unitId: string,
-    product: Product,
-  ): Unit => {
-    const option = this.findOption(optionId, product);
-    return OptionHelper.getUnitByID(unitId, option);
+  /**
+   * @throws {InvalidOptionError}
+   * @throws {InvalidUnitError}
+   */
+  public static getUnitById = (optionId: string, unitId: string, product: Product): Unit => {
+    const option = this.getUnit(optionId, product);
+    return OptionHelper.getUnitByID(option, unitId);
   };
 
-  public static getUnitByType = (
-    optionId: string,
-    unitType: UnitType,
-    product: Product,
-  ): Unit => {
-    const option = this.findOption(optionId, product);
-    return OptionHelper.getUnitByType(unitType, option);
+  /**
+   * @throws {InvalidOptionError}
+   * @throws {InvalidUnitError}
+   */
+  public static getUnitByType = (optionId: string, unitType: UnitType, product: Product): Unit => {
+    const option = this.getUnit(optionId, product);
+    return OptionHelper.getUnitByType(option, unitType);
   };
 }

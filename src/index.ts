@@ -12,9 +12,9 @@ export * from "./models/RequestDataManager";
 export * from "./models/SubRequestDataManager";
 export * from "./models/UnitItemsHelper";
 
-export * from './services/DataGenerationService'
+export * from "./services/DataGenerationService";
 
 export * from "./types/Account";
 export * from "./types/Backend";
-export * from './types/Connection'
-export * from './types/Repository'
+export * from "./types/Connection";
+export * from "./types/Repository";

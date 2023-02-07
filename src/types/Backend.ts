@@ -1,5 +1,5 @@
-import { BaseConnection } from './Connection';
-import { RequestDataManager } from '../models/RequestDataManager';
+import { BaseConnection } from "./Connection";
+import { RequestDataManager } from "../models/RequestDataManager";
 import type {
   CapabilityId,
   Availability,
@@ -38,7 +38,7 @@ import {
   updateBookingBodySchema,
   updateBookingPathParamsSchema,
 } from "@octocloud/types";
-import { BaseConfig } from '../models/Config';
+import { BaseConfig } from "../models/Config";
 import * as yup from "yup";
 
 export interface BackendParams {
@@ -46,64 +46,50 @@ export interface BackendParams {
   rdm: RequestDataManager<BaseConnection, BaseConfig>;
   capabilities?: CapabilityId[];
   useIdempotency?: boolean;
-};
+}
 
 // deno-lint-ignore no-empty-interface
 export interface GetBookingSchema extends GetBookingPathParamsSchema {}
 
-export const getBookingSchema: yup.SchemaOf<GetBookingSchema> =
-  getBookingPathParamsSchema.clone();
+export const getBookingSchema: yup.SchemaOf<GetBookingSchema> = getBookingPathParamsSchema.clone();
 
 // deno-lint-ignore no-empty-interface
 export interface GetBookingsSchema extends GetBookingsQueryParamsSchema {}
 
-export const getBookingsSchema: yup.SchemaOf<GetBookingsSchema> =
-  getBookingsQueryParamsSchema.clone();
+export const getBookingsSchema: yup.SchemaOf<GetBookingsSchema> = getBookingsQueryParamsSchema.clone();
 
 // deno-lint-ignore no-empty-interface
 export interface CreateBookingSchema extends CreateBookingBodySchema {}
 
 export const createBookingSchema = createBookingBodySchema.clone();
 
-export interface ConfirmBookingSchema
-  extends ConfirmBookingPathParamsSchema, ConfirmBookingBodySchema {}
+export interface ConfirmBookingSchema extends ConfirmBookingPathParamsSchema, ConfirmBookingBodySchema {}
 
-export const confirmBookingSchema: yup.SchemaOf<ConfirmBookingSchema> = yup
-  .object()
-  .shape({
-    ...confirmBookingPathParamsSchema.fields,
-    ...confirmBookingBodySchema.fields,
-  });
+export const confirmBookingSchema: yup.SchemaOf<ConfirmBookingSchema> = yup.object().shape({
+  ...confirmBookingPathParamsSchema.fields,
+  ...confirmBookingBodySchema.fields,
+});
 
-export interface UpdateBookingSchema
-  extends UpdateBookingBodySchema, UpdateBookingPathParamsSchema {}
+export interface UpdateBookingSchema extends UpdateBookingBodySchema, UpdateBookingPathParamsSchema {}
 
-export const updateBookingSchema: yup.SchemaOf<UpdateBookingSchema> = yup
-  .object()
-  .shape({
-    ...updateBookingPathParamsSchema.fields,
-    ...updateBookingBodySchema.fields,
-  });
+export const updateBookingSchema: yup.SchemaOf<UpdateBookingSchema> = yup.object().shape({
+  ...updateBookingPathParamsSchema.fields,
+  ...updateBookingBodySchema.fields,
+});
 
-export interface CancelBookingSchema
-  extends CancelBookingBodySchema, CancelBookingPathParamsSchema {}
+export interface CancelBookingSchema extends CancelBookingBodySchema, CancelBookingPathParamsSchema {}
 
-export const cancelBookingSchema: yup.SchemaOf<CancelBookingSchema> = yup
-  .object()
-  .shape({
-    ...cancelBookingBodySchema.fields,
-    ...cancelBookingPathParamsSchema.fields,
-  });
+export const cancelBookingSchema: yup.SchemaOf<CancelBookingSchema> = yup.object().shape({
+  ...cancelBookingBodySchema.fields,
+  ...cancelBookingPathParamsSchema.fields,
+});
 
-export interface ExtendBookingSchema
-  extends ExtendBookingBodySchema, ExtendBookingPathParamsSchema {}
+export interface ExtendBookingSchema extends ExtendBookingBodySchema, ExtendBookingPathParamsSchema {}
 
-export const extendBookingSchema: yup.SchemaOf<ExtendBookingSchema> = yup
-  .object()
-  .shape({
-    ...extendBookingBodySchema.fields,
-    ...extendBookingPathParamsSchema.fields,
-  });
+export const extendBookingSchema: yup.SchemaOf<ExtendBookingSchema> = yup.object().shape({
+  ...extendBookingBodySchema.fields,
+  ...extendBookingPathParamsSchema.fields,
+});
 
 export enum WebhookEvent {
   BookingUpdate = "booking_update",
@@ -182,29 +168,17 @@ export interface GetProductsPathParamsSchema {
 }
 
 export interface Backend {
-  getProduct(
-    schema: GetProductPathParamsSchema,
-    params: BackendParams,
-  ): Promise<Product>;
-  getProducts(
-    schema: GetProductsPathParamsSchema,
-    params: BackendParams,
-  ): Promise<Product[]>;
-  getAvailability(
-    schema: AvailabilityBodySchema,
-    params: BackendParams,
-  ): Promise<Availability[]>;
+  getProduct(schema: GetProductPathParamsSchema, params: BackendParams): Promise<Product>;
+  getProducts(schema: GetProductsPathParamsSchema, params: BackendParams): Promise<Product[]>;
+  getAvailability(schema: AvailabilityBodySchema, params: BackendParams): Promise<Availability[]>;
   getAvailabilityCalendar(
     schema: AvailabilityCalendarBodySchema,
-    params: BackendParams,
+    params: BackendParams
   ): Promise<AvailabilityCalendar[]>;
   createBooking(schema: CreateBookingSchema, params: BackendParams): Promise<Booking>;
   updateBooking(schema: UpdateBookingSchema, params: BackendParams): Promise<Booking>;
   getBooking(schema: GetBookingSchema, params: BackendParams): Promise<Booking>;
-  confirmBooking(
-    schema: ConfirmBookingSchema,
-    params: BackendParams,
-  ): Promise<Booking>;
+  confirmBooking(schema: ConfirmBookingSchema, params: BackendParams): Promise<Booking>;
   cancelBooking(schema: CancelBookingSchema, params: BackendParams): Promise<Booking>;
   deleteBooking(schema: CancelBookingSchema, params: BackendParams): Promise<Booking>;
   extendBooking(schema: ExtendBookingSchema, params: BackendParams): Promise<Booking>;
