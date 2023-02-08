@@ -9,6 +9,8 @@ export * from "./models/OptionHelper";
 export * from "./models/ProductHelper";
 export * from "./models/RequestData";
 export * from "./models/RequestDataManager";
+export * from "./models/SubRequestData";
+export * from "./models/BaseRequestData";
 export * from "./models/SubRequestDataManager";
 export * from "./models/UnitItemsHelper";
 

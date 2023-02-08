@@ -1,6 +1,7 @@
 import { IAccountRepository, Repository } from "./../types/Repository";
 import { BaseConnection } from "../types/Connection";
-import { ConnectionMetaData, RequestData, RequestMetaData, SubRequestData } from "./RequestData";
+import { ConnectionMetaData, RequestData, RequestMetaData } from "./RequestData";
+import { SubRequestData } from "./SubRequestData";
 import { DataGenerationService } from "../services/DataGenerationService";
 import { HttpError } from "./Error";
 import { BaseConfig } from "./Config";
@@ -19,12 +20,13 @@ export class RequestDataManager<Connection, Config extends BaseConfig> {
   private requestId: string;
   private channel: string;
   private action = "";
-  private searchKeys: Array<string> = [];
   private logsEnabled = true;
   private alertEnabled = false;
   private _corsEnabled = false;
   private subrequests: SubRequestData[] = [];
   private _config: Config;
+  private httpError: HttpError | null = null;
+  private productIds: string[] = [];
 
   constructor({
     request,
@@ -59,10 +61,6 @@ export class RequestDataManager<Connection, Config extends BaseConfig> {
 
   private generateRequestId = (): string => this.dataGenerationService.generateUUID();
 
-  public addSearchKey = (key: string): void => {
-    this.searchKeys.push(key);
-  };
-
   public setConnection = (connection: BaseConnection): void => {
     this.connection = connection;
   };
@@ -90,6 +88,14 @@ export class RequestDataManager<Connection, Config extends BaseConfig> {
   public disableLogs = (): void => {
     this.logsEnabled = false;
   };
+
+  public setHttpError = (error: HttpError): void => {
+    this.httpError = error;
+  };
+
+  public setProductIds = (productIds: string[]): void => {
+    this.productIds = productIds;
+  }
 
   public enableAlert = (): void => {
     if (!this.config.isDevelopment) {
@@ -184,6 +190,7 @@ export class RequestDataManager<Connection, Config extends BaseConfig> {
       duration: this.getDuration(this.date, new Date()),
       environment: this.config.environment,
     };
+
     const requestData = new RequestData({
       id,
       request: this.request,
@@ -191,13 +198,16 @@ export class RequestDataManager<Connection, Config extends BaseConfig> {
       response,
       logsEnabled: this.logsEnabled,
       subrequests: this.subrequests,
+      productIds: this.productIds,
     });
 
-    if (error) {
-      requestData.setError(error);
-      if (error instanceof HttpError) {
-        metadata.status = error.statusLog;
-        metadata.success = error.statusLog >= 200 && error.statusLog < 300;
+    const err = this.httpError ?? error;
+
+    if (err) {
+      requestData.setError(err);
+      if (err instanceof HttpError) {
+        metadata.status = err.statusLog;
+        metadata.success = err.statusLog >= 200 && err.statusLog < 300;
       }
     }
     return requestData;
