@@ -31,15 +31,15 @@ describe("ProductHelper", () => {
   });
   const product = productParser.parseModelToPOJO(productModel);
 
-  describe("getUnit", () => {
+  describe("findOption", () => {
     it("should return option", async () => {
-      const option = ProductHelper.getUnit(optionId, product);
+      const option = ProductHelper.findOption(optionId, product);
       expect(option !== null);
     });
 
     it("should fail and throw InvalidOptionError", async () => {
       const findOption = () => {
-        ProductHelper.getUnit(invalidOptionId, product);
+        ProductHelper.findOption(invalidOptionId, product);
       };
 
       expect(findOption).toThrowError(InvalidOptionError);

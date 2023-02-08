@@ -1,4 +1,5 @@
 import { BaseRequestData, IBaseRequestData } from "./BaseRequestData";
+import { Environment } from "./Config";
 import { SubRequestData } from "./SubRequestData";
 
 export type ConnectionMetaData = {
@@ -8,7 +9,7 @@ export type ConnectionMetaData = {
   endpoint: string;
   backend: string;
   account: string | null;
-  environment: string;
+  environment: Environment;
 };
 
 export type RequestMetaData = {
@@ -19,7 +20,7 @@ export type RequestMetaData = {
   status: number;
   success: boolean;
   duration: number;
-  environment: string;
+  environment: Environment;
 };
 
 export class RequestData extends BaseRequestData implements IBaseRequestData {
