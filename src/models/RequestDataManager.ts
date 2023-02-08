@@ -95,7 +95,7 @@ export class RequestDataManager<Connection, Config extends BaseConfig> {
 
   public setProductIds = (productIds: string[]): void => {
     this.productIds = productIds;
-  }
+  };
 
   public enableAlert = (): void => {
     if (!this.config.isDevelopment) {

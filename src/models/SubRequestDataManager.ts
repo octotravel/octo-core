@@ -1,4 +1,4 @@
-import { SubMetadata, SubRequestData } from "./RequestData";
+import { SubMetadata, SubRequestData } from "./SubRequestData";
 import { DataGenerationService } from "../services/DataGenerationService";
 
 export class SubRequestDataManager {

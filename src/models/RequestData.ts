@@ -1,5 +1,5 @@
-import { BaseRequestData, IBaseRequestData } from './BaseRequestData'
-import { SubRequestData } from './SubRequestData'
+import { BaseRequestData, IBaseRequestData } from "./BaseRequestData";
+import { SubRequestData } from "./SubRequestData";
 
 export type ConnectionMetaData = {
   id: string;
