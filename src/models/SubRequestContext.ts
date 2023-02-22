@@ -1,7 +1,7 @@
 import { SubMetadata, SubRequestData } from "./SubRequestData";
 import { DataGenerationService } from "../services/DataGenerationService";
 
-export class SubRequestDataManager {
+export class SubRequestContext {
   private dataGenerationService = new DataGenerationService();
 
   private accountId: string | null = null;

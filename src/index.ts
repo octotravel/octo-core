@@ -11,11 +11,11 @@ export * from "./models/Money";
 export * from "./models/OptionHelper";
 export * from "./models/ProductHelper";
 export * from "./models/RequestData";
-export * from "./models/RequestDataManager";
+export * from "./models/RequestContext";
 export * from "./models/RequestLogger";
 export * from "./models/SubRequestData";
 export * from "./models/BaseRequestData";
-export * from "./models/SubRequestDataManager";
+export * from "./models/SubRequestContext";
 export * from "./models/UnitItemsHelper";
 
 export * from "./services/DataGenerationService";

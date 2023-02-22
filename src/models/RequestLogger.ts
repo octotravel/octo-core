@@ -1,13 +1,11 @@
-import { BaseConnection } from "../types/Connection";
-import { BaseConfig } from "./Config";
 import { RequestData } from "./RequestData";
-import { RequestDataManager } from "./RequestDataManager";
+import { RequestContext } from "./RequestContext";
 
 export interface IRequestLogger {
-  logRequest(rdm: RequestDataManager<BaseConnection, BaseConfig>, data: RequestData): Promise<void>;
+  logRequest(data: RequestData, ctx: RequestContext): Promise<void>;
 }
 
 export class NullRequestLogger implements IRequestLogger {
-  public logRequest = async (rdm: RequestDataManager<BaseConnection, BaseConfig>, data: RequestData): Promise<void> =>
+  public logRequest = async (data: RequestData, ctx: RequestContext): Promise<void> =>
     Promise.resolve();
 }

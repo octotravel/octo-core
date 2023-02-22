@@ -1,5 +1,4 @@
-import { BaseConnection } from "./Connection";
-import { RequestDataManager } from "../models/RequestDataManager";
+import { RequestContext } from "../models/RequestContext";
 import type {
   CapabilityId,
   Availability,
@@ -42,12 +41,11 @@ import {
   updateBookingBodySchema,
   updateBookingPathParamsSchema,
 } from "@octocloud/types";
-import { BaseConfig } from "../models/Config";
 import * as yup from "yup";
 
 export interface BackendParams {
   locale?: string;
-  rdm: RequestDataManager<BaseConnection, BaseConfig>;
+  ctx: RequestContext;
   capabilities?: CapabilityId[];
   useIdempotency?: boolean;
 }

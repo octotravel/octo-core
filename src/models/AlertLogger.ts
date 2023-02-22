@@ -1,12 +1,10 @@
-import { BaseConfig } from "./Config";
-import { BaseConnection } from "./../types/Connection";
-import { RequestDataManager } from "./RequestDataManager";
+import { RequestContext } from "./RequestContext";
 import { RequestData } from "./RequestData";
 
 export interface IAlertLogger {
-  alert(rdm: RequestDataManager<BaseConnection, BaseConfig>, data: RequestData): Promise<void>;
+  alert(data: RequestData, ctx: RequestContext): Promise<void>;
 }
 
 export class NullAlertLogger implements IAlertLogger {
-  public alert = async (rdm: RequestDataManager<BaseConnection, BaseConfig>): Promise<void> => Promise.resolve();
+  public alert = async (data: RequestData, ctx: RequestContext): Promise<void> => Promise.resolve();
 }

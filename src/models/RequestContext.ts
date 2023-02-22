@@ -1,19 +1,14 @@
-import { IAccountRepository, Repository } from "./../types/Repository";
 import { BaseConnection } from "../types/Connection";
 import { ConnectionMetaData, RequestData, RequestMetaData } from "./RequestData";
 import { SubRequestData } from "./SubRequestData";
 import { DataGenerationService } from "../services/DataGenerationService";
 import { HttpError } from "./Error";
 import { BaseConfig } from "./Config";
-import { Backend } from "../types/Backend";
 
-export class RequestDataManager<Connection, Config extends BaseConfig> {
+export class RequestContext {
   private dataGenerationService = new DataGenerationService();
 
   private date: Date;
-  private _backend: Backend;
-  private _connectionRepository: Repository<Connection>;
-  private _accountRepository: IAccountRepository;
   private connection: BaseConnection | null = null;
   private accountId: string | null = null;
   private request: Request;
@@ -24,7 +19,7 @@ export class RequestDataManager<Connection, Config extends BaseConfig> {
   private alertEnabled = false;
   private _corsEnabled = false;
   private subrequests: SubRequestData[] = [];
-  private _config: Config;
+  private config: BaseConfig;
   private httpError: HttpError | null = null;
   private productIds: string[] = [];
 
@@ -33,19 +28,13 @@ export class RequestDataManager<Connection, Config extends BaseConfig> {
     connection = null,
     channel,
     accountId,
-    backend,
-    connectionRepository,
-    accountRepository,
     config,
   }: {
     request: Request;
     connection: BaseConnection | null;
     channel: string;
     accountId?: string;
-    backend: Backend;
-    connectionRepository: Repository<Connection>;
-    accountRepository: IAccountRepository;
-    config: Config;
+    config: BaseConfig;
   }) {
     this.requestId = this.generateRequestId();
     this.request = request;
@@ -53,10 +42,7 @@ export class RequestDataManager<Connection, Config extends BaseConfig> {
     this.connection = connection;
     this.date = new Date();
     this.channel = channel;
-    this._backend = backend;
-    this._connectionRepository = connectionRepository;
-    this._accountRepository = accountRepository;
-    this._config = config;
+    this.config = config;
   }
 
   private generateRequestId = (): string => this.dataGenerationService.generateUUID();
@@ -108,33 +94,17 @@ export class RequestDataManager<Connection, Config extends BaseConfig> {
     this.alertEnabled = false;
   };
 
-  public get backend(): Backend {
-    return this._backend;
-  }
-
-  public get config(): Config {
-    return this._config;
-  }
-
-  public get connectionRepository(): Repository<Connection> {
-    return this._connectionRepository;
-  }
-
-  public get accountRepository(): IAccountRepository {
-    return this._accountRepository;
-  }
-
   public getRequestId = (): string => this.requestId;
 
   public getChannel = (): string => this.channel;
 
   public isAlertEnabled = (): boolean => this.alertEnabled;
 
-  public getConnection = (): Connection => {
+  public getConnection = <T extends BaseConnection>(): T => {
     if (this.connection === null) {
       throw new Error("connection is not set");
     }
-    return this.connection as Connection;
+    return this.connection as T;
   };
 
   public getAccountId = (): string => this.accountId as string;
