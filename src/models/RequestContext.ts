@@ -113,6 +113,8 @@ export class RequestContext {
 
   public getAction = (): string => this.action;
 
+  public getConfig = <T extends BaseConfig>(): T => this.config as T;
+
   private getDuration = (start: Date, end: Date): number => {
     return (end.getTime() - start.getTime()) / 1000;
   };
