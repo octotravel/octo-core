@@ -1,5 +1,9 @@
 import { BaseConnection, BaseConnectionPatch } from "../types/Connection";
 
+export interface IConnectionUpdater {
+  updateConnection<T>(connection: BaseConnection, patch: BaseConnectionPatch): T;
+}
+
 export class ConnectionUpdater {
   private removeEmptyFields = (data: any): Record<string, any> => {
     return Object.fromEntries(
