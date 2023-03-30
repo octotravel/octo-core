@@ -1,6 +1,6 @@
 import { v4 as uuid } from "uuid";
 
-interface IDataGenerationService {
+export interface IDataGenerationService {
   generateUUID(): string;
 }
 
