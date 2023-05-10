@@ -7,7 +7,6 @@ export type ConnectionMetaData = {
   channel: string;
   name: string;
   endpoint: string;
-  backend: string;
   account: string | null;
   environment: Environment;
 };

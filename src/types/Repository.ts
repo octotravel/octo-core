@@ -28,3 +28,10 @@ export interface IAccountRepository extends Repository<Account> {
   deleteConnection(accountId: string, connectionId: string): Promise<Account | null>;
   checkConnection(accountId: string, connectionId: string): Promise<void>;
 }
+
+export interface IConnectionRepository<Connection, ConnectionPatch> {
+  create(data: Connection): Promise<void>;
+  update(data: ConnectionPatch): Promise<void | null>;
+  get(key: string): Promise<Connection | null>;
+  delete(key: string): Promise<void>;
+}

@@ -143,13 +143,11 @@ export class RequestContext {
 
   public getRequestData = (response: Response, error?: Error): RequestData => {
     const id = `${this.accountId}/${this.requestId}`;
-    const backend = this.connection?.backend;
     const connectionMetaData: ConnectionMetaData = {
       id: this.connection?.id ?? "",
       channel: this.channel,
       name: this.connection?.name ?? "",
-      backend: backend?.type ?? "",
-      endpoint: backend?.endpoint ?? "",
+      endpoint: this.connection?.endpoint ?? "",
       account: this.accountId,
       environment: this.config.environment,
     };

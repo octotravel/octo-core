@@ -15,14 +15,9 @@ export class ConnectionUpdater {
 
   public updateConnection = <T>(connection: BaseConnection, patch: BaseConnectionPatch): T => {
     const withoutNullable = this.removeEmptyFields(patch);
-    const backend = patch.backend ? this.removeEmptyFields(patch.backend) : {};
     return {
       ...connection,
       ...withoutNullable,
-      backend: {
-        ...connection.backend,
-        ...backend,
-      },
     } as T;
   };
 }

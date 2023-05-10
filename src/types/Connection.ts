@@ -50,19 +50,21 @@ export type CityConnectBackendPatch = {
 type ConnectionBackend = OctoBackend | AnchorBackend | CityConnectBackend;
 type ConnectionBackendPatch = OctoBackendPatch | AnchorBackendPatch | CityConnectBackendPatch;
 
-export type BaseConnection = {
+export interface BaseConnection {
   id: string;
-  backend: ConnectionBackend;
+  supplierId: string;
+  apiKey: string;
+  endpoint: string;
   accountId: string;
   name: string;
-};
-
-export type BaseConnectionPatch = {
+}
+export interface BaseConnectionPatch {
   id: string;
-  accountId: string;
   name?: string;
-  backend?: ConnectionBackendPatch;
-};
+  endpoint?: string;
+  apiKey?: string;
+  supplierId?: string;
+}
 
 const octoBackendSchema: yup.SchemaOf<OctoBackend> = yup.object().shape({
   type: yup.mixed().oneOf(Object.values(BackendType)).required(),
