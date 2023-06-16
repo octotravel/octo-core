@@ -1,4 +1,4 @@
-import { Account } from "./Account";
+import { Account, AccountData, GetAccountData } from './Account';
 export interface PutOptions {
   expiration?: number;
   expirationTtl?: number;
@@ -17,7 +17,7 @@ export interface PutOptions {
 //     cursor?: string;
 //   };
 
-export interface IAccountRepository<AccountData, GetAccountData> {
+export interface IAccountRepository {
   create(accountData: AccountData): Promise<void>;
   update(accountData: AccountData): Promise<void>;
   get(key: string): Promise<Account | null>;
