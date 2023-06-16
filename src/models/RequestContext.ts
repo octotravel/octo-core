@@ -84,7 +84,7 @@ export class RequestContext {
   };
 
   public enableAlert = (): void => {
-    if (!this.config.isDevelopment) {
+    if (!this.config.isLocal) {
       this.alertEnabled = true;
       this.enableLogs();
     }
