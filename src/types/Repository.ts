@@ -17,16 +17,12 @@ export interface PutOptions {
 //     cursor?: string;
 //   };
 
-export interface Repository<T> {
-  set(key: string, value: T, options?: PutOptions): Promise<void>;
-  get(key: string): Promise<T | null>;
+export interface IAccountRepository<AccountData, GetAccountData> {
+  create(accountData: AccountData): Promise<void>;
+  update(accountData: AccountData): Promise<void>;
+  get(key: string): Promise<Account | null>;
+  getAll(): Promise<Array<GetAccountData>>;
   delete(key: string): Promise<void>;
-}
-
-export interface IAccountRepository extends Repository<Account> {
-  addConnection(accountId: string, connectionId: string): Promise<Account | null>;
-  deleteConnection(accountId: string, connectionId: string): Promise<Account | null>;
-  checkConnection(accountId: string, connectionId: string): Promise<void>;
 }
 
 export interface IConnectionRepository<Connection, ConnectionPatch> {
