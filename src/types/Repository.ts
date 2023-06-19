@@ -1,4 +1,4 @@
-import { Account, AccountData, GetAccountData } from './Account';
+import { Account, AccountData, GetAccountData } from "./Account";
 export interface PutOptions {
   expiration?: number;
   expirationTtl?: number;
@@ -16,6 +16,12 @@ export interface PutOptions {
 //     list_complete: boolean;
 //     cursor?: string;
 //   };
+
+export interface Repository<T> {
+  set(key: string, value: T, options?: PutOptions): Promise<void>;
+  get(key: string): Promise<T | null>;
+  delete(key: string): Promise<void>;
+}
 
 export interface IAccountRepository {
   create(accountData: AccountData): Promise<void>;
