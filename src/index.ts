@@ -20,6 +20,7 @@ export * from "./models/UnitItemsHelper";
 
 export * from "./services/DataGenerationService";
 
+export * from "./types/Auth";
 export * from "./types/Account";
 export * from "./types/Backend";
 export * from "./types/Channel";

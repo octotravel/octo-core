@@ -58,6 +58,7 @@ export interface BaseConnection {
   accountId: string;
   name: string;
 }
+
 export interface BaseConnectionPatch {
   id: string;
   name?: string;
