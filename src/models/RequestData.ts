@@ -3,10 +3,10 @@ import { Environment } from "./Config";
 import { SubRequestData } from "./SubRequestData";
 
 export type ConnectionMetaData = {
-  id: string;
-  channel: string;
-  name: string;
-  endpoint: string;
+  id: string | null;
+  channel: string | null;
+  name: string | null;
+  endpoint: string | null;
   account: string | null;
   environment: Environment;
 };

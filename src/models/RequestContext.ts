@@ -152,10 +152,10 @@ export class RequestContext {
   public getRequestData = (response: Response, error?: Error): RequestData => {
     const id = `${this.accountId}/${this.requestId}`;
     const connectionMetaData: ConnectionMetaData = {
-      id: this.connection?.id ?? "",
-      channel: this.channel ?? "",
-      name: this.connection?.name ?? "",
-      endpoint: this.connection?.endpoint ?? "",
+      id: this.connection?.id ?? null,
+      channel: this.channel ?? null,
+      name: this.connection?.name ?? null,
+      endpoint: this.connection?.endpoint ?? null,
       account: this.accountId,
       environment: this.config?.environment ?? Environment.LOCAL
     };
