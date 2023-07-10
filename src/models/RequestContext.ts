@@ -39,7 +39,7 @@ export class RequestContext {
     this.requestId = this.generateRequestId();
     this.request = request;
     this.accountId = connection?.accountId ?? accountId ?? null;
-    this.connection = connection;
+    this.connection = connection ?? null;
     this.date = new Date();
     this.channel = channel ?? null;
     this.config = config ?? null;
