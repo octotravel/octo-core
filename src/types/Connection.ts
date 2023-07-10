@@ -120,7 +120,7 @@ export const deleteConnectionSchema = yup.string().required();
 
 export const getConnectionSchema = yup.string().required();
 
-export const patchConnectionSchema: yup.SchemaOf<BaseConnectionPatch>  = yup.object().shape({
+export const patchConnectionSchema: yup.SchemaOf<BaseConnectionPatch> = yup.object().shape({
   id: yup.string().required(),
   supplierId: yup.string().uuid().optional(),
   apiKey: yup.string().uuid().optional(),
