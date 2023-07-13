@@ -6,6 +6,5 @@ export interface IRequestLogger {
 }
 
 export class NullRequestLogger implements IRequestLogger {
-  public logRequest = async (data: RequestData, ctx: RequestContext): Promise<void> =>
-    Promise.resolve();
+  public logRequest = async (data: RequestData, ctx: RequestContext): Promise<void> => Promise.resolve();
 }
