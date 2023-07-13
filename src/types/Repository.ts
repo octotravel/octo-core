@@ -35,5 +35,6 @@ export interface IConnectionRepository<Connection, ConnectionPatch> {
   create(data: Connection): Promise<void>;
   update(data: ConnectionPatch): Promise<void | null>;
   get(key: string): Promise<Connection | null>;
+  getAll(): Promise<Array<Connection>>;
   delete(key: string): Promise<void>;
 }
