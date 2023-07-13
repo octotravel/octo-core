@@ -165,6 +165,7 @@ export interface Backend {
   extendBooking(schema: ExtendBookingSchema, params: BackendParams): Promise<Booking>;
   getBookings(schema: GetBookingsSchema, params: BackendParams): Promise<Booking[]>;
   getSupplier(params: BackendParams): Promise<Supplier>;
+  getSuppliers(params: BackendParams): Promise<Supplier[]>;
   createWebhook(schema: CreateWebhookBodyParamsSchema, params: BackendParams): Promise<Webhook>;
   deleteWebhook(schema: DeleteWebhookPathParamsSchema, params: BackendParams): Promise<void>;
   listWebhooks(schema: BackendParams): Promise<Webhook[]>;
