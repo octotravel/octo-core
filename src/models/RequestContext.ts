@@ -28,7 +28,7 @@ export class RequestContext {
     connection = null,
     channel,
     accountId,
-    config
+    config,
   }: {
     request: Request;
     connection?: BaseConnection | null;
@@ -157,7 +157,7 @@ export class RequestContext {
       name: this.connection?.name ?? null,
       endpoint: this.connection?.endpoint ?? null,
       account: this.accountId,
-      environment: this.config?.environment ?? Environment.LOCAL
+      environment: this.config?.environment ?? Environment.LOCAL,
     };
 
     const metadata: RequestMetaData = {
@@ -168,7 +168,7 @@ export class RequestContext {
       status: response.status,
       success: response.ok,
       duration: this.getDuration(this.date, new Date()),
-      environment: this.config?.environment ?? Environment.LOCAL
+      environment: this.config?.environment ?? Environment.LOCAL,
     };
 
     const requestData = new RequestData({
@@ -178,7 +178,7 @@ export class RequestContext {
       response,
       logsEnabled: this.logsEnabled,
       subrequests: this.subrequests,
-      productIds: this.productIds
+      productIds: this.productIds,
     });
 
     const err = this.httpError ?? error;
