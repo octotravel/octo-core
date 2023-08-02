@@ -1,4 +1,4 @@
-import { IResponseHandler } from "../types/ResponseHandler";
+import { IResponseHandler } from "../types/Response";
 import { HttpError } from "./Error";
 import { RequestContext } from './RequestContext';
 
