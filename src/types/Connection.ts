@@ -108,7 +108,7 @@ const cityconnectBackendPatchSchema: yup.SchemaOf<CityConnectBackendPatch> = yup
 });
 
 export const createConnectionSchema: yup.SchemaOf<BaseConnection> = yup.object().shape({
-  id: yup.string().uuid().required(),
+  id: yup.string().uuid().defined(),
   supplierId: yup.string().uuid().required(),
   apiKey: yup.string().uuid().required(),
   endpoint: yup.string().required(),
