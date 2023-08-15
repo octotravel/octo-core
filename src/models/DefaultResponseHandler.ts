@@ -1,6 +1,6 @@
 import { IResponseHandler } from "../types/Response";
 import { HttpError } from "./Error";
-import { RequestContext } from './RequestContext';
+import { RequestContext } from "./RequestContext";
 
 export class DefaultResponseHandler implements IResponseHandler {
   public handleResponse(data: any, ctx: RequestContext): Response {
