@@ -145,6 +145,8 @@ export class RequestContext {
     this.subrequests.push(data);
   };
 
+  public getSubrequest = (): SubRequestData[] => this.subrequests;
+
   public get corsEnabled(): boolean {
     return this._corsEnabled;
   }
