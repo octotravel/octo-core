@@ -139,9 +139,6 @@ export class RequestContext {
   };
 
   public addSubrequest = (data: SubRequestData): void => {
-    if (this.subrequests.length > 998) {
-      throw new Error("maximum subrequest limit reached");
-    }
     this.subrequests.push(data);
   };
 
