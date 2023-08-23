@@ -16,6 +16,7 @@ export class RequestContext {
   private channel: string | null = null;
   private action = "";
   private logsEnabled = true;
+  private _isRequestImportant = false;
   private alertEnabled = false;
   private _corsEnabled = false;
   private subrequests: SubRequestData[] = [];
@@ -66,6 +67,14 @@ export class RequestContext {
   public enableLogs = (): void => {
     this.logsEnabled = true;
   };
+
+  public setRequestAsImportant = (): void => {
+    this._isRequestImportant = true;
+  };
+
+  public isRequestImportant = (): boolean => {
+    return this._isRequestImportant;
+  }
 
   public enableCORS = (): void => {
     this._corsEnabled = true;
