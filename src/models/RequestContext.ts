@@ -3,7 +3,7 @@ import { ConnectionMetaData, RequestData, RequestMetaData } from "./RequestData"
 import { SubRequestData } from "./SubRequestData";
 import { DataGenerationService } from "../services/DataGenerationService";
 import { HttpError } from "./Error";
-import { BaseConfig } from "./Config";
+import { BaseConfig, Environment } from "./Config";
 
 export class RequestContext {
   private dataGenerationService = new DataGenerationService();
@@ -13,13 +13,14 @@ export class RequestContext {
   private accountId: string | null = null;
   private request: Request;
   private requestId: string;
-  private channel: string;
+  private channel: string | null = null;
   private action = "";
   private logsEnabled = true;
+  private _isRequestImportant = false;
   private alertEnabled = false;
   private _corsEnabled = false;
   private subrequests: SubRequestData[] = [];
-  private config: BaseConfig;
+  private config: BaseConfig | null = null;
   private httpError: HttpError | null = null;
   private productIds: string[] = [];
 
@@ -31,18 +32,18 @@ export class RequestContext {
     config,
   }: {
     request: Request;
-    connection: BaseConnection | null;
-    channel: string;
+    connection?: BaseConnection | null;
+    channel?: string;
     accountId?: string;
-    config: BaseConfig;
+    config?: BaseConfig;
   }) {
     this.requestId = this.generateRequestId();
     this.request = request;
     this.accountId = connection?.accountId ?? accountId ?? null;
-    this.connection = connection;
+    this.connection = connection ?? null;
     this.date = new Date();
-    this.channel = channel;
-    this.config = config;
+    this.channel = channel ?? null;
+    this.config = config ?? null;
   }
 
   private generateRequestId = (): string => this.dataGenerationService.generateUUID();
@@ -67,6 +68,14 @@ export class RequestContext {
     this.logsEnabled = true;
   };
 
+  public setRequestAsImportant = (): void => {
+    this._isRequestImportant = true;
+  };
+
+  public isRequestImportant = (): boolean => {
+    return this._isRequestImportant;
+  };
+
   public enableCORS = (): void => {
     this._corsEnabled = true;
   };
@@ -84,7 +93,7 @@ export class RequestContext {
   };
 
   public enableAlert = (): void => {
-    if (!this.config.isDevelopment) {
+    if (this.config && !this.config.isLocal) {
       this.alertEnabled = true;
       this.enableLogs();
     }
@@ -96,7 +105,11 @@ export class RequestContext {
 
   public getRequestId = (): string => this.requestId;
 
-  public getChannel = (): string => this.channel;
+  public setChannel = (channel: string): void => {
+    this.channel = channel;
+  };
+
+  public getChannel = (): string => this.channel as string;
 
   public isAlertEnabled = (): boolean => this.alertEnabled;
 
@@ -112,6 +125,10 @@ export class RequestContext {
   public getRequest = (): Request => this.request as Request;
 
   public getAction = (): string => this.action;
+
+  public setConfig = <T extends BaseConfig>(config: T): void => {
+    this.config = config;
+  };
 
   public getConfig = <T extends BaseConfig>(): T => this.config as T;
 
@@ -131,11 +148,10 @@ export class RequestContext {
   };
 
   public addSubrequest = (data: SubRequestData): void => {
-    if (this.subrequests.length > 998) {
-      throw new Error("maximum subrequest limit reached");
-    }
     this.subrequests.push(data);
   };
+
+  public getSubrequest = (): SubRequestData[] => this.subrequests;
 
   public get corsEnabled(): boolean {
     return this._corsEnabled;
@@ -144,12 +160,12 @@ export class RequestContext {
   public getRequestData = (response: Response, error?: Error): RequestData => {
     const id = `${this.accountId}/${this.requestId}`;
     const connectionMetaData: ConnectionMetaData = {
-      id: this.connection?.id ?? "",
-      channel: this.channel,
-      name: this.connection?.name ?? "",
-      endpoint: this.connection?.endpoint ?? "",
+      id: this.connection?.id ?? null,
+      channel: this.channel ?? null,
+      name: this.connection?.name ?? null,
+      endpoint: this.connection?.endpoint ?? null,
       account: this.accountId,
-      environment: this.config.environment,
+      environment: this.config?.environment ?? Environment.LOCAL,
     };
 
     const metadata: RequestMetaData = {
@@ -160,7 +176,7 @@ export class RequestContext {
       status: response.status,
       success: response.ok,
       duration: this.getDuration(this.date, new Date()),
-      environment: this.config.environment,
+      environment: this.config?.environment ?? Environment.LOCAL,
     };
 
     const requestData = new RequestData({

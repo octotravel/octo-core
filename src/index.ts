@@ -17,12 +17,15 @@ export * from "./models/SubRequestData";
 export * from "./models/BaseRequestData";
 export * from "./models/SubRequestContext";
 export * from "./models/UnitItemsHelper";
+export * from "./models/DefaultResponseHandler";
 
 export * from "./services/DataGenerationService";
 
+export * from "./types/Auth";
 export * from "./types/Account";
 export * from "./types/Backend";
 export * from "./types/Channel";
 export * from "./types/Connection";
 export * from "./types/Repository";
 export * from "./types/Request";
+export * from "./types/Response";

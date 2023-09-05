@@ -58,6 +58,7 @@ export interface BaseConnection {
   accountId: string;
   name: string;
 }
+
 export interface BaseConnectionPatch {
   id: string;
   name?: string;
@@ -106,16 +107,12 @@ const cityconnectBackendPatchSchema: yup.SchemaOf<CityConnectBackendPatch> = yup
   password: yup.string().optional(),
 });
 
-export const createConnectionSchema = yup.object().shape({
+export const createConnectionSchema: yup.SchemaOf<BaseConnection> = yup.object().shape({
   id: yup.string().defined(),
-  backend: yup
-    .object()
-    .shape({
-      type: yup.mixed().oneOf(Object.values(BackendType)),
-    })
-    .optional()
-    .default(undefined),
-  accountId: yup.string().required(),
+  supplierId: yup.string().uuid().required(),
+  apiKey: yup.string().uuid().required(),
+  endpoint: yup.string().required(),
+  accountId: yup.string().uuid().required(),
   name: yup.string().required(),
 });
 
@@ -123,16 +120,11 @@ export const deleteConnectionSchema = yup.string().required();
 
 export const getConnectionSchema = yup.string().required();
 
-export const patchConnectionSchema = yup.object().shape({
+export const patchConnectionSchema: yup.SchemaOf<BaseConnectionPatch> = yup.object().shape({
   id: yup.string().required(),
-  backend: yup
-    .object()
-    .shape({
-      type: yup.mixed().oneOf(Object.values(BackendType)),
-    })
-    .default(undefined)
-    .optional(),
-  accountId: yup.string().required(),
+  supplierId: yup.string().uuid().optional(),
+  apiKey: yup.string().uuid().optional(),
+  endpoint: yup.string().optional(),
   name: yup.string().optional(),
 });
 
