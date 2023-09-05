@@ -47,7 +47,7 @@
   },
   "dependencies": {
     "@dinero.js/currencies": "2.0.0-alpha.8",
-    "@octocloud/types": "github:octotravel/octo-types#main",
+    "@octocloud/types": "^1.5.7",
     "date-fns": "^2.30.0",
     "date-fns-tz": "^2.0.0",
     "dinero.js": "2.0.0-alpha.8",
