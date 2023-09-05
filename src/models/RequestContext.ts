@@ -74,7 +74,7 @@ export class RequestContext {
 
   public isRequestImportant = (): boolean => {
     return this._isRequestImportant;
-  }
+  };
 
   public enableCORS = (): void => {
     this._corsEnabled = true;
