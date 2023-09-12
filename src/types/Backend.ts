@@ -43,9 +43,12 @@ import {
 } from "@octocloud/types";
 import * as yup from "yup";
 
-export interface BackendParams {
-  locale?: string;
+export interface CoreParams {
   ctx: RequestContext;
+}
+
+export interface BackendParams extends CoreParams {
+  locale?: string;
   capabilities?: CapabilityId[];
   useIdempotency?: boolean;
 }
