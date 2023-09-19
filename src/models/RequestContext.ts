@@ -122,7 +122,7 @@ export class RequestContext {
 
   public getAccountId = (): string => this.accountId as string;
 
-  public getRequest = (): Request => this.request as Request;
+  public getRequest = (): Promise<Request> => Promise.resolve(this.request as Request);
 
   public getAction = (): string => this.action;
 
@@ -157,7 +157,7 @@ export class RequestContext {
     return this._corsEnabled;
   }
 
-  public getRequestData = (response: Response, error?: Error): RequestData => {
+  public getRequestData = async (response: Response, error?: Error): Promise<RequestData> => {
     const id = `${this.accountId}/${this.requestId}`;
     const connectionMetaData: ConnectionMetaData = {
       id: this.connection?.id ?? null,
@@ -181,7 +181,7 @@ export class RequestContext {
 
     const requestData = new RequestData({
       id,
-      request: this.getRequest(),
+      request: await this.getRequest(),
       metadata,
       response,
       logsEnabled: this.logsEnabled,
