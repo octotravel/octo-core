@@ -157,7 +157,7 @@ export class RequestContext {
     return this._corsEnabled;
   }
 
-  public getRequestData = (response: Response, error?: Error): Promise<RequestData> => {
+  public getRequestData = (response: Response, error?: Error): RequestData => {
     const id = `${this.accountId}/${this.requestId}`;
     const connectionMetaData: ConnectionMetaData = {
       id: this.connection?.id ?? null,
@@ -199,6 +199,6 @@ export class RequestContext {
       }
     }
 
-    return Promise.resolve(requestData);
+    return requestData;
   };
 }
