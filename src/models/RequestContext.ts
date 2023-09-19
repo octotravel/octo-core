@@ -29,7 +29,7 @@ export class RequestContext {
     connection = null,
     channel,
     accountId,
-    config
+    config,
   }: {
     request: Request;
     connection?: BaseConnection | null;
@@ -122,7 +122,7 @@ export class RequestContext {
 
   public getAccountId = (): string => this.accountId as string;
 
-  public getRequest = (): Promise<Request> => Promise.resolve(this.request as Request);
+  public getRequest = (): Request => this.request as Request;
 
   public getAction = (): string => this.action;
 
@@ -157,7 +157,7 @@ export class RequestContext {
     return this._corsEnabled;
   }
 
-  public getRequestData = async (response: Response, error?: Error): Promise<RequestData> => {
+  public getRequestData = (response: Response, error?: Error): Promise<RequestData> => {
     const id = `${this.accountId}/${this.requestId}`;
     const connectionMetaData: ConnectionMetaData = {
       id: this.connection?.id ?? null,
@@ -165,7 +165,7 @@ export class RequestContext {
       name: this.connection?.name ?? null,
       endpoint: this.connection?.endpoint ?? null,
       account: this.accountId,
-      environment: this.config?.environment ?? Environment.LOCAL
+      environment: this.config?.environment ?? Environment.LOCAL,
     };
 
     const metadata: RequestMetaData = {
@@ -176,17 +176,17 @@ export class RequestContext {
       status: response.status,
       success: response.ok,
       duration: this.getDuration(this.date, new Date()),
-      environment: this.config?.environment ?? Environment.LOCAL
+      environment: this.config?.environment ?? Environment.LOCAL,
     };
 
     const requestData = new RequestData({
       id,
-      request: await this.getRequest(),
+      request: this.getRequest(),
       metadata,
       response,
       logsEnabled: this.logsEnabled,
       subrequests: this.subrequests,
-      productIds: this.productIds
+      productIds: this.productIds,
     });
 
     const err = this.httpError ?? error;
@@ -199,6 +199,6 @@ export class RequestContext {
       }
     }
 
-    return requestData;
+    return Promise.resolve(requestData);
   };
 }
