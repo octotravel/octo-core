@@ -181,7 +181,7 @@ export class RequestContext {
 
     const requestData = new RequestData({
       id,
-      request: this.request,
+      request: this.getRequest(),
       metadata,
       response,
       logsEnabled: this.logsEnabled,
