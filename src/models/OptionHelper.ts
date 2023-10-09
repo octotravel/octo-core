@@ -52,36 +52,46 @@ export class OptionHelper {
   };
 
   /**
-   * @throws {OptionRestrictionsError}
+   * @throws {OptionRestrictionsError, InvalidUnitError}
    */
   public static checkRestrictions = (option: Option, units: Array<AvailabilityUnit>): void => {
     const count = units.reduce((acc, unit) => acc + unit.quantity, 0);
     const isMinOk = option.restrictions.minUnits <= count && count > 0;
     const isMaxOk = option.restrictions.maxUnits === null || option.restrictions.maxUnits >= count;
 
-    const unitRestrictions = units.map((unit) => {
+    units.forEach((unit) => {
       const octoUnit = option.units.find((u) => u.id === unit.id) ?? null;
-
+      if (octoUnit === null) {
+        throw new InvalidUnitError(unit.id);
+      }
       if (octoUnit !== null) {
-        const minQuantity = octoUnit?.restrictions?.minQuantity ?? null;
-        const maxQuantity = octoUnit?.restrictions?.maxQuantity ?? null;
+        const minQuantity: number | null = octoUnit.restrictions.minQuantity ?? null;
+        const maxQuantity: number | null = octoUnit.restrictions.maxQuantity ?? null;
         const isMinOk = minQuantity === null || (minQuantity <= unit.quantity && unit.quantity > 0);
         const isMaxOk = maxQuantity === null || maxQuantity >= unit.quantity;
-        const isOk = isMinOk && isMaxOk;
+
+        const isAccompaniedByOk =
+          octoUnit.restrictions.accompaniedBy.length === 0 ||
+          octoUnit.restrictions.accompaniedBy.some((accompaniedBy) => units.map((u) => u.id).includes(accompaniedBy));
+        const isOk = isMinOk && isMaxOk && isAccompaniedByOk;
         if (!isOk) {
-          throw new OptionRestrictionsError(minQuantity ?? 0, maxQuantity);
+          throw new OptionRestrictionsError({
+            minUnits: minQuantity ?? 0,
+            maxUnits: maxQuantity,
+            unit: octoUnit,
+            isAccompaniedByOk,
+          });
         }
-
-        return isOk;
       }
-
-      return true;
     });
 
-    const restrictions = [...unitRestrictions, isMinOk, isMaxOk];
+    const restrictions = [isMinOk, isMaxOk];
     const { minUnits, maxUnits } = option.restrictions;
     if (!restrictions.every(Boolean)) {
-      throw new OptionRestrictionsError(minUnits, maxUnits);
+      throw new OptionRestrictionsError({
+        minUnits,
+        maxUnits,
+      });
     }
   };
 }

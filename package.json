@@ -1,6 +1,6 @@
 {
   "name": "@octocloud/core",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -47,7 +47,7 @@
   },
   "dependencies": {
     "@dinero.js/currencies": "2.0.0-alpha.8",
-    "@octocloud/types": "^1.5.7",
+    "@octocloud/types": "^1.5.11",
     "date-fns": "^2.30.0",
     "date-fns-tz": "^2.0.0",
     "dinero.js": "^2.0.0-alpha.14",

@@ -29,7 +29,7 @@ describe("OptionHelper", () => {
             minQuantity: 2,
             maxQuantity: 4,
             paxCount: 0,
-            accompaniedBy: [],
+            accompaniedBy: [firstUnitId],
           },
         },
       ],
@@ -124,7 +124,37 @@ describe("OptionHelper", () => {
       expect(checkRestrictions).not.toThrow();
     });
 
-    it("should successfully pass check", async () => {
+    it("should successfully pass check when one unit has to be accompanied", async () => {
+      const checkRestrictions = () => {
+        OptionHelper.checkRestrictions(option, [
+          {
+            id: firstUnitId,
+            quantity: 1,
+          },
+          {
+            id: secondUnitId,
+            quantity: 2,
+          },
+        ]);
+      };
+
+      expect(checkRestrictions).not.toThrow();
+    });
+
+    it("should fail check when one unit has to be accompanied and it is not", async () => {
+      const checkRestrictions = () => {
+        OptionHelper.checkRestrictions(option, [
+          {
+            id: secondUnitId,
+            quantity: 1,
+          },
+        ]);
+      };
+
+      expect(checkRestrictions).toThrowError(OptionRestrictionsError);
+    });
+
+    it("should fail when invalid unit is provided", async () => {
       const checkRestrictions = () => {
         OptionHelper.checkRestrictions(option, [
           {
@@ -134,7 +164,7 @@ describe("OptionHelper", () => {
         ]);
       };
 
-      expect(checkRestrictions).not.toThrow();
+      expect(checkRestrictions).toThrowError(InvalidUnitError);
     });
 
     it("should fail on unit`s restrictions and throw OptionRestrictionsError", async () => {
@@ -162,12 +192,7 @@ describe("OptionHelper", () => {
 
     it("should fail on option`s restrictions and throw OptionRestrictionsError", async () => {
       const checkRestrictions = () => {
-        OptionHelper.checkRestrictions(optionWithoutUnits, [
-          {
-            id: invalidUnitId,
-            quantity: 3,
-          },
-        ]);
+        OptionHelper.checkRestrictions(optionWithoutUnits, []);
       };
 
       expect(checkRestrictions).toThrowError(OptionRestrictionsError);
