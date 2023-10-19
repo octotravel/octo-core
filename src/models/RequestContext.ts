@@ -21,6 +21,7 @@ export class RequestContext {
   private _corsEnabled = false;
   private subrequests: SubRequestData[] = [];
   private config: BaseConfig | null = null;
+  private error: Error | null = null;
   private httpError: HttpError | null = null;
   private productIds: string[] = [];
 
@@ -82,6 +83,12 @@ export class RequestContext {
 
   public disableLogs = (): void => {
     this.logsEnabled = false;
+  };
+
+  public getError = (): Error | null => this.error;
+
+  public setError = (error: Error): void => {
+    this.error = error;
   };
 
   public setHttpError = (error: HttpError): void => {

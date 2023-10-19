@@ -3,7 +3,7 @@ import { HttpError } from "./Error";
 import { RequestContext } from "./RequestContext";
 
 export class DefaultResponseHandler implements IResponseHandler {
-  public handleResponse(data: any, ctx: RequestContext): Response {
+  public handleResponse(data: unknown, ctx: RequestContext): Response {
     const payload = data === null ? "{}" : JSON.stringify(data);
 
     return new Response(payload, {
@@ -12,7 +12,7 @@ export class DefaultResponseHandler implements IResponseHandler {
     }).clone();
   }
 
-  public handleError(err: any, ctx: RequestContext): Response {
+  public handleError(err: Error, ctx: RequestContext): Response {
     if (err instanceof HttpError) {
       return new Response(JSON.stringify(err.body), {
         headers: { "content-type": "application/json" },
