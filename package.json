@@ -1,6 +1,6 @@
 {
   "name": "@octocloud/core",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -52,7 +52,7 @@
     "date-fns-tz": "^2.0.0",
     "dinero.js": "^2.0.0-alpha.14",
     "reflect-metadata": "^0.1.13",
-    "tsyringe": "^4.7.0",
+    "tsyringe": "^4.8.0",
     "uuid": "^9.0.0"
   }
 }
