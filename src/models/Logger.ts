@@ -42,7 +42,5 @@ export class NullLogger implements Logger {
     return this.logLevel(LogLevel.DEBUG, message, context);
   }
 
-  public logLevel(level: LogLevel, message: string, context?: unknown): Promise<void> {
-    return Promise.resolve();
-  }
+  public async logLevel(level: LogLevel, message: string, context?: unknown): Promise<void> {}
 }

@@ -8,6 +8,7 @@ module.exports = {
     "unused-imports/no-unused-imports": "error",
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-empty-interface": "off",
-    curly: "error",
-  },
+    "@typescript-eslint/no-empty-function": "off",
+    curly: "error"
+  }
 };
