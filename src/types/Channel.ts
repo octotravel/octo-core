@@ -5,5 +5,5 @@ export interface Channel {
   getName(): string;
   getActions(): string[];
   serve(requestContext: RequestContext): Promise<Response>;
-  getDependencyContainer(): DependencyContainer
+  getDependencyContainer(): DependencyContainer;
 }
