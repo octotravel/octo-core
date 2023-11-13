@@ -4,43 +4,45 @@ export enum LogLevel {
   WARNING = "warning",
   LOG = "log",
   INFO = "info",
-  DEBUG = "debug"
+  DEBUG = "debug",
 }
 
 export interface Logger {
-  fatal(message: unknown, context?: unknown): Promise<void>;
-  error(message: unknown, context?: unknown): Promise<void>;
-  warning(message: unknown, context?: unknown): Promise<void>;
-  log(message: unknown, context?: unknown): Promise<void>;
-  info(message: unknown, context?: unknown): Promise<void>;
-  debug(message: unknown, context?: unknown): Promise<void>;
-  logLevel(level: LogLevel, message: unknown, context?: unknown): Promise<void>;
+  fatal(data: unknown, context?: unknown): Promise<unknown>;
+  error(data: unknown, context?: unknown): Promise<unknown>;
+  warning(data: unknown, context?: unknown): Promise<unknown>;
+  log(data: unknown, context?: unknown): Promise<unknown>;
+  info(data: unknown, context?: unknown): Promise<unknown>;
+  debug(data: unknown, context?: unknown): Promise<unknown>;
+  logLevel(level: LogLevel, data: unknown, context?: unknown): Promise<unknown>;
 }
 
 export class NullLogger implements Logger {
-  public async fatal(message: string, context?: unknown): Promise<void> {
-    return this.logLevel(LogLevel.FATAL, message, context);
+  public async fatal(data: string, context?: unknown): Promise<unknown> {
+    return this.logLevel(LogLevel.FATAL, data, context);
   }
 
-  public async error(message: string, context?: unknown): Promise<void> {
-    return this.logLevel(LogLevel.ERROR, message, context);
+  public async error(data: string, context?: unknown): Promise<unknown> {
+    return this.logLevel(LogLevel.ERROR, data, context);
   }
 
-  public async warning(message: string, context?: unknown): Promise<void> {
-    return this.logLevel(LogLevel.WARNING, message, context);
+  public async warning(data: string, context?: unknown): Promise<unknown> {
+    return this.logLevel(LogLevel.WARNING, data, context);
   }
 
-  public async log(message: string, context?: unknown): Promise<void> {
-    return this.logLevel(LogLevel.LOG, message, context);
+  public async log(data: string, context?: unknown): Promise<unknown> {
+    return this.logLevel(LogLevel.LOG, data, context);
   }
 
-  public async info(message: string, context?: unknown): Promise<void> {
-    return this.logLevel(LogLevel.INFO, message, context);
+  public async info(data: string, context?: unknown): Promise<unknown> {
+    return this.logLevel(LogLevel.INFO, data, context);
   }
 
-  public async debug(message: string, context?: unknown): Promise<void> {
-    return this.logLevel(LogLevel.DEBUG, message, context);
+  public async debug(data: string, context?: unknown): Promise<unknown> {
+    return this.logLevel(LogLevel.DEBUG, data, context);
   }
 
-  public async logLevel(level: LogLevel, message: string, context?: unknown): Promise<void> {}
+  public async logLevel(level: LogLevel, data: unknown, context?: unknown): Promise<unknown> {
+    return null;
+  }
 }
