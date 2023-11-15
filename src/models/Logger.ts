@@ -10,7 +10,7 @@ export enum LogLevel {
 export interface Logger {
   fatal(data: unknown, context?: unknown): Promise<unknown>;
   error(data: unknown, context?: unknown): Promise<unknown>;
-  warning(data: unknown, context?: unknown): Promise<unknown>;
+  warn(data: unknown, context?: unknown): Promise<unknown>;
   log(data: unknown, context?: unknown): Promise<unknown>;
   info(data: unknown, context?: unknown): Promise<unknown>;
   debug(data: unknown, context?: unknown): Promise<unknown>;
@@ -26,7 +26,7 @@ export class NullLogger implements Logger {
     return this.logLevel(LogLevel.ERROR, data, context);
   }
 
-  public async warning(data: string, context?: unknown): Promise<unknown> {
+  public async warn(data: string, context?: unknown): Promise<unknown> {
     return this.logLevel(LogLevel.WARNING, data, context);
   }
 
