@@ -6,10 +6,12 @@ export const STATUS_UNAUTHORIZED = 401;
 export const STATUS_FORBIDDEN = 403;
 export const STATUS_NOT_FOUD = 404;
 export const STATUS_INTERNAL_SERVER_ERROR = 500;
+export const STATUS_SERVICE_UNAVAILABLE_ERROR = 503;
 export const MESSAGE_BAD_REQUEST = "Bad Request";
 export const MESSAGE_NOT_FOUND = "Not Found";
 export const MESSAGE_UNAUTHORIZED = "Unauthorized";
 export const MESSAGE_INTERNAL_SERVER_ERROR = "Internal Server Error";
+export const MESSAGE_SERVICE_UNAVAILABLE_ERROR = "Service Unavailable Error";
 
 export const MESSAGE_NO_AVAILABILITY_ERROR = "No Availability";
 export const MESSAGE_OPTION_RESTRICTIONS_ERROR = "Option Restrictions aren't met";
@@ -169,10 +171,20 @@ export class HttpUnauthorized extends HttpError {
     });
   }
 }
+
 export class HttpInternalServerError extends HttpError {
   constructor(body?: Record<string, unknown>) {
     super(STATUS_INTERNAL_SERVER_ERROR, {
       message: MESSAGE_INTERNAL_SERVER_ERROR,
+      body,
+    });
+  }
+}
+
+export class HttpServiceUnavailableError extends HttpError {
+  constructor(body?: Record<string, unknown>) {
+    super(STATUS_SERVICE_UNAVAILABLE_ERROR, {
+      message: MESSAGE_SERVICE_UNAVAILABLE_ERROR,
       body,
     });
   }
