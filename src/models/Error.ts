@@ -10,6 +10,7 @@ export const STATUS_SERVICE_UNAVAILABLE_ERROR = 503;
 export const MESSAGE_BAD_REQUEST = "Bad Request";
 export const MESSAGE_NOT_FOUND = "Not Found";
 export const MESSAGE_UNAUTHORIZED = "Unauthorized";
+export const MESSAGE_FORBIDDEN = "Forbidden";
 export const MESSAGE_INTERNAL_SERVER_ERROR = "Internal Server Error";
 export const MESSAGE_SERVICE_UNAVAILABLE_ERROR = "Service Unavailable Error";
 
@@ -167,6 +168,15 @@ export class HttpUnauthorized extends HttpError {
   constructor(body?: Record<string, unknown>) {
     super(STATUS_UNAUTHORIZED, {
       message: MESSAGE_UNAUTHORIZED,
+      body,
+    });
+  }
+}
+
+export class HttpForbiddenError extends HttpError {
+  constructor(body?: Record<string, unknown>) {
+    super(STATUS_FORBIDDEN, {
+      message: MESSAGE_FORBIDDEN,
       body,
     });
   }
