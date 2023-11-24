@@ -66,6 +66,10 @@ export class RequestContext {
   };
 
   public enableLogs = (): void => {
+    if (this.config && (this.config.isLocal || this.config.isTest)) {
+      return;
+    }
+
     this.logsEnabled = true;
   };
 
