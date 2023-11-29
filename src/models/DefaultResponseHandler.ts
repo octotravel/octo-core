@@ -3,13 +3,13 @@ import { HttpError, MESSAGE_INTERNAL_SERVER_ERROR } from "./Error";
 import { RequestContext } from "./RequestContext";
 
 export class DefaultResponseHandler implements IResponseHandler {
-  public handleResponse(data: unknown, ctx: RequestContext): Response {
+  public handleResponse(data: unknown, _: RequestContext): Response {
     const payload = data === null ? "{}" : JSON.stringify(data);
 
     return new Response(payload, {
       headers: { "content-type": "application/json" },
       status: 200,
-    }).clone();
+    });
   }
 
   public handleError(err: unknown, ctx: RequestContext): Response {
@@ -18,7 +18,7 @@ export class DefaultResponseHandler implements IResponseHandler {
       return new Response(JSON.stringify(err.body), {
         headers: { "content-type": "application/json" },
         status: err.status,
-      }).clone();
+      });
     }
 
     if (err instanceof Error) {
@@ -26,12 +26,12 @@ export class DefaultResponseHandler implements IResponseHandler {
       return new Response(JSON.stringify({ error: err.message, stack: err.stack ?? "" }), {
         headers: { "content-type": "application/json" },
         status: 500,
-      }).clone();
+      });
     }
 
     return new Response(JSON.stringify({ error: MESSAGE_INTERNAL_SERVER_ERROR, stack: "" }), {
       headers: { "content-type": "application/json" },
       status: 500,
-    }).clone();
+    });
   }
 }
