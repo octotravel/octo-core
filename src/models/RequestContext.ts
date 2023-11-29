@@ -18,6 +18,7 @@ export class RequestContext {
   private logsEnabled = true;
   private _isRequestImportant = false;
   private alertEnabled = false;
+  private _alertMessage: string | null = null;
   private _corsEnabled = false;
   private subrequests: SubRequestData[] = [];
   private config: BaseConfig | null = null;
@@ -103,9 +104,10 @@ export class RequestContext {
     this.productIds = productIds;
   };
 
-  public enableAlert = (): void => {
+  public enableAlert = (message: string | null = null): void => {
     if (this.config && !this.config.isLocal && !this.config.isTest) {
       this.alertEnabled = true;
+      this._alertMessage = message;
       this.enableLogs();
     }
   };
@@ -166,6 +168,10 @@ export class RequestContext {
 
   public get corsEnabled(): boolean {
     return this._corsEnabled;
+  }
+
+  public get alertMessage(): string | null {
+    return this._alertMessage;
   }
 
   public getRequestData = (response: Response, error?: Error): RequestData => {
