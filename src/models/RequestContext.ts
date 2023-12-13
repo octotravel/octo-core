@@ -4,6 +4,7 @@ import { SubRequestData } from "./SubRequestData";
 import { DataGenerationService } from "../services/DataGenerationService";
 import { HttpError } from "./Error";
 import { BaseConfig, Environment } from "./Config";
+import { AlertData } from "./AlertData";
 
 export class RequestContext {
   private dataGenerationService = new DataGenerationService();
@@ -17,8 +18,7 @@ export class RequestContext {
   private action = "";
   private logsEnabled = true;
   private _isRequestImportant = false;
-  private alertEnabled = false;
-  private _alertMessage: string | null = null;
+  private alertData: AlertData | null = null;
   private _corsEnabled = false;
   private subrequests: SubRequestData[] = [];
   private config: BaseConfig | null = null;
@@ -104,16 +104,15 @@ export class RequestContext {
     this.productIds = productIds;
   };
 
-  public enableAlert = (message: string | null = null): void => {
+  public enableAlert = (alertData: AlertData): void => {
     if (this.config && !this.config.isLocal && !this.config.isTest) {
-      this.alertEnabled = true;
-      this._alertMessage = message;
+      this.alertData = alertData;
       this.enableLogs();
     }
   };
 
   public disableAlert = (): void => {
-    this.alertEnabled = false;
+    this.alertData = null;
   };
 
   public getRequestId = (): string => this.requestId;
@@ -124,7 +123,7 @@ export class RequestContext {
 
   public getChannel = (): string => this.channel as string;
 
-  public isAlertEnabled = (): boolean => this.alertEnabled;
+  public isAlertEnabled = (): boolean => this.alertData !== null;
 
   public getConnection = <T extends BaseConnection>(): T => {
     if (this.connection === null) {
@@ -168,10 +167,6 @@ export class RequestContext {
 
   public get corsEnabled(): boolean {
     return this._corsEnabled;
-  }
-
-  public get alertMessage(): string | null {
-    return this._alertMessage;
   }
 
   public getRequestData = (response: Response, error?: Error): RequestData => {
