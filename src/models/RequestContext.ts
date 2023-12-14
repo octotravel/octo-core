@@ -104,7 +104,7 @@ export class RequestContext {
     this.productIds = productIds;
   };
 
-  public enableAlert = (alertData: AlertData): void => {
+  public enableAlert = (alertData: AlertData = new AlertData()): void => {
     if (this.config && !this.config.isLocal && !this.config.isTest) {
       this.alertData = alertData;
       this.enableLogs();
