@@ -115,6 +115,8 @@ export class RequestContext {
     this.alertData = null;
   };
 
+  public getAlertData = (): AlertData | null => this.alertData;
+
   public getRequestId = (): string => this.requestId;
 
   public setChannel = (channel: string): void => {
