@@ -51,6 +51,7 @@
     "date-fns": "^2.30.0",
     "date-fns-tz": "^2.0.0",
     "dinero.js": "^2.0.0-alpha.14",
+    "libphonenumber-js": "^1.10.53",
     "reflect-metadata": "^0.1.13",
     "tsyringe": "^4.8.0",
     "uuid": "^9.0.0"
