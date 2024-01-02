@@ -139,6 +139,7 @@ export type ExtendOrderSchema = {
 export type CancelOrderSchema = {
   id: string;
   reason?: string;
+  force?: boolean;
 };
 
 export type GetOrderSchema = {
