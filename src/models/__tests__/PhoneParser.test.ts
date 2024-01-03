@@ -1,6 +1,7 @@
 import { PhoneParser } from "../PhoneParser";
 
 describe("PhoneParser", () => {
+  const parser = new PhoneParser();
   const numbers = [
     "+1 202-555-0181", // (United States)
     "+44 20 7946 0857", // (United Kingdom)
@@ -21,7 +22,7 @@ describe("PhoneParser", () => {
         valid: true,
         country: "US",
       };
-      expect(new PhoneParser().parse("+1 202-555-0181")).toEqual(expected);
+      expect(parser.parse("+1 202-555-0181")).toEqual(expected);
     });
 
     it("should parse phone number", async () => {
@@ -31,7 +32,7 @@ describe("PhoneParser", () => {
         valid: true,
         country: "GB",
       };
-      expect(new PhoneParser().parse("+44 20 7946 0857")).toEqual(expected);
+      expect(parser.parse("+44 20 7946 0857")).toEqual(expected);
     });
 
     it("should parse phone number", async () => {
@@ -41,7 +42,7 @@ describe("PhoneParser", () => {
         valid: true,
         country: "AU",
       };
-      expect(new PhoneParser().parse("+61 2 9876 5432")).toEqual(expected);
+      expect(parser.parse("+61 2 9876 5432")).toEqual(expected);
     });
 
     it("should parse phone number", async () => {
@@ -51,7 +52,7 @@ describe("PhoneParser", () => {
         valid: true,
         country: "IN",
       };
-      expect(new PhoneParser().parse("+91 98765 43210")).toEqual(expected);
+      expect(parser.parse("+91 98765 43210")).toEqual(expected);
     });
 
     it("should parse phone number", async () => {
@@ -61,7 +62,7 @@ describe("PhoneParser", () => {
         valid: true,
         country: "ZA",
       };
-      expect(new PhoneParser().parse("+27 21 555 0192")).toEqual(expected);
+      expect(parser.parse("+27 21 555 0192")).toEqual(expected);
     });
 
     it("should parse phone number", async () => {
@@ -71,7 +72,7 @@ describe("PhoneParser", () => {
         valid: true,
         country: "BR",
       };
-      expect(new PhoneParser().parse("+55 21 99999-8888")).toEqual(expected);
+      expect(parser.parse("+55 21 99999-8888")).toEqual(expected);
     });
 
     it("should parse phone number", async () => {
@@ -81,7 +82,17 @@ describe("PhoneParser", () => {
         valid: true,
         country: "JP",
       };
-      expect(new PhoneParser().parse("+81 3-1234-5678")).toEqual(expected);
+      expect(parser.parse("+81 3-1234-5678")).toEqual(expected);
+    });
+
+    it("should parse phone number", async () => {
+      const expected = {
+        international: "4084769420",
+        national: "4084769420",
+        valid: false,
+        country: null,
+      };
+      expect(parser.parse("(408) 476-9420")).toEqual(expected);
     });
   });
 });
