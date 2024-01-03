@@ -15,7 +15,7 @@ export class PhoneParser {
       if (parsedPhoneNumber && parsedPhoneNumber.isValid()) {
         // ventrata doesn't support kosovo rn
         if (parsedPhoneNumber.country && parsedPhoneNumber.country === "XK") {
-          return this.mapPhoneNumber(phoneNumber, parsedPhoneNumber);
+          return this.mapPhoneNumber(phoneNumber);
         }
 
         return this.mapPhoneNumber(phoneNumber, parsedPhoneNumber);
