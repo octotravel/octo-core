@@ -27,6 +27,10 @@ export interface BaseError {
   error: string;
 }
 
+export class RuntimeError extends Error {}
+
+export class LogicError extends Error {}
+
 export const isBaseError = (err: Record<string, any>): err is BaseError => {
   return Boolean(err?.status && err?.message && err?.error);
 };
