@@ -21,6 +21,7 @@ export * from "./models/BaseRequestData";
 export * from "./models/SubRequestContext";
 export * from "./models/UnitItemsHelper";
 export * from "./models/DefaultResponseHandler";
+export * from "./models/PhoneParser";
 
 export * from "./services/DataGenerationService";
 
