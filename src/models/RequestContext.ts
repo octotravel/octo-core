@@ -3,7 +3,7 @@ import { ConnectionMetaData, RequestData, RequestMetaData } from "./RequestData"
 import { SubRequestData } from "./SubRequestData";
 import { DataGenerationService } from "../services/DataGenerationService";
 import { HttpError } from "./Error";
-import { BaseConfig, Environment } from "./Config";
+import { Environment } from "./Config";
 import { AlertData } from "./AlertData";
 
 export class RequestContext {
@@ -21,7 +21,7 @@ export class RequestContext {
   private alertData: AlertData | null = null;
   private _corsEnabled = false;
   private subrequests: SubRequestData[] = [];
-  private config: BaseConfig | null = null;
+  private environment: Environment | null = null;
   private error: Error | null = null;
   private httpError: HttpError | null = null;
   private productIds: string[] = [];
@@ -31,13 +31,13 @@ export class RequestContext {
     connection = null,
     channel,
     accountId,
-    config,
+    environment,
   }: {
     request: Request;
     connection?: BaseConnection | null;
     channel?: string;
     accountId?: string;
-    config?: BaseConfig;
+    environment?: Environment;
   }) {
     this.requestId = this.generateRequestId();
     this.request = request;
@@ -45,7 +45,7 @@ export class RequestContext {
     this.connection = connection ?? null;
     this.date = new Date();
     this.channel = channel ?? null;
-    this.config = config ?? null;
+    this.environment = environment ?? null;
   }
 
   private generateRequestId = (): string => this.dataGenerationService.generateUUID();
@@ -67,10 +67,6 @@ export class RequestContext {
   };
 
   public enableLogs = (): void => {
-    if (this.config && (this.config.isLocal || this.config.isTest)) {
-      return;
-    }
-
     this.logsEnabled = true;
   };
 
@@ -105,10 +101,8 @@ export class RequestContext {
   };
 
   public enableAlert = (alertData: AlertData = new AlertData()): void => {
-    if (this.config && !this.config.isLocal && !this.config.isTest) {
-      this.alertData = alertData;
-      this.enableLogs();
-    }
+    this.alertData = alertData;
+    this.enableLogs();
   };
 
   public disableAlert = (): void => {
@@ -139,12 +133,6 @@ export class RequestContext {
   public getRequest = (): Request => this.request as Request;
 
   public getAction = (): string => this.action;
-
-  public setConfig = <T extends BaseConfig>(config: T): void => {
-    this.config = config;
-  };
-
-  public getConfig = <T extends BaseConfig>(): T => this.config as T;
 
   private getDuration = (start: Date, end: Date): number => {
     return (end.getTime() - start.getTime()) / 1000;
@@ -179,7 +167,7 @@ export class RequestContext {
       name: this.connection?.name ?? null,
       endpoint: this.connection?.endpoint ?? null,
       account: this.accountId,
-      environment: this.config?.environment ?? Environment.LOCAL,
+      environment: this.environment ?? Environment.LOCAL,
     };
 
     const metadata: RequestMetaData = {
@@ -190,7 +178,7 @@ export class RequestContext {
       status: response.status,
       success: response.ok,
       duration: this.getDuration(this.date, new Date()),
-      environment: this.config?.environment ?? Environment.LOCAL,
+      environment: this.environment ?? Environment.LOCAL,
     };
 
     const requestData = new RequestData({
