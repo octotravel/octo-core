@@ -128,7 +128,7 @@ export const patchConnectionSchema: yup.SchemaOf<BaseConnectionPatch> = yup.obje
   name: yup.string().optional(),
 });
 
-export const validateSchema = async <T>(schema: yup.SchemaOf<T>, data: unknown): Promise<T> => {
+export const validateSchema = async <T>(schema: yup.SchemaOf<T>, data: any): Promise<T> => {
   await schema.validate(data);
   return schema.cast(data) as T;
 };
@@ -136,7 +136,7 @@ export const validateSchema = async <T>(schema: yup.SchemaOf<T>, data: unknown):
 /**
  * @throws Error when there is not valid backend
  */
-const validateBackendSchema = async (backendType: BackendType, data: unknown): Promise<ConnectionBackend> => {
+const validateBackendSchema = async (backendType: BackendType, data: any): Promise<ConnectionBackend> => {
   switch (backendType) {
     case BackendType.octo: {
       return await validateSchema<OctoBackend>(octoBackendSchema, data);
@@ -155,7 +155,7 @@ const validateBackendSchema = async (backendType: BackendType, data: unknown): P
 /**
  * @throws Error when there is not valid backend
  */
-const validateBackendPatchSchema = async (backendType: BackendType, data: unknown): Promise<ConnectionBackendPatch> => {
+const validateBackendPatchSchema = async (backendType: BackendType, data: any): Promise<ConnectionBackendPatch> => {
   switch (backendType) {
     case BackendType.octo: {
       return await validateSchema<OctoBackendPatch>(octoBackendPatchSchema, data);

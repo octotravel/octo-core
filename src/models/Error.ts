@@ -151,7 +151,7 @@ export class HttpError extends Error implements BaseError {
 }
 
 export class HttpBadRequest extends HttpError {
-  public constructor(body: Record<string, unknown>) {
+  public constructor(body: Record<string, any>) {
     super(STATUS_BAD_REQUEST, {
       message: MESSAGE_BAD_REQUEST,
       body,
@@ -160,7 +160,7 @@ export class HttpBadRequest extends HttpError {
 }
 
 export class HttpNotFound extends HttpError {
-  public constructor(body: Record<string, unknown>) {
+  public constructor(body: Record<string, any>) {
     super(STATUS_NOT_FOUD, {
       message: MESSAGE_NOT_FOUND,
       body,
@@ -169,7 +169,7 @@ export class HttpNotFound extends HttpError {
 }
 
 export class HttpUnauthorized extends HttpError {
-  public constructor(body?: Record<string, unknown>) {
+  public constructor(body?: Record<string, any>) {
     super(STATUS_UNAUTHORIZED, {
       message: MESSAGE_UNAUTHORIZED,
       body,
@@ -178,7 +178,7 @@ export class HttpUnauthorized extends HttpError {
 }
 
 export class HttpForbiddenError extends HttpError {
-  public constructor(body?: Record<string, unknown>) {
+  public constructor(body?: Record<string, any>) {
     super(STATUS_FORBIDDEN, {
       message: MESSAGE_FORBIDDEN,
       body,
@@ -187,7 +187,7 @@ export class HttpForbiddenError extends HttpError {
 }
 
 export class HttpInternalServerError extends HttpError {
-  public constructor(body?: Record<string, unknown>) {
+  public constructor(body?: Record<string, any>) {
     super(STATUS_INTERNAL_SERVER_ERROR, {
       message: MESSAGE_INTERNAL_SERVER_ERROR,
       body,
@@ -196,7 +196,7 @@ export class HttpInternalServerError extends HttpError {
 }
 
 export class HttpServiceUnavailableError extends HttpError {
-  public constructor(body?: Record<string, unknown>) {
+  public constructor(body?: Record<string, any>) {
     super(STATUS_SERVICE_UNAVAILABLE_ERROR, {
       message: MESSAGE_SERVICE_UNAVAILABLE_ERROR,
       body,

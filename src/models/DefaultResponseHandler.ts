@@ -3,7 +3,7 @@ import { HttpError, MESSAGE_INTERNAL_SERVER_ERROR } from './Error';
 import { RequestContext } from './RequestContext';
 
 export class DefaultResponseHandler implements IResponseHandler {
-  public handleResponse(data: unknown, _: RequestContext): Response {
+  public handleResponse(data: any, _: RequestContext): Response {
     const payload = data === null ? '{}' : JSON.stringify(data);
 
     return new Response(payload, {
@@ -12,7 +12,7 @@ export class DefaultResponseHandler implements IResponseHandler {
     });
   }
 
-  public handleError(err: unknown, ctx: RequestContext): Response {
+  public handleError(err: any, ctx: RequestContext): Response {
     if (err instanceof HttpError) {
       ctx.setError(err);
       return new Response(JSON.stringify(err.body), {
