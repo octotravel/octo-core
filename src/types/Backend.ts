@@ -1,4 +1,4 @@
-import { RequestContext } from "../models/RequestContext";
+import { RequestContext } from '../models/RequestContext';
 import type {
   CapabilityId,
   Availability,
@@ -27,7 +27,7 @@ import type {
   CreateWebhookBodyParamsSchema,
   DeleteWebhookPathParamsSchema,
   Order,
-} from "@octocloud/types";
+} from '@octocloud/types';
 import {
   cancelBookingBodySchema,
   cancelBookingPathParamsSchema,
@@ -40,8 +40,8 @@ import {
   getBookingsQueryParamsSchema,
   updateBookingBodySchema,
   updateBookingPathParamsSchema,
-} from "@octocloud/types";
-import * as yup from "yup";
+} from '@octocloud/types';
+import * as yup from 'yup';
 
 export interface CoreParams {
   ctx: RequestContext;
@@ -97,25 +97,25 @@ export const extendBookingSchema: yup.SchemaOf<ExtendBookingSchema> = yup.object
 });
 
 export enum LookupType {
-  email = "email",
-  mobile = "mobile",
-  reference = "reference",
+  email = 'email',
+  mobile = 'mobile',
+  reference = 'reference',
 }
 
-export type LookupSchema = {
+export interface LookupSchema {
   email?: string;
   mobile?: string;
   reference?: string;
   verification?: string;
-};
+}
 
-export type CreateOrderSchema = {
+export interface CreateOrderSchema {
   expirationMinutes?: number;
   emailReceipt?: boolean;
   contact?: Contact;
   // octo/pricing
   currency?: string;
-};
+}
 
 export interface GetMappingsSchema {
   productId?: string;
@@ -131,58 +131,58 @@ export type ConfirmOrderSchema = CreateOrderSchema & {
   id: string;
 };
 
-export type ExtendOrderSchema = {
+export interface ExtendOrderSchema {
   id: string;
   expirationMinutes: number;
-};
+}
 
-export type CancelOrderSchema = {
+export interface CancelOrderSchema {
   id: string;
   reason?: string;
   force?: boolean;
-};
+}
 
-export type GetOrderSchema = {
+export interface GetOrderSchema {
   id: string;
-};
+}
 
-export type UpdateMappingsSchema = Array<Mapping>;
+export type UpdateMappingsSchema = Mapping[];
 
 export interface GetProductsPathParamsSchema {
   currency?: string;
 }
 
 export interface Backend {
-  getProduct(schema: GetProductPathParamsSchema, params: BackendParams): Promise<Product>;
-  getProducts(schema: GetProductsPathParamsSchema, params: BackendParams): Promise<Product[]>;
-  getAvailability(schema: AvailabilityBodySchema, params: BackendParams): Promise<Availability[]>;
-  getAvailabilityCalendar(
+  getProduct: (schema: GetProductPathParamsSchema, params: BackendParams) => Promise<Product>;
+  getProducts: (schema: GetProductsPathParamsSchema, params: BackendParams) => Promise<Product[]>;
+  getAvailability: (schema: AvailabilityBodySchema, params: BackendParams) => Promise<Availability[]>;
+  getAvailabilityCalendar: (
     schema: AvailabilityCalendarBodySchema,
-    params: BackendParams
-  ): Promise<AvailabilityCalendar[]>;
-  createBooking(schema: CreateBookingSchema, params: BackendParams): Promise<Booking>;
-  updateBooking(schema: UpdateBookingSchema, params: BackendParams): Promise<Booking>;
-  getBooking(schema: GetBookingSchema, params: BackendParams): Promise<Booking>;
-  confirmBooking(schema: ConfirmBookingSchema, params: BackendParams): Promise<Booking>;
-  cancelBooking(schema: CancelBookingSchema, params: BackendParams): Promise<Booking>;
-  deleteBooking(schema: CancelBookingSchema, params: BackendParams): Promise<Booking>;
-  extendBooking(schema: ExtendBookingSchema, params: BackendParams): Promise<Booking>;
-  getBookings(schema: GetBookingsSchema, params: BackendParams): Promise<Booking[]>;
-  getSupplier(params: BackendParams): Promise<Supplier>;
-  getSuppliers(params: BackendParams): Promise<Supplier[]>;
-  createWebhook(schema: CreateWebhookBodyParamsSchema, params: BackendParams): Promise<Webhook>;
-  deleteWebhook(schema: DeleteWebhookPathParamsSchema, params: BackendParams): Promise<void>;
-  listWebhooks(schema: BackendParams): Promise<Webhook[]>;
-  updateMappings(schema: UpdateMappingsSchema, params: BackendParams): Promise<void>;
-  getMappings(schema: GetMappingsSchema, params: BackendParams): Promise<Mapping[]>;
-  createOrder(schema: CreateOrderSchema, params: BackendParams): Promise<Order>;
-  updateOrder(schema: UpdateOrderSchema, params: BackendParams): Promise<Order>;
-  getOrder(schema: GetOrderSchema, params: BackendParams): Promise<Order>;
-  confirmOrder(schema: ConfirmOrderSchema, params: BackendParams): Promise<Order>;
-  cancelOrder(schema: CancelOrderSchema, params: BackendParams): Promise<Order>;
-  deleteOrder(schema: CancelOrderSchema, params: BackendParams): Promise<Order>;
-  extendOrder(schema: ExtendOrderSchema, params: BackendParams): Promise<Order>;
-  getGateway(params: BackendParams): Promise<unknown>;
-  lookup(schema: LookupSchema, params: BackendParams): Promise<unknown>;
-  getCapabilities(params: BackendParams): Promise<Capability[]>;
+    params: BackendParams,
+  ) => Promise<AvailabilityCalendar[]>;
+  createBooking: (schema: CreateBookingSchema, params: BackendParams) => Promise<Booking>;
+  updateBooking: (schema: UpdateBookingSchema, params: BackendParams) => Promise<Booking>;
+  getBooking: (schema: GetBookingSchema, params: BackendParams) => Promise<Booking>;
+  confirmBooking: (schema: ConfirmBookingSchema, params: BackendParams) => Promise<Booking>;
+  cancelBooking: (schema: CancelBookingSchema, params: BackendParams) => Promise<Booking>;
+  deleteBooking: (schema: CancelBookingSchema, params: BackendParams) => Promise<Booking>;
+  extendBooking: (schema: ExtendBookingSchema, params: BackendParams) => Promise<Booking>;
+  getBookings: (schema: GetBookingsSchema, params: BackendParams) => Promise<Booking[]>;
+  getSupplier: (params: BackendParams) => Promise<Supplier>;
+  getSuppliers: (params: BackendParams) => Promise<Supplier[]>;
+  createWebhook: (schema: CreateWebhookBodyParamsSchema, params: BackendParams) => Promise<Webhook>;
+  deleteWebhook: (schema: DeleteWebhookPathParamsSchema, params: BackendParams) => Promise<void>;
+  listWebhooks: (schema: BackendParams) => Promise<Webhook[]>;
+  updateMappings: (schema: UpdateMappingsSchema, params: BackendParams) => Promise<void>;
+  getMappings: (schema: GetMappingsSchema, params: BackendParams) => Promise<Mapping[]>;
+  createOrder: (schema: CreateOrderSchema, params: BackendParams) => Promise<Order>;
+  updateOrder: (schema: UpdateOrderSchema, params: BackendParams) => Promise<Order>;
+  getOrder: (schema: GetOrderSchema, params: BackendParams) => Promise<Order>;
+  confirmOrder: (schema: ConfirmOrderSchema, params: BackendParams) => Promise<Order>;
+  cancelOrder: (schema: CancelOrderSchema, params: BackendParams) => Promise<Order>;
+  deleteOrder: (schema: CancelOrderSchema, params: BackendParams) => Promise<Order>;
+  extendOrder: (schema: ExtendOrderSchema, params: BackendParams) => Promise<Order>;
+  getGateway: (params: BackendParams) => Promise<unknown>;
+  lookup: (schema: LookupSchema, params: BackendParams) => Promise<unknown>;
+  getCapabilities: (params: BackendParams) => Promise<Capability[]>;
 }

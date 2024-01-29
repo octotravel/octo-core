@@ -1,14 +1,14 @@
-import { dinero, toSnapshot, Dinero, add, subtract, toDecimal, Currency } from "dinero.js";
-import * as dineroCurrencies from "@dinero.js/currencies";
+import { dinero, toSnapshot, Dinero, add, subtract, toDecimal, Currency } from 'dinero.js';
+import * as dineroCurrencies from '@dinero.js/currencies';
 
-const currencies: { [code: string]: Currency<number> } = dineroCurrencies;
+const currencies: Record<string, Currency<number>> = dineroCurrencies;
 
 export class Money {
   public currency: string;
-  private internalCurrency: Currency<number>;
+  private readonly internalCurrency: Currency<number>;
   private internal: Dinero<number>;
 
-  constructor(n: number, currency: string) {
+  public constructor(n: number, currency: string) {
     this.currency = currency;
     this.internalCurrency = this.getCurrency(currency);
     this.internal = dinero({
@@ -16,10 +16,11 @@ export class Money {
       currency: this.internalCurrency,
     });
   }
+
   /**
    * @throws {Error}
    */
-  private getCurrency = (code: string): Currency<number> => {
+  private readonly getCurrency = (code: string): Currency<number> => {
     const currency = currencies[code];
     if (currency) {
       return currency;
@@ -39,12 +40,12 @@ export class Money {
     return Number(toDecimal(this.internal));
   };
 
-  public add = (money: Money): Money => {
+  public add = (money: Money): this => {
     this.internal = add(this.internal, money.internal);
     return this;
   };
 
-  public substract = (money: Money): Money => {
+  public substract = (money: Money): this => {
     this.internal = subtract(this.internal, money.internal);
     return this;
   };

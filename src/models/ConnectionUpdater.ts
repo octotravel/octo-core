@@ -1,15 +1,15 @@
-import { BaseConnection, BaseConnectionPatch } from "../types/Connection";
+import { BaseConnection, BaseConnectionPatch } from '../types/Connection';
 
 export interface IConnectionUpdater {
-  updateConnection<T>(connection: BaseConnection, patch: BaseConnectionPatch): T;
+  updateConnection: <T>(connection: BaseConnection, patch: BaseConnectionPatch) => T;
 }
 
 export class ConnectionUpdater {
-  private removeEmptyFields = (data: any): Record<string, any> => {
+  private readonly removeEmptyFields = (data: any): Record<string, any> => {
     return Object.fromEntries(
       Object.entries(data)
         .filter(([_, v]) => v != null)
-        .filter(Boolean)
+        .filter(Boolean),
     );
   };
 

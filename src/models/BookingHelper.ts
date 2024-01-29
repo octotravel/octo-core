@@ -1,5 +1,5 @@
-import { Booking, UnitItem, UnitType } from "@octocloud/types";
-import { InvalidUnitError } from "./Error";
+import { Booking, UnitItem, UnitType } from '@octocloud/types';
+import { InvalidUnitError } from './Error';
 
 export class BookingHelper {
   /**

@@ -1,51 +1,51 @@
-import * as yup from "yup";
-import { HttpBadRequest } from "../models/Error";
+import * as yup from 'yup';
+import { HttpBadRequest } from '../models/Error';
 
 export enum BackendType {
-  octo = "octo",
-  anchor = "anchor",
-  cityconnect = "cityconnect",
+  octo = 'octo',
+  anchor = 'anchor',
+  cityconnect = 'cityconnect',
 }
 
-export type OctoBackend = {
+export interface OctoBackend {
   type: BackendType;
   endpoint: string;
   apiKey: string;
   supplierId: string;
-};
+}
 
-export type OctoBackendPatch = {
+export interface OctoBackendPatch {
   type: BackendType;
   endpoint?: string;
   apiKey?: string;
   supplierId?: string;
-};
+}
 
-export type AnchorBackend = {
+export interface AnchorBackend {
   type: BackendType;
   endpoint: string;
   apiKey: string;
-};
+}
 
-export type AnchorBackendPatch = {
+export interface AnchorBackendPatch {
   type: BackendType.anchor;
   endpoint?: string;
   apiKey?: string;
-};
+}
 
-export type CityConnectBackend = {
+export interface CityConnectBackend {
   type: BackendType.cityconnect;
   endpoint: string;
   username: string;
   password: string;
-};
+}
 
-export type CityConnectBackendPatch = {
+export interface CityConnectBackendPatch {
   type: BackendType.cityconnect;
   endpoint?: string;
   username?: string;
   password?: string;
-};
+}
 
 type ConnectionBackend = OctoBackend | AnchorBackend | CityConnectBackend;
 type ConnectionBackendPatch = OctoBackendPatch | AnchorBackendPatch | CityConnectBackendPatch;
@@ -136,38 +136,38 @@ export const validateSchema = async <T>(schema: yup.SchemaOf<T>, data: unknown):
 /**
  * @throws Error when there is not valid backend
  */
-const validateBackendSchema = (backendType: BackendType, data: unknown): Promise<ConnectionBackend> => {
+const validateBackendSchema = async (backendType: BackendType, data: unknown): Promise<ConnectionBackend> => {
   switch (backendType) {
     case BackendType.octo: {
-      return validateSchema<OctoBackend>(octoBackendSchema, data);
+      return await validateSchema<OctoBackend>(octoBackendSchema, data);
     }
     case BackendType.anchor: {
-      return validateSchema<AnchorBackend>(anchorBackendSchema, data);
+      return await validateSchema<AnchorBackend>(anchorBackendSchema, data);
     }
     case BackendType.cityconnect: {
-      return validateSchema<CityConnectBackend>(cityconnectBackendSchema, data);
+      return await validateSchema<CityConnectBackend>(cityconnectBackendSchema, data);
     }
     default:
-      throw new Error("invalid backend");
+      throw new Error('invalid backend');
   }
 };
 
 /**
  * @throws Error when there is not valid backend
  */
-const validateBackendPatchSchema = (backendType: BackendType, data: unknown): Promise<ConnectionBackendPatch> => {
+const validateBackendPatchSchema = async (backendType: BackendType, data: unknown): Promise<ConnectionBackendPatch> => {
   switch (backendType) {
     case BackendType.octo: {
-      return validateSchema<OctoBackendPatch>(octoBackendPatchSchema, data);
+      return await validateSchema<OctoBackendPatch>(octoBackendPatchSchema, data);
     }
     case BackendType.anchor: {
-      return validateSchema<AnchorBackendPatch>(anchorBackendPatchSchema, data);
+      return await validateSchema<AnchorBackendPatch>(anchorBackendPatchSchema, data);
     }
     case BackendType.cityconnect: {
-      return validateSchema<CityConnectBackendPatch>(cityconnectBackendPatchSchema, data);
+      return await validateSchema<CityConnectBackendPatch>(cityconnectBackendPatchSchema, data);
     }
     default:
-      throw new Error("invalid backend");
+      throw new Error('invalid backend');
   }
 };
 

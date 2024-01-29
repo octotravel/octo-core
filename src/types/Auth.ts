@@ -1,3 +1,3 @@
 export interface IAuthService {
-  validate(accountId: string, connectionId: string): Promise<void>;
+  validate: (accountId: string, connectionId: string) => Promise<void>;
 }

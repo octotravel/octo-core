@@ -1,32 +1,32 @@
-import { BaseConnection } from "../types/Connection";
-import { ConnectionMetaData, RequestData, RequestMetaData } from "./RequestData";
-import { SubRequestData } from "./SubRequestData";
-import { DataGenerationService } from "../services/DataGenerationService";
-import { HttpError } from "./Error";
-import { Environment } from "./Config";
-import { AlertData } from "./AlertData";
+import { BaseConnection } from '../types/Connection';
+import { ConnectionMetaData, RequestData, RequestMetaData } from './RequestData';
+import { SubRequestData } from './SubRequestData';
+import { DataGenerationService } from '../services/DataGenerationService';
+import { HttpError } from './Error';
+import { Environment } from './Config';
+import { AlertData } from './AlertData';
 
 export class RequestContext {
-  private dataGenerationService = new DataGenerationService();
+  private readonly dataGenerationService = new DataGenerationService();
 
-  private date: Date;
+  private readonly date: Date;
   private connection: BaseConnection | null = null;
   private accountId: string | null = null;
-  private request: Request;
+  private readonly request: Request;
   private requestId: string;
   private channel: string | null = null;
-  private action = "";
+  private action = '';
   private logsEnabled = true;
   private _isRequestImportant = false;
   private alertData: AlertData | null = null;
   private _corsEnabled = false;
-  private subrequests: SubRequestData[] = [];
-  private environment: Environment | null = null;
+  private readonly subrequests: SubRequestData[] = [];
+  private readonly environment: Environment | null = null;
   private error: Error | null = null;
   private httpError: HttpError | null = null;
   private productIds: string[] = [];
 
-  constructor({
+  public constructor({
     request,
     connection = null,
     channel,
@@ -48,7 +48,7 @@ export class RequestContext {
     this.environment = environment ?? null;
   }
 
-  private generateRequestId = (): string => this.dataGenerationService.generateUUID();
+  private readonly generateRequestId = (): string => this.dataGenerationService.generateUUID();
 
   public setConnection = (connection: BaseConnection): void => {
     this.connection = connection;
@@ -117,24 +117,24 @@ export class RequestContext {
     this.channel = channel;
   };
 
-  public getChannel = (): string => this.channel as string;
+  public getChannel = (): string => this.channel!;
 
   public isAlertEnabled = (): boolean => this.alertData !== null;
 
   public getConnection = <T extends BaseConnection>(): T => {
     if (this.connection === null) {
-      throw new Error("connection is not set");
+      throw new Error('connection is not set');
     }
     return this.connection as T;
   };
 
-  public getAccountId = (): string => this.accountId as string;
+  public getAccountId = (): string => this.accountId!;
 
-  public getRequest = (): Request => this.request as Request;
+  public getRequest = (): Request => this.request;
 
   public getAction = (): string => this.action;
 
-  private getDuration = (start: Date, end: Date): number => {
+  private readonly getDuration = (start: Date, end: Date): number => {
     return (end.getTime() - start.getTime()) / 1000;
   };
 
@@ -171,7 +171,7 @@ export class RequestContext {
     };
 
     const metadata: RequestMetaData = {
-      id: this.requestId ?? "",
+      id: this.requestId ?? '',
       date: this.date,
       connection: connectionMetaData,
       action: this.action,

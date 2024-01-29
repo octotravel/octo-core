@@ -1,4 +1,4 @@
-import { Unit } from "@octocloud/types";
+import { Unit } from '@octocloud/types';
 
 export const STATUS_SUCCESS = 200;
 export const STATUS_BAD_REQUEST = 400;
@@ -7,19 +7,19 @@ export const STATUS_FORBIDDEN = 403;
 export const STATUS_NOT_FOUD = 404;
 export const STATUS_INTERNAL_SERVER_ERROR = 500;
 export const STATUS_SERVICE_UNAVAILABLE_ERROR = 503;
-export const MESSAGE_BAD_REQUEST = "Bad Request";
-export const MESSAGE_NOT_FOUND = "Not Found";
-export const MESSAGE_UNAUTHORIZED = "Unauthorized";
-export const MESSAGE_FORBIDDEN = "Forbidden";
-export const MESSAGE_INTERNAL_SERVER_ERROR = "Internal Server Error";
-export const MESSAGE_SERVICE_UNAVAILABLE_ERROR = "Service Unavailable Error";
+export const MESSAGE_BAD_REQUEST = 'Bad Request';
+export const MESSAGE_NOT_FOUND = 'Not Found';
+export const MESSAGE_UNAUTHORIZED = 'Unauthorized';
+export const MESSAGE_FORBIDDEN = 'Forbidden';
+export const MESSAGE_INTERNAL_SERVER_ERROR = 'Internal Server Error';
+export const MESSAGE_SERVICE_UNAVAILABLE_ERROR = 'Service Unavailable Error';
 
-export const MESSAGE_NO_AVAILABILITY_ERROR = "No Availability";
+export const MESSAGE_NO_AVAILABILITY_ERROR = 'No Availability';
 export const MESSAGE_OPTION_RESTRICTIONS_ERROR = "Option Restrictions aren't met";
-export const MESSAGE_INVALID_UNITS_ERROR = "Invalid Units";
-export const MESSAGE_INVALID_UNIT_ERROR = "Invalid Unit";
-export const MESSAGE_EXTERNAL_API_ERROR = "External Api Error";
-export const MESSAGE_INVALID_PRODUCT_ID = "Invalid Product ID";
+export const MESSAGE_INVALID_UNITS_ERROR = 'Invalid Units';
+export const MESSAGE_INVALID_UNIT_ERROR = 'Invalid Unit';
+export const MESSAGE_EXTERNAL_API_ERROR = 'External Api Error';
+export const MESSAGE_INVALID_PRODUCT_ID = 'Invalid Product ID';
 
 export interface BaseError {
   status: number;
@@ -40,14 +40,14 @@ export class InternalError extends Error implements BaseError {
   public readonly error = MESSAGE_INTERNAL_SERVER_ERROR;
   public readonly status = STATUS_INTERNAL_SERVER_ERROR;
 
-  constructor(message: string) {
+  public constructor(message: string) {
     super();
     this.message = message;
   }
 }
 
 export class NoAvailabilityError extends InternalError {
-  constructor() {
+  public constructor() {
     super(MESSAGE_NO_AVAILABILITY_ERROR);
   }
 }
@@ -57,7 +57,7 @@ export class OptionRestrictionsError extends InternalError {
   public readonly unit: Unit | null;
   public readonly isAccompaniedByOk: boolean;
 
-  constructor({
+  public constructor({
     minUnits,
     maxUnits,
     unit,
@@ -78,21 +78,21 @@ export class OptionRestrictionsError extends InternalError {
 
 export class ExternalApiError extends InternalError {
   public readonly httpError: HttpError;
-  constructor(error: HttpError) {
+  public constructor(error: HttpError) {
     super(MESSAGE_EXTERNAL_API_ERROR);
     this.httpError = error;
   }
 }
 export class InvalidUnitsError extends InternalError {
-  public readonly invalidUnits: Array<string>;
-  constructor(invalidUnits: Array<string>) {
+  public readonly invalidUnits: string[];
+  public constructor(invalidUnits: string[]) {
     super(MESSAGE_INVALID_UNITS_ERROR);
     this.invalidUnits = invalidUnits;
   }
 }
 export class InvalidUnitError extends InternalError {
   public readonly unit: string;
-  constructor(unit: string) {
+  public constructor(unit: string) {
     super(MESSAGE_INVALID_UNITS_ERROR);
     this.unit = unit;
   }
@@ -101,21 +101,21 @@ export class InvalidUnitError extends InternalError {
 export class InvalidOptionError extends InternalError {
   public readonly optionId: string;
   public readonly productId: string;
-  constructor(optionId: string, productId: string) {
+  public constructor(optionId: string, productId: string) {
     super(MESSAGE_INVALID_PRODUCT_ID);
     this.optionId = optionId;
     this.productId = productId;
   }
 }
 
-export type HttpErrorParams = {
+export interface HttpErrorParams {
   message?: string;
   error?: string;
   body?: Record<string, any>;
   requestId?: string | null;
   subRequestId?: string | null;
   statusLog?: number;
-};
+}
 export class HttpError extends Error implements BaseError {
   public readonly status: number;
   public readonly statusLog: number;
@@ -125,9 +125,9 @@ export class HttpError extends Error implements BaseError {
   public readonly subRequestId: string | null;
   public readonly errorParams: HttpErrorParams;
 
-  constructor(
+  public constructor(
     status: number,
-    { message = "", body, error = "", requestId = null, subRequestId = null, statusLog }: HttpErrorParams
+    { message = '', body, error = '', requestId = null, subRequestId = null, statusLog }: HttpErrorParams,
   ) {
     super();
     const errorParams = {
@@ -151,7 +151,7 @@ export class HttpError extends Error implements BaseError {
 }
 
 export class HttpBadRequest extends HttpError {
-  constructor(body: Record<string, unknown>) {
+  public constructor(body: Record<string, unknown>) {
     super(STATUS_BAD_REQUEST, {
       message: MESSAGE_BAD_REQUEST,
       body,
@@ -160,7 +160,7 @@ export class HttpBadRequest extends HttpError {
 }
 
 export class HttpNotFound extends HttpError {
-  constructor(body: Record<string, unknown>) {
+  public constructor(body: Record<string, unknown>) {
     super(STATUS_NOT_FOUD, {
       message: MESSAGE_NOT_FOUND,
       body,
@@ -169,7 +169,7 @@ export class HttpNotFound extends HttpError {
 }
 
 export class HttpUnauthorized extends HttpError {
-  constructor(body?: Record<string, unknown>) {
+  public constructor(body?: Record<string, unknown>) {
     super(STATUS_UNAUTHORIZED, {
       message: MESSAGE_UNAUTHORIZED,
       body,
@@ -178,7 +178,7 @@ export class HttpUnauthorized extends HttpError {
 }
 
 export class HttpForbiddenError extends HttpError {
-  constructor(body?: Record<string, unknown>) {
+  public constructor(body?: Record<string, unknown>) {
     super(STATUS_FORBIDDEN, {
       message: MESSAGE_FORBIDDEN,
       body,
@@ -187,7 +187,7 @@ export class HttpForbiddenError extends HttpError {
 }
 
 export class HttpInternalServerError extends HttpError {
-  constructor(body?: Record<string, unknown>) {
+  public constructor(body?: Record<string, unknown>) {
     super(STATUS_INTERNAL_SERVER_ERROR, {
       message: MESSAGE_INTERNAL_SERVER_ERROR,
       body,
@@ -196,7 +196,7 @@ export class HttpInternalServerError extends HttpError {
 }
 
 export class HttpServiceUnavailableError extends HttpError {
-  constructor(body?: Record<string, unknown>) {
+  public constructor(body?: Record<string, unknown>) {
     super(STATUS_SERVICE_UNAVAILABLE_ERROR, {
       message: MESSAGE_SERVICE_UNAVAILABLE_ERROR,
       body,
@@ -205,21 +205,21 @@ export class HttpServiceUnavailableError extends HttpError {
 }
 
 export class ConnectionNotFound extends HttpNotFound {
-  constructor(id: string) {
+  public constructor(id: string) {
     const body = { error: `Connection:${id} not found` };
     super(body);
   }
 }
 
 export class AccountNotFound extends HttpNotFound {
-  constructor(id: string) {
+  public constructor(id: string) {
     const body = { error: `Account:${id} not found` };
     super(body);
   }
 }
 
 export class ConnectionUnauthorized extends HttpUnauthorized {
-  constructor(connectionId: string, accountId: string) {
+  public constructor(connectionId: string, accountId: string) {
     const body = {
       error: `Connection:${connectionId} doesn't belong to Account:${accountId}`,
     };
@@ -228,13 +228,13 @@ export class ConnectionUnauthorized extends HttpUnauthorized {
 }
 
 export class ChannelNotConnected extends HttpUnauthorized {
-  constructor(id: string) {
+  public constructor(id: string) {
     const body = { error: `Channel with connectionId:${id} not connected` };
     super(body);
   }
 }
 export class ChannelNotFound extends HttpUnauthorized {
-  constructor(name: string) {
+  public constructor(name: string) {
     const body = {
       error: `Channel with name: ${name.toUpperCase()} not found`,
     };

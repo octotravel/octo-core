@@ -1,4 +1,4 @@
-import parsePhoneNumber, { AsYouType, PhoneNumber } from "libphonenumber-js";
+import parsePhoneNumber, { AsYouType, PhoneNumber } from 'libphonenumber-js';
 
 interface ParsedPhoneNumber {
   international: string;
@@ -14,7 +14,7 @@ export class PhoneParser {
 
       if (parsedPhoneNumber && parsedPhoneNumber.isValid()) {
         // ventrata doesn't support kosovo rn
-        if (parsedPhoneNumber.country && parsedPhoneNumber.country === "XK") {
+        if (parsedPhoneNumber.country && parsedPhoneNumber.country === 'XK') {
           return this.mapPhoneNumber(phoneNumber);
         }
 
@@ -28,7 +28,7 @@ export class PhoneParser {
     }
   };
 
-  private mapPhoneNumber = (phoneNumber: string, parsedPhoneNumber?: PhoneNumber): ParsedPhoneNumber => {
+  private readonly mapPhoneNumber = (phoneNumber: string, parsedPhoneNumber?: PhoneNumber): ParsedPhoneNumber => {
     return {
       international: parsedPhoneNumber ? parsedPhoneNumber.formatInternational() : phoneNumber,
       national: parsedPhoneNumber ? parsedPhoneNumber.formatNational() : phoneNumber,
