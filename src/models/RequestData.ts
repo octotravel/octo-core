@@ -1,17 +1,17 @@
-import { BaseRequestData, IBaseRequestData } from "./BaseRequestData";
-import { Environment } from "./Config";
-import { SubRequestData } from "./SubRequestData";
+import { BaseRequestData, IBaseRequestData } from './BaseRequestData';
+import { Environment } from './Config';
+import { SubRequestData } from './SubRequestData';
 
-export type ConnectionMetaData = {
+export interface ConnectionMetaData {
   id: string | null;
   channel: string | null;
   name: string | null;
   endpoint: string | null;
   account: string | null;
   environment: Environment;
-};
+}
 
-export type RequestMetaData = {
+export interface RequestMetaData {
   id: string;
   date: Date;
   connection: ConnectionMetaData;
@@ -20,7 +20,7 @@ export type RequestMetaData = {
   success: boolean;
   duration: number;
   environment: Environment;
-};
+}
 
 export class RequestData extends BaseRequestData implements IBaseRequestData {
   public id: string;
@@ -33,7 +33,7 @@ export class RequestData extends BaseRequestData implements IBaseRequestData {
   public subrequests: SubRequestData[] = [];
   public productIds: string[] = [];
 
-  constructor({
+  public constructor({
     id,
     request,
     response,
@@ -60,7 +60,7 @@ export class RequestData extends BaseRequestData implements IBaseRequestData {
     this.productIds = productIds;
   }
 
-  public setSearchKeys = (searchKeys: Array<string>): void => {
+  public setSearchKeys = (searchKeys: string[]): void => {
     this.searchKeys = searchKeys;
   };
 

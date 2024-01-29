@@ -1,8 +1,8 @@
 export enum Environment {
-  PRODUCTION = "production",
-  STAGING = "staging",
-  TEST = "test",
-  LOCAL = "local",
+  PRODUCTION = 'production',
+  STAGING = 'staging',
+  TEST = 'test',
+  LOCAL = 'local',
 }
 
 export class BaseConfig {
@@ -14,7 +14,7 @@ export class BaseConfig {
   public productionURL: string;
   public stagingURL: string;
 
-  constructor({
+  public constructor({
     environment,
     productionURL,
     stagingURL,
@@ -32,7 +32,7 @@ export class BaseConfig {
     this.stagingURL = stagingURL;
   }
 
-  public getURL = () => {
+  public getURL = (): string => {
     if (this.isProduction) {
       return this.productionURL;
     }

@@ -1,17 +1,17 @@
-import { SubMetadata, SubRequestData } from "./SubRequestData";
-import { DataGenerationService } from "../services/DataGenerationService";
+import { SubMetadata, SubRequestData } from './SubRequestData';
+import { DataGenerationService } from '../services/DataGenerationService';
 
 export class SubRequestContext {
-  private dataGenerationService = new DataGenerationService();
+  private readonly dataGenerationService = new DataGenerationService();
 
   private accountId: string | null = null;
   private request: Request | null = null;
   private requestId: string | null = null;
-  private subRequestId = "";
+  private subRequestId = '';
   private date: Date = new Date();
   private logsEnabled = true;
 
-  private generateRequestId = (): string => this.dataGenerationService.generateUUID();
+  private readonly generateRequestId = (): string => this.dataGenerationService.generateUUID();
 
   public initRequestData = ({
     request,
@@ -39,7 +39,7 @@ export class SubRequestContext {
 
   public getSubRequestId = (): string => this.subRequestId;
 
-  private getDuration = (start: Date, end: Date): number => {
+  private readonly getDuration = (start: Date, end: Date): number => {
     return (end.getTime() - start.getTime()) / 1000;
   };
 
@@ -47,17 +47,17 @@ export class SubRequestContext {
     const id = `${this.accountId}/${this.requestId}/${this.subRequestId}`;
     const metadata: SubMetadata = {
       id: this.subRequestId,
-      requestId: this.requestId as string,
+      requestId: this.requestId!,
       date: this.date,
-      url: this.request?.url ?? "",
-      method: this.request?.method ?? "",
+      url: this.request?.url ?? '',
+      method: this.request?.method ?? '',
       status: response.status,
       success: response.ok,
       duration: this.getDuration(this.date, new Date()),
     };
     const requestData = new SubRequestData({
       id,
-      request: this.request as Request,
+      request: this.request!,
       response,
       metadata,
       logsEnabled: this.logsEnabled,

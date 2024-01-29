@@ -1,6 +1,6 @@
-import { BaseRequestData, IBaseRequestData } from "./BaseRequestData";
+import { BaseRequestData, IBaseRequestData } from './BaseRequestData';
 
-export type SubMetadata = {
+export interface SubMetadata {
   id: string;
   requestId: string;
   date: Date;
@@ -9,7 +9,7 @@ export type SubMetadata = {
   status: number;
   success: boolean;
   duration: number;
-};
+}
 
 export class SubRequestData extends BaseRequestData implements IBaseRequestData {
   public id: string;
@@ -19,7 +19,7 @@ export class SubRequestData extends BaseRequestData implements IBaseRequestData 
   public error: Error | null = null;
   public logsEnabled: boolean;
 
-  constructor({
+  public constructor({
     id,
     request,
     response,

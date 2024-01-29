@@ -1,8 +1,8 @@
-import { PricingModelGenerator, PricingParser } from "@octocloud/generators";
-import { PriceHelper } from "../PriceHelper";
-import { CapabilityId, Currency } from "@octocloud/types";
+import { PricingModelGenerator, PricingParser } from '@octocloud/generators';
+import { PriceHelper } from '../PriceHelper';
+import { CapabilityId, Currency } from '@octocloud/types';
 
-describe("PricingHelper", () => {
+describe('PricingHelper', () => {
   const pricingModelGenerator = new PricingModelGenerator();
   const pricingParser = new PricingParser();
   const pricingData = {
@@ -29,14 +29,14 @@ describe("PricingHelper", () => {
   const pricing = pricingParser.parseModelToPOJO(pricingModel);
   const pricingWithOffer = pricingParser.parseModelToPOJO(pricingModelWithOffers);
 
-  describe("calculatePrice", () => {
-    it("should calculate price", async () => {
+  describe('calculatePrice', () => {
+    it('should calculate price', async () => {
       const price = PriceHelper.calculatePrice(pricing);
       expect(price.original).toBe(1000);
       expect(price.retail).toBe(1000);
     });
 
-    it("should calculate price with offer", async () => {
+    it('should calculate price with offer', async () => {
       const price = PriceHelper.calculatePrice(pricingWithOffer);
       expect(price.original).toBe(1500);
       expect(price.retail).toBe(1500);

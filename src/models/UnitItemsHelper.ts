@@ -1,4 +1,4 @@
-import { AvailabilityUnit, BookingUnitItemSchema } from "@octocloud/types";
+import { AvailabilityUnit, BookingUnitItemSchema } from '@octocloud/types';
 
 export class UnitItemsHelper {
   public static mapFromAvailabilityUnits = (units: AvailabilityUnit[]): BookingUnitItemSchema[] => {
@@ -11,7 +11,7 @@ export class UnitItemsHelper {
   };
 
   public static mapUnitIdsToAvailabilityUnits = (units: string[]): AvailabilityUnit[] => {
-    const unitIdCount = units.reduce((acc: { [key: string]: number }, unitId: string) => {
+    const unitIdCount = units.reduce((acc: Record<string, number>, unitId: string) => {
       if (acc[unitId]) {
         acc[unitId] += 1;
       } else {

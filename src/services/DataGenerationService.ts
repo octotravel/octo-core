@@ -1,7 +1,7 @@
-import { v4 as uuid } from "uuid";
+import { v4 as uuid } from 'uuid';
 
 export interface IDataGenerationService {
-  generateUUID(): string;
+  generateUUID: () => string;
 }
 
 export class DataGenerationService implements IDataGenerationService {

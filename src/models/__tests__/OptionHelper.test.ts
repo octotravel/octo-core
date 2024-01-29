@@ -1,16 +1,16 @@
-import { OptionModelGenerator, OptionParser } from "@octocloud/generators";
-import { OptionHelper } from "../OptionHelper";
-import { InvalidUnitsError, InvalidUnitError, OptionRestrictionsError } from "../Error";
-import { UnitType } from "@octocloud/types";
+import { OptionModelGenerator, OptionParser } from '@octocloud/generators';
+import { OptionHelper } from '../OptionHelper';
+import { InvalidUnitsError, InvalidUnitError, OptionRestrictionsError } from '../Error';
+import { UnitType } from '@octocloud/types';
 
-describe("OptionHelper", () => {
+describe('OptionHelper', () => {
   const optionModelGenerator = new OptionModelGenerator();
   const optionParser = new OptionParser();
 
-  const firstUnitId = "firstUnitId";
-  const secondUnitId = "secondUnitId";
+  const firstUnitId = 'firstUnitId';
+  const secondUnitId = 'secondUnitId';
   const usedUnitType = UnitType.ADULT;
-  const invalidUnitId = "invalidUnitId";
+  const invalidUnitId = 'invalidUnitId';
   const unusedUnitType = UnitType.MILITARY;
   const optionModel = optionModelGenerator.generateOption({
     optionData: {
@@ -41,14 +41,16 @@ describe("OptionHelper", () => {
       restrictions: {
         minUnits: 1,
         maxUnits: 2,
+        minPaxCount: 0,
+        maxPaxCount: null,
       },
     },
   });
   const optionWithoutUnits = optionParser.parseModelToPOJO(optionModelWithoutUnits);
 
-  describe("checkUnits", () => {
-    it("should successfully pass check", async () => {
-      const checkUnits = () => {
+  describe('checkUnits', () => {
+    it('should successfully pass check', async () => {
+      const checkUnits = (): void => {
         OptionHelper.checkUnits(option, [
           {
             id: firstUnitId,
@@ -60,8 +62,8 @@ describe("OptionHelper", () => {
       expect(checkUnits).not.toThrow();
     });
 
-    it("should fail and throw InvalidUnitsError", async () => {
-      const checkUnits = () => {
+    it('should fail and throw InvalidUnitsError', async () => {
+      const checkUnits = (): void => {
         OptionHelper.checkUnits(option, [
           {
             id: invalidUnitId,
@@ -74,17 +76,17 @@ describe("OptionHelper", () => {
     });
   });
 
-  describe("getUnitByID", () => {
-    it("should successfully return unit", async () => {
-      const getUnitByID = () => {
+  describe('getUnitByID', () => {
+    it('should successfully return unit', async () => {
+      const getUnitByID = (): void => {
         OptionHelper.getUnitByID(option, firstUnitId);
       };
 
       expect(getUnitByID).not.toThrow();
     });
 
-    it("should fail and throw InvalidUnitError", async () => {
-      const getUnitByID = () => {
+    it('should fail and throw InvalidUnitError', async () => {
+      const getUnitByID = (): void => {
         OptionHelper.getUnitByID(option, invalidUnitId);
       };
 
@@ -92,17 +94,17 @@ describe("OptionHelper", () => {
     });
   });
 
-  describe("getUnitByType", () => {
-    it("should successfully return unit", async () => {
-      const getUnitByType = () => {
+  describe('getUnitByType', () => {
+    it('should successfully return unit', async () => {
+      const getUnitByType = (): void => {
         OptionHelper.getUnitByType(option, usedUnitType);
       };
 
       expect(getUnitByType).not.toThrow();
     });
 
-    it("should fail and throw InvalidUnitError", async () => {
-      const getUnitByType = () => {
+    it('should fail and throw InvalidUnitError', async () => {
+      const getUnitByType = (): void => {
         OptionHelper.getUnitByType(option, unusedUnitType);
       };
 
@@ -110,9 +112,9 @@ describe("OptionHelper", () => {
     });
   });
 
-  describe("checkRestrictions", () => {
-    it("should successfully pass check", async () => {
-      const checkRestrictions = () => {
+  describe('checkRestrictions', () => {
+    it('should successfully pass check', async () => {
+      const checkRestrictions = (): void => {
         OptionHelper.checkRestrictions(option, [
           {
             id: firstUnitId,
@@ -124,8 +126,8 @@ describe("OptionHelper", () => {
       expect(checkRestrictions).not.toThrow();
     });
 
-    it("should successfully pass check when one unit has to be accompanied", async () => {
-      const checkRestrictions = () => {
+    it('should successfully pass check when one unit has to be accompanied', async () => {
+      const checkRestrictions = (): void => {
         OptionHelper.checkRestrictions(option, [
           {
             id: firstUnitId,
@@ -141,8 +143,8 @@ describe("OptionHelper", () => {
       expect(checkRestrictions).not.toThrow();
     });
 
-    it("should fail check when one unit has to be accompanied and it is not", async () => {
-      const checkRestrictions = () => {
+    it('should fail check when one unit has to be accompanied and it is not', async () => {
+      const checkRestrictions = (): void => {
         OptionHelper.checkRestrictions(option, [
           {
             id: secondUnitId,
@@ -154,8 +156,8 @@ describe("OptionHelper", () => {
       expect(checkRestrictions).toThrowError(OptionRestrictionsError);
     });
 
-    it("should fail when invalid unit is provided", async () => {
-      const checkRestrictions = () => {
+    it('should fail when invalid unit is provided', async () => {
+      const checkRestrictions = (): void => {
         OptionHelper.checkRestrictions(option, [
           {
             id: invalidUnitId,
@@ -167,8 +169,8 @@ describe("OptionHelper", () => {
       expect(checkRestrictions).toThrowError(InvalidUnitError);
     });
 
-    it("should fail on unit`s restrictions and throw OptionRestrictionsError", async () => {
-      const checkRestrictionsIsMinOk = () => {
+    it('should fail on unit`s restrictions and throw OptionRestrictionsError', async () => {
+      const checkRestrictionsIsMinOk = (): void => {
         OptionHelper.checkRestrictions(option, [
           {
             id: secondUnitId,
@@ -177,7 +179,7 @@ describe("OptionHelper", () => {
         ]);
       };
 
-      const checkRestrictionsIsMaxOk = () => {
+      const checkRestrictionsIsMaxOk = (): void => {
         OptionHelper.checkRestrictions(option, [
           {
             id: secondUnitId,
@@ -190,8 +192,8 @@ describe("OptionHelper", () => {
       expect(checkRestrictionsIsMaxOk).toThrowError(OptionRestrictionsError);
     });
 
-    it("should fail on option`s restrictions and throw OptionRestrictionsError", async () => {
-      const checkRestrictions = () => {
+    it('should fail on option`s restrictions and throw OptionRestrictionsError', async () => {
+      const checkRestrictions = (): void => {
         OptionHelper.checkRestrictions(optionWithoutUnits, []);
       };
 

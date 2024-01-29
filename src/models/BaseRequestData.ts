@@ -5,7 +5,7 @@ export interface IBaseRequestData {
   metadata: any;
   logsEnabled: boolean;
   error: Error | null;
-  setError(error: Error): void;
+  setError: (error: Error) => void;
 }
 
 export abstract class BaseRequestData {

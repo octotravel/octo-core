@@ -1,17 +1,17 @@
-import { Option, Unit, UnitType } from "@octocloud/types";
-import { InvalidUnitError, InvalidUnitsError, OptionRestrictionsError } from "./Error";
+import { Option, Unit, UnitType } from '@octocloud/types';
+import { InvalidUnitError, InvalidUnitsError, OptionRestrictionsError } from './Error';
 
-type AvailabilityUnit = {
+interface AvailabilityUnit {
   id: string;
   quantity: number;
-};
+}
 
 export class OptionHelper {
   /**
    * @throws {InvalidUnitsError}
    */
-  public static checkUnits = (option: Option, units: Array<AvailabilityUnit>): void => {
-    const invalidUnits = units.reduce((acc: Array<string>, unit) => {
+  public static checkUnits = (option: Option, units: AvailabilityUnit[]): void => {
+    const invalidUnits = units.reduce((acc: string[], unit) => {
       try {
         this.getUnitByID(option, unit.id);
       } catch (error) {
@@ -54,7 +54,7 @@ export class OptionHelper {
   /**
    * @throws {OptionRestrictionsError, InvalidUnitError}
    */
-  public static checkRestrictions = (option: Option, units: Array<AvailabilityUnit>): void => {
+  public static checkRestrictions = (option: Option, units: AvailabilityUnit[]): void => {
     const count = units.reduce((acc, unit) => acc + unit.quantity, 0);
     const isMinOk = option.restrictions.minUnits <= count && count > 0;
     const isMaxOk = option.restrictions.maxUnits === null || option.restrictions.maxUnits >= count;
