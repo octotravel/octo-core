@@ -21,7 +21,7 @@ export interface IAccountRepository {
 
 export interface IConnectionRepository<Connection, ConnectionPatch> {
   create: (data: Connection) => Promise<void>;
-  update: (data: ConnectionPatch) => Promise<null>;
+  update: (data: ConnectionPatch) => Promise<void>;
   get: (key: string) => Promise<Connection | null>;
   getAll: () => Promise<Connection[]>;
   delete: (key: string) => Promise<void>;
