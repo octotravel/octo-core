@@ -12,6 +12,7 @@ export * from './models/BackendError';
 export * from './models/Money';
 export * from './models/OptionHelper';
 export * from './models/PriceHelper';
+export * from './models/PricingUnitHelper';
 export * from './models/ProductHelper';
 export * from './models/RequestData';
 export * from './models/RequestContext';
