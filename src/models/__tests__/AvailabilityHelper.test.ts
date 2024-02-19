@@ -1,7 +1,7 @@
 import { AvailabilityModelGenerator, AvailabilityParser } from '@octocloud/generators';
 import { AvailabilityHelper } from '../AvailabilityHelper';
 import { NoAvailabilityError } from '../Error';
-import { Availability } from '@octocloud/types';
+import { Availability, PricingUnit, AvailabilityStatus } from '@octocloud/types';
 
 describe('AvailabilityHelper', () => {
   const availabilityModelGenerator = new AvailabilityModelGenerator();
@@ -21,6 +21,7 @@ describe('AvailabilityHelper', () => {
     {
       localDateTimeStart: '2023-12-03T00:00:00+01:00',
       available: true,
+      unitPricing: undefined,
     },
   ]);
 
@@ -48,6 +49,101 @@ describe('AvailabilityHelper', () => {
       };
 
       expect(checkAvailability).toThrowError(NoAvailabilityError);
+    });
+  });
+
+  describe('updateWithFiltereredFirstUnitPricing', () => {
+    it('should return an empty array when given an empty array', () => {
+      const result = AvailabilityHelper.updateWithFiltereredFirstUnitPricing([]);
+      expect(result).toEqual([]);
+    });
+
+    it('should return the same array when no unitPricing is present', () => {
+      const result = AvailabilityHelper.updateWithFiltereredFirstUnitPricing([availabilyPOJOs[2]]);
+      expect(result).toEqual([availabilyPOJOs[2]]);
+    });
+
+    it('should filter out duplicate unit pricings for each availability', () => {
+      const unitPricing1: PricingUnit[] = [
+        { unitId: '1', original: 10, retail: 15, net: null, currency: 'USD', currencyPrecision: 2, includedTaxes: [] },
+        { unitId: '2', original: 20, retail: 25, net: null, currency: 'USD', currencyPrecision: 2, includedTaxes: [] },
+        { unitId: '1', original: 30, retail: 35, net: null, currency: 'USD', currencyPrecision: 2, includedTaxes: [] },
+      ];
+      const unitPricing2: PricingUnit[] = [
+        { unitId: '3', original: 10, retail: 15, net: null, currency: 'USD', currencyPrecision: 2, includedTaxes: [] },
+        { unitId: '4', original: 20, retail: 25, net: null, currency: 'USD', currencyPrecision: 2, includedTaxes: [] },
+        { unitId: '3', original: 30, retail: 35, net: null, currency: 'USD', currencyPrecision: 2, includedTaxes: [] },
+      ];
+      const availabilities: Availability[] = [
+        {
+          id: '1',
+          localDateTimeStart: '2024-02-19T08:00:00',
+          localDateTimeEnd: '2024-02-19T18:00:00',
+          allDay: false,
+          available: true,
+          status: AvailabilityStatus.AVAILABLE,
+          vacancies: 10,
+          capacity: 20,
+          maxUnits: 5,
+          utcCutoffAt: '2024-02-19T06:00:00Z',
+          openingHours: [{ from: '08:00', to: '18:00' }],
+          unitPricing: unitPricing1,
+        },
+        {
+          id: '2',
+          localDateTimeStart: '2024-02-20T08:00:00',
+          localDateTimeEnd: '2024-02-20T18:00:00',
+          allDay: false,
+          available: true,
+          status: AvailabilityStatus.AVAILABLE,
+          vacancies: 5,
+          capacity: 10,
+          maxUnits: 2,
+          utcCutoffAt: '2024-02-20T06:00:00Z',
+          openingHours: [{ from: '08:00', to: '18:00' }],
+          unitPricing: unitPricing2,
+        },
+      ];
+      const expectedFilteredUnitPricing1: PricingUnit[] = [
+        { unitId: '1', original: 10, retail: 15, net: null, currency: 'USD', currencyPrecision: 2, includedTaxes: [] },
+        { unitId: '2', original: 20, retail: 25, net: null, currency: 'USD', currencyPrecision: 2, includedTaxes: [] },
+      ];
+      const expectedFilteredUnitPricing2: PricingUnit[] = [
+        { unitId: '3', original: 10, retail: 15, net: null, currency: 'USD', currencyPrecision: 2, includedTaxes: [] },
+        { unitId: '4', original: 20, retail: 25, net: null, currency: 'USD', currencyPrecision: 2, includedTaxes: [] },
+      ];
+      const expectedResult: Availability[] = [
+        {
+          id: '1',
+          localDateTimeStart: '2024-02-19T08:00:00',
+          localDateTimeEnd: '2024-02-19T18:00:00',
+          allDay: false,
+          available: true,
+          status: AvailabilityStatus.AVAILABLE,
+          vacancies: 10,
+          capacity: 20,
+          maxUnits: 5,
+          utcCutoffAt: '2024-02-19T06:00:00Z',
+          openingHours: [{ from: '08:00', to: '18:00' }],
+          unitPricing: expectedFilteredUnitPricing1,
+        },
+        {
+          id: '2',
+          localDateTimeStart: '2024-02-20T08:00:00',
+          localDateTimeEnd: '2024-02-20T18:00:00',
+          allDay: false,
+          available: true,
+          status: AvailabilityStatus.AVAILABLE,
+          vacancies: 5,
+          capacity: 10,
+          maxUnits: 2,
+          utcCutoffAt: '2024-02-20T06:00:00Z',
+          openingHours: [{ from: '08:00', to: '18:00' }],
+          unitPricing: expectedFilteredUnitPricing2,
+        },
+      ];
+      const result = AvailabilityHelper.updateWithFiltereredFirstUnitPricing(availabilities);
+      expect(result).toEqual(expectedResult);
     });
   });
 });
