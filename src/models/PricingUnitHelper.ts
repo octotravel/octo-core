@@ -5,10 +5,10 @@ export class PricingUnitHelper {
     const usedUnitIds: string[] = [];
     const filteredUnitPricings: PricingUnit[] = [];
 
-    for (const unit of pricingUnits) {
-      if (!usedUnitIds.includes(unit.unitId)) {
-        filteredUnitPricings.push(unit);
-        usedUnitIds.push(unit.unitId);
+    for (const pricingUnit of pricingUnits) {
+      if (!usedUnitIds.includes(pricingUnit.unitId)) {
+        filteredUnitPricings.push(pricingUnit);
+        usedUnitIds.push(pricingUnit.unitId);
       }
     }
 
