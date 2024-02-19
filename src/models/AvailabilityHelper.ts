@@ -21,7 +21,6 @@ export class AvailabilityHelper {
       }
 
       const filteredUnitPricings = PricingUnitHelper.filterFirstUnitPricing(availability.unitPricing);
-
       availability.unitPricing = filteredUnitPricings;
     }
 
