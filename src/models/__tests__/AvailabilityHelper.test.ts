@@ -1,7 +1,7 @@
 import { AvailabilityModelGenerator, AvailabilityParser } from '@octocloud/generators';
 import { AvailabilityHelper } from '../AvailabilityHelper';
 import { NoAvailabilityError } from '../Error';
-import { Availability, PricingUnit, AvailabilityStatus } from '@octocloud/types';
+import { Availability, PricingUnit, AvailabilityStatus, UnitType } from '@octocloud/types';
 
 describe('AvailabilityHelper', () => {
   const availabilityModelGenerator = new AvailabilityModelGenerator();
@@ -65,14 +65,14 @@ describe('AvailabilityHelper', () => {
 
     it('should filter out duplicate unit pricings for each availability', () => {
       const unitPricing1: PricingUnit[] = [
-        { unitId: '1', original: 10, retail: 15, net: null, currency: 'USD', currencyPrecision: 2, includedTaxes: [] },
-        { unitId: '2', original: 20, retail: 25, net: null, currency: 'USD', currencyPrecision: 2, includedTaxes: [] },
-        { unitId: '1', original: 30, retail: 35, net: null, currency: 'USD', currencyPrecision: 2, includedTaxes: [] },
+        { unitId: '1', original: 10, retail: 15, net: null, currency: 'USD', currencyPrecision: 2, includedTaxes: [], unitType: UnitType.ADULT },
+        { unitId: '2', original: 20, retail: 25, net: null, currency: 'USD', currencyPrecision: 2, includedTaxes: [], unitType: UnitType.CHILD },
+        { unitId: '1', original: 30, retail: 35, net: null, currency: 'USD', currencyPrecision: 2, includedTaxes: [], unitType: UnitType.ADULT },
       ];
       const unitPricing2: PricingUnit[] = [
-        { unitId: '3', original: 10, retail: 15, net: null, currency: 'USD', currencyPrecision: 2, includedTaxes: [] },
-        { unitId: '4', original: 20, retail: 25, net: null, currency: 'USD', currencyPrecision: 2, includedTaxes: [] },
-        { unitId: '3', original: 30, retail: 35, net: null, currency: 'USD', currencyPrecision: 2, includedTaxes: [] },
+        { unitId: '3', original: 10, retail: 15, net: null, currency: 'USD', currencyPrecision: 2, includedTaxes: [], unitType: UnitType.ADULT },
+        { unitId: '4', original: 20, retail: 25, net: null, currency: 'USD', currencyPrecision: 2, includedTaxes: [], unitType: UnitType.CHILD },
+        { unitId: '3', original: 30, retail: 35, net: null, currency: 'USD', currencyPrecision: 2, includedTaxes: [], unitType: UnitType.ADULT },
       ];
       const availabilities: Availability[] = [
         {
@@ -105,12 +105,12 @@ describe('AvailabilityHelper', () => {
         },
       ];
       const expectedFilteredUnitPricing1: PricingUnit[] = [
-        { unitId: '1', original: 10, retail: 15, net: null, currency: 'USD', currencyPrecision: 2, includedTaxes: [] },
-        { unitId: '2', original: 20, retail: 25, net: null, currency: 'USD', currencyPrecision: 2, includedTaxes: [] },
+        { unitId: '1', original: 10, retail: 15, net: null, currency: 'USD', currencyPrecision: 2, includedTaxes: [], unitType: UnitType.ADULT },
+        { unitId: '2', original: 20, retail: 25, net: null, currency: 'USD', currencyPrecision: 2, includedTaxes: [], unitType: UnitType.CHILD },
       ];
       const expectedFilteredUnitPricing2: PricingUnit[] = [
-        { unitId: '3', original: 10, retail: 15, net: null, currency: 'USD', currencyPrecision: 2, includedTaxes: [] },
-        { unitId: '4', original: 20, retail: 25, net: null, currency: 'USD', currencyPrecision: 2, includedTaxes: [] },
+        { unitId: '3', original: 10, retail: 15, net: null, currency: 'USD', currencyPrecision: 2, includedTaxes: [], unitType: UnitType.ADULT },
+        { unitId: '4', original: 20, retail: 25, net: null, currency: 'USD', currencyPrecision: 2, includedTaxes: [], unitType: UnitType.CHILD },
       ];
       const expectedResult: Availability[] = [
         {
