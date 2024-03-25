@@ -1,5 +1,5 @@
 export class FetchHelper {
-  public async fetch(request: Request, currentRetryAttempt = 0, maxRetryAttempts = 3): Promise<Response> {
+  public static async fetch(request: Request, currentRetryAttempt = 0, maxRetryAttempts = 3): Promise<Response> {
     if (currentRetryAttempt > 0) {
       await this.delay((currentRetryAttempt + 1) * 1000);
     }
@@ -22,7 +22,7 @@ export class FetchHelper {
     }
   }
 
-  private async delay(ms: number): Promise<unknown> {
+  private static async delay(ms: number): Promise<unknown> {
     return await new Promise((resolve) => setTimeout(resolve, ms));
   }
 }
