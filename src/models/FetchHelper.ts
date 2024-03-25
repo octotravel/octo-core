@@ -1,7 +1,7 @@
 export class FetchHelper {
   public async fetch(request: Request, currentRetryAttempt = 0, maxRetryAttempts = 3): Promise<Response> {
     if (currentRetryAttempt > 0) {
-      await this.delay(Math.pow(3, currentRetryAttempt + 1) * 1000);
+      await this.delay((currentRetryAttempt + 1) * 1000);
     }
 
     try {
