@@ -7,6 +7,7 @@ export * from './models/Config';
 export * from './models/ConnectionUpdater';
 export * from './models/DateHelper';
 export * from './models/Error';
+export * from './models/FetchHelper';
 export * from './models/Logger';
 export * from './models/BackendError';
 export * from './models/Money';
