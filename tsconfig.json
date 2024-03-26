@@ -18,7 +18,7 @@
     "typeRoots": ["./src/global.d.ts", "node_modules/@types"],
     "types": ["jest"]
   },
-  "files": ["./src/index.ts"],
+  "files": ["./src/index.ts", "vitest.config.ts"],
   "include": ["src/**/**.ts"],
   "exclude": ["node_modules"]
 }

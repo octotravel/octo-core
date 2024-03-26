@@ -2,6 +2,7 @@ import { BookingModelGenerator, BookingParser } from '@octocloud/generators';
 import { AvailabilityStatus, UnitItem, UnitType } from '@octocloud/types';
 import { BookingHelper } from '../BookingHelper';
 import { InvalidUnitError } from '../Error';
+import { describe, expect, it } from 'vitest';
 
 describe('BookingHelper', () => {
   const bookingModelGenerator = new BookingModelGenerator();

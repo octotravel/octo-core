@@ -1,4 +1,5 @@
 import { PhoneParser } from '../PhoneParser';
+import { describe, expect, it } from 'vitest';
 
 describe('PhoneParser', () => {
   const parser = new PhoneParser();

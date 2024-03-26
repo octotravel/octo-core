@@ -12,18 +12,25 @@ export default async function fetchRetry(
     await delay((currentRetryAttempt + 1) * 1000);
   }
 
+  currentRetryAttempt++;
+
   try {
     const res = await fetch(input, init);
+
+    if (res === undefined) {
+      return await fetchRetry(input, init, currentRetryAttempt, maxRetryAttempts);
+    }
+
     const status = res.status;
 
     if ((status < 200 || status >= 400) && currentRetryAttempt < maxRetryAttempts) {
-      return await fetchRetry(input, init, currentRetryAttempt + 1, maxRetryAttempts);
+      return await fetchRetry(input, init, currentRetryAttempt, maxRetryAttempts);
     }
 
     return res;
   } catch (error: unknown) {
     if (currentRetryAttempt < maxRetryAttempts) {
-      return await fetchRetry(input, init, currentRetryAttempt + 1, maxRetryAttempts);
+      return await fetchRetry(input, init, currentRetryAttempt, maxRetryAttempts);
     }
 
     throw error;
