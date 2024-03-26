@@ -7,7 +7,6 @@ export * from './models/Config';
 export * from './models/ConnectionUpdater';
 export * from './models/DateHelper';
 export * from './models/Error';
-export * from './models/FetchHelper';
 export * from './models/Logger';
 export * from './models/BackendError';
 export * from './models/Money';
@@ -36,3 +35,5 @@ export * from './types/Connection';
 export * from './types/Repository';
 export * from './types/Request';
 export * from './types/Response';
+
+export * from './util/fetchRetry';
