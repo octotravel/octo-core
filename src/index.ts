@@ -35,3 +35,5 @@ export * from './types/Connection';
 export * from './types/Repository';
 export * from './types/Request';
 export * from './types/Response';
+
+export * from './util/fetchRetry';

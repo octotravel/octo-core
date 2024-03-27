@@ -1,4 +1,6 @@
 import { Money } from './../Money';
+import { describe, expect, it } from 'vitest';
+
 describe('Money', () => {
   describe('init', () => {
     it('should init with invalid currency', async () => {
