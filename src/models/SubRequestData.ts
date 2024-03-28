@@ -26,7 +26,7 @@ export class SubRequestData extends BaseRequestData implements IBaseRequestData 
     response,
     metadata,
     logsEnabled,
-    isRetry
+    isRetry,
   }: {
     id: string;
     request: Request;
