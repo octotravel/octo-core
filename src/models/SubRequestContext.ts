@@ -61,6 +61,7 @@ export class SubRequestContext {
       response,
       metadata,
       logsEnabled: this.logsEnabled,
+      isRetry: false,
     });
     if (error) {
       requestData.setError(error);

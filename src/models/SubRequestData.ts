@@ -18,6 +18,7 @@ export class SubRequestData extends BaseRequestData implements IBaseRequestData 
   public metadata: SubMetadata;
   public error: Error | null = null;
   public logsEnabled: boolean;
+  public isRetry: boolean;
 
   public constructor({
     id,
@@ -25,12 +26,14 @@ export class SubRequestData extends BaseRequestData implements IBaseRequestData 
     response,
     metadata,
     logsEnabled,
+    isRetry,
   }: {
     id: string;
     request: Request;
     response: Response;
     metadata: SubMetadata;
     logsEnabled: boolean;
+    isRetry: boolean;
   }) {
     super();
     this.id = id;
@@ -38,6 +41,7 @@ export class SubRequestData extends BaseRequestData implements IBaseRequestData 
     this.request = request;
     this.metadata = metadata;
     this.logsEnabled = logsEnabled;
+    this.isRetry = isRetry;
   }
 
   public setError = (error: Error): void => {
@@ -51,6 +55,7 @@ export class SubRequestData extends BaseRequestData implements IBaseRequestData 
       response: this.response.clone(),
       metadata: this.metadata,
       logsEnabled: this.logsEnabled,
+      isRetry: this.isRetry,
     });
   };
 }
