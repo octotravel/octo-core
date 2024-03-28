@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import fetchRetry from '../fetchRetry';
+import { fetchRetry } from '../fetchRetry';
 
 describe('API', () => {
   beforeEach(() => {
