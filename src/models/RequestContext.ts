@@ -18,6 +18,7 @@ export class RequestContext {
   private action = '';
   private logsEnabled = true;
   private _isRequestImportant = false;
+  private _isRequestRetry = false;
   private alertData: AlertData | null = null;
   private _corsEnabled = false;
   private readonly subrequests: SubRequestData[] = [];
@@ -76,6 +77,14 @@ export class RequestContext {
 
   public isRequestImportant = (): boolean => {
     return this._isRequestImportant;
+  };
+
+  public setRequestAsRetry = (): void => {
+    this._isRequestRetry = true;
+  };
+
+  public isRequestRetry = (): boolean => {
+    return this._isRequestRetry;
   };
 
   public enableCORS = (): void => {
