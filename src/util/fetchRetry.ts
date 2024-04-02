@@ -3,14 +3,25 @@ import { BackendParams } from '../types/Backend';
 
 const DEFAULT_MAX_RETRY_ATTEMPTS = 3;
 const RETRY_DELAY_MULTIPLIER_IN_MS = 1000;
+const FETCH_RETRY_DEFAULT_OPTIONS = {
+  params: null,
+  currentRetryAttempt: 0,
+  maxRetryAttempts: DEFAULT_MAX_RETRY_ATTEMPTS,
+};
+
+export interface FetchRetryOptions {
+  params?: BackendParams | null;
+  currentRetryAttempt?: number;
+  maxRetryAttempts?: number;
+}
 
 export async function fetchRetry(
   input: RequestInfo,
   init?: RequestInit,
-  params: BackendParams | null = null,
-  currentRetryAttempt = 0,
-  maxRetryAttempts = DEFAULT_MAX_RETRY_ATTEMPTS,
+  options: FetchRetryOptions = FETCH_RETRY_DEFAULT_OPTIONS,
 ): Promise<Response> {
+  let { params = null, currentRetryAttempt = 0, maxRetryAttempts = DEFAULT_MAX_RETRY_ATTEMPTS } = options;
+
   const subRequestContext = new SubRequestContext();
 
   if (params !== null) {
@@ -54,13 +65,13 @@ export async function fetchRetry(
   }
 
   if (res === undefined && currentRetryAttempt < maxRetryAttempts) {
-    return await fetchRetry(input, init, params, currentRetryAttempt, maxRetryAttempts);
+    return await fetchRetry(input, init, { params, currentRetryAttempt, maxRetryAttempts });
   }
 
   const status = res.status;
 
   if ((status < 200 || status >= 400) && currentRetryAttempt < maxRetryAttempts) {
-    return await fetchRetry(input, init, params, currentRetryAttempt, maxRetryAttempts);
+    return await fetchRetry(input, init, { params, currentRetryAttempt, maxRetryAttempts });
   }
 
   if (error !== undefined) {
