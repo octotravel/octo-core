@@ -11,7 +11,7 @@ const FETCH_RETRY_DEFAULT_OPTIONS = {
 };
 
 export interface FetchRetryOptions {
-  subrequestContext?: SubRequestContext | null;
+  subRequestContext?: SubRequestContext | null;
   currentRetryAttempt?: number;
   maxRetryAttempts?: number;
   retryDelayMultiplierInMs?: number;
@@ -23,7 +23,7 @@ export async function fetchRetry(
   options: FetchRetryOptions = FETCH_RETRY_DEFAULT_OPTIONS,
 ): Promise<Response> {
   let {
-    subrequestContext = null,
+    subRequestContext = null,
     currentRetryAttempt = 0,
     maxRetryAttempts = DEFAULT_MAX_RETRY_ATTEMPTS,
     retryDelayMultiplierInMs = DEFAULT_RETRY_DELAY_MULTIPLIER_IN_MS,
@@ -31,14 +31,14 @@ export async function fetchRetry(
   let subRequestRetryContext: SubRequestRetryContext | null = null;
 
   if (currentRetryAttempt > 0) {
-    if (subrequestContext !== null) {
+    if (subRequestContext !== null) {
       const request: Request = input instanceof Request ? input : new Request(input, init);
 
       subRequestRetryContext = new SubRequestRetryContext({
         request,
-        accountId: subrequestContext.getAccountId(),
-        requestId: subrequestContext.getRequestId(),
-        subRequestId: subrequestContext.getId(),
+        accountId: subRequestContext.getAccountId(),
+        requestId: subRequestContext.getRequestId(),
+        subRequestId: subRequestContext.getId(),
       });
     }
 
@@ -58,21 +58,21 @@ export async function fetchRetry(
     }
   }
 
-  if (currentRetryAttempt === 0 && subrequestContext !== null) {
-    subrequestContext.setResponse(res);
-    subrequestContext.setError(error);
-  } else if (currentRetryAttempt > 0 && subrequestContext !== null && subRequestRetryContext !== null) {
+  if (currentRetryAttempt === 0 && subRequestContext !== null) {
+    subRequestContext.setResponse(res);
+    subRequestContext.setError(error);
+  } else if (currentRetryAttempt > 0 && subRequestContext !== null && subRequestRetryContext !== null) {
     subRequestRetryContext.setResponse(res);
     subRequestRetryContext.setError(error);
     const requestData = subRequestRetryContext.getRequestData();
-    subrequestContext.addRetry(requestData);
+    subRequestContext.addRetry(requestData);
   }
 
   currentRetryAttempt++;
 
   if (res === undefined && currentRetryAttempt < maxRetryAttempts) {
     return await fetchRetry(input, init, {
-      subrequestContext,
+      subRequestContext,
       currentRetryAttempt,
       maxRetryAttempts,
       retryDelayMultiplierInMs,
@@ -83,7 +83,7 @@ export async function fetchRetry(
 
   if ((status < 200 || status >= 400) && currentRetryAttempt < maxRetryAttempts) {
     return await fetchRetry(input, init, {
-      subrequestContext,
+      subRequestContext,
       currentRetryAttempt,
       maxRetryAttempts,
       retryDelayMultiplierInMs,

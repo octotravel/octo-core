@@ -78,10 +78,10 @@ describe('fetchRetry', () => {
   });
 
   describe('with provided subrequest context', () => {
-    let subrequestContext: SubRequestContext;
+    let subRequestContext: SubRequestContext;
 
     beforeEach(() => {
-      subrequestContext = new SubRequestContext({
+      subRequestContext = new SubRequestContext({
         request: new Request(url),
         accountId: '2635034e-3094-428b-b8f0-9d0cc0960c0c',
         requestId: '89d08dfb-6bff-4ad6-b01c-1b2f643fddce',
@@ -91,10 +91,10 @@ describe('fetchRetry', () => {
     it('should succeed at first try with successful response', async () => {
       global.fetch = vi.fn().mockReturnValueOnce(Promise.resolve(new Response('', { status: 200 })));
       const response = await fetchRetry(url, undefined, {
-        subrequestContext,
+        subRequestContext,
         retryDelayMultiplierInMs: RETRY_DELAY_MULTIPLIER_IN_MS,
       });
-      const subrequestData = subrequestContext.getRequestData();
+      const subrequestData = subRequestContext.getRequestData();
 
       expect(response.status).toBe(200);
       expect(subrequestData.response.status).toBe(200);
@@ -107,10 +107,10 @@ describe('fetchRetry', () => {
         .mockReturnValueOnce(Promise.resolve(new Response('503 Service Unavailable', { status: 503 })))
         .mockReturnValueOnce(Promise.resolve(new Response('{}', { status: 200 })));
       const response = await fetchRetry(url, undefined, {
-        subrequestContext,
+        subRequestContext,
         retryDelayMultiplierInMs: RETRY_DELAY_MULTIPLIER_IN_MS,
       });
-      const subrequestData = subrequestContext.getRequestData();
+      const subrequestData = subRequestContext.getRequestData();
 
       expect(response.status).toBe(200);
       expect(subrequestData.response.status).toBe(503);
@@ -125,10 +125,10 @@ describe('fetchRetry', () => {
         .mockReturnValueOnce(Promise.resolve(new Response('502 Bad Gateway', { status: 502 })))
         .mockReturnValueOnce(Promise.resolve(new Response('{}', { status: 200 })));
       const response = await fetchRetry(url, undefined, {
-        subrequestContext,
+        subRequestContext,
         retryDelayMultiplierInMs: RETRY_DELAY_MULTIPLIER_IN_MS,
       });
-      const subrequestData = subrequestContext.getRequestData();
+      const subrequestData = subRequestContext.getRequestData();
 
       expect(response.status).toBe(200);
       expect(subrequestData.response.status).toBe(503);
@@ -144,10 +144,10 @@ describe('fetchRetry', () => {
         .mockReturnValueOnce(Promise.resolve(new Response('502 Bad Gateway', { status: 502 })))
         .mockReturnValueOnce(Promise.resolve(new Response('500 Internal Server Error', { status: 500 })));
       const response = await fetchRetry(url, undefined, {
-        subrequestContext,
+        subRequestContext,
         retryDelayMultiplierInMs: RETRY_DELAY_MULTIPLIER_IN_MS,
       });
-      const subrequestData = subrequestContext.getRequestData();
+      const subrequestData = subRequestContext.getRequestData();
 
       expect(response.status).toBe(500);
       expect(subrequestData.response.status).toBe(503);
