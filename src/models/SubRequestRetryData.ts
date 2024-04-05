@@ -1,5 +1,4 @@
 import { BaseRequestData, IBaseRequestData } from './BaseRequestData';
-import { SubRequestRetryData } from './SubRequestRetryData';
 
 export interface SubMetadata {
   id: string;
@@ -12,11 +11,10 @@ export interface SubMetadata {
   duration: number;
 }
 
-export class SubRequestData extends BaseRequestData implements IBaseRequestData {
+export class SubRequestRetryData extends BaseRequestData implements IBaseRequestData {
   public id: string;
   public request: Request;
   public response: Response;
-  public retries: SubRequestRetryData[] = [];
   public error: Error | null = null;
   public metadata: SubMetadata;
   public logsEnabled: boolean;
@@ -25,7 +23,6 @@ export class SubRequestData extends BaseRequestData implements IBaseRequestData 
     id,
     request,
     response,
-    retries,
     error,
     metadata,
     logsEnabled,
@@ -34,7 +31,6 @@ export class SubRequestData extends BaseRequestData implements IBaseRequestData 
     request: Request;
     response: Response;
     error: Error | null;
-    retries: SubRequestRetryData[];
     metadata: SubMetadata;
     logsEnabled: boolean;
   }) {
@@ -42,26 +38,16 @@ export class SubRequestData extends BaseRequestData implements IBaseRequestData 
     this.id = id;
     this.response = response;
     this.request = request;
-    this.retries = retries;
     this.error = error;
     this.metadata = metadata;
     this.logsEnabled = logsEnabled;
   }
 
-  public getFinalResponse(): Response {
-    if (this.retries.length > 0) {
-      return this.retries[-1].response;
-    }
-
-    return this.response;
-  }
-
-  public clone = (): SubRequestData => {
-    return new SubRequestData({
+  public clone = (): SubRequestRetryData => {
+    return new SubRequestRetryData({
       id: this.id,
       request: this.request.clone(),
       response: this.response.clone(),
-      retries: this.retries,
       error: this.error,
       metadata: this.metadata,
       logsEnabled: this.logsEnabled,

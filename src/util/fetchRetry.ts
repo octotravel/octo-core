@@ -1,18 +1,20 @@
 import { SubRequestContext } from '../models/SubRequestContext';
-import { BackendParams } from '../types/Backend';
+import { SubRequestRetryContext } from '../models/SubrequestRetryContext';
 
 const DEFAULT_MAX_RETRY_ATTEMPTS = 3;
-const RETRY_DELAY_MULTIPLIER_IN_MS = 1000;
+const DEFAULT_RETRY_DELAY_MULTIPLIER_IN_MS = 1000;
 const FETCH_RETRY_DEFAULT_OPTIONS = {
-  params: null,
+  subrequestContext: null,
   currentRetryAttempt: 0,
   maxRetryAttempts: DEFAULT_MAX_RETRY_ATTEMPTS,
+  retryDelayMultiplierInMs: DEFAULT_RETRY_DELAY_MULTIPLIER_IN_MS,
 };
 
 export interface FetchRetryOptions {
-  params?: BackendParams | null;
+  subrequestContext?: SubRequestContext | null;
   currentRetryAttempt?: number;
   maxRetryAttempts?: number;
+  retryDelayMultiplierInMs?: number;
 }
 
 export async function fetchRetry(
@@ -20,29 +22,31 @@ export async function fetchRetry(
   init?: RequestInit,
   options: FetchRetryOptions = FETCH_RETRY_DEFAULT_OPTIONS,
 ): Promise<Response> {
-  let { params = null, currentRetryAttempt = 0, maxRetryAttempts = DEFAULT_MAX_RETRY_ATTEMPTS } = options;
-
-  const subRequestContext = new SubRequestContext();
-
-  if (params !== null) {
-    const request: Request = input instanceof Request ? input : new Request(input, init);
-
-    // Init subrequest data here, so timeout counts towards the request duration
-    subRequestContext.initRequestData({
-      request,
-      requestId: params.ctx.getRequestId(),
-      accountId: params.ctx.getAccountId(),
-    });
-  }
+  let {
+    subrequestContext = null,
+    currentRetryAttempt = 0,
+    maxRetryAttempts = DEFAULT_MAX_RETRY_ATTEMPTS,
+    retryDelayMultiplierInMs = DEFAULT_RETRY_DELAY_MULTIPLIER_IN_MS,
+  } = options;
+  let subRequestRetryContext: SubRequestRetryContext | null = null;
 
   if (currentRetryAttempt > 0) {
-    await new Promise((resolve) => setTimeout(resolve, (currentRetryAttempt + 1) * RETRY_DELAY_MULTIPLIER_IN_MS));
+    if (subrequestContext !== null) {
+      const request: Request = input instanceof Request ? input : new Request(input, init);
+
+      subRequestRetryContext = new SubRequestRetryContext({
+        request,
+        accountId: subrequestContext.getAccountId(),
+        requestId: subrequestContext.getRequestId(),
+        subRequestId: subrequestContext.getId(),
+      });
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, (currentRetryAttempt + 1) * retryDelayMultiplierInMs));
   }
 
-  currentRetryAttempt++;
-
   let res: Response | undefined;
-  let error: Error | undefined;
+  let error: Error | null = null;
 
   try {
     res = await fetch(input, init);
@@ -54,27 +58,39 @@ export async function fetchRetry(
     }
   }
 
-  const requestData = subRequestContext.getRequestData(res, error);
-
-  if (currentRetryAttempt > 0) {
-    requestData.isRetry = true;
+  if (currentRetryAttempt === 0 && subrequestContext !== null) {
+    subrequestContext.setResponse(res);
+    subrequestContext.setError(error);
+  } else if (currentRetryAttempt > 0 && subrequestContext !== null && subRequestRetryContext !== null) {
+    subRequestRetryContext.setResponse(res);
+    subRequestRetryContext.setError(error);
+    const requestData = subRequestRetryContext.getRequestData();
+    subrequestContext.addRetry(requestData);
   }
 
-  if (params !== null) {
-    params.ctx.addSubrequest(requestData);
-  }
+  currentRetryAttempt++;
 
   if (res === undefined && currentRetryAttempt < maxRetryAttempts) {
-    return await fetchRetry(input, init, { params, currentRetryAttempt, maxRetryAttempts });
+    return await fetchRetry(input, init, {
+      subrequestContext,
+      currentRetryAttempt,
+      maxRetryAttempts,
+      retryDelayMultiplierInMs,
+    });
   }
 
   const status = res.status;
 
   if ((status < 200 || status >= 400) && currentRetryAttempt < maxRetryAttempts) {
-    return await fetchRetry(input, init, { params, currentRetryAttempt, maxRetryAttempts });
+    return await fetchRetry(input, init, {
+      subrequestContext,
+      currentRetryAttempt,
+      maxRetryAttempts,
+      retryDelayMultiplierInMs,
+    });
   }
 
-  if (error !== undefined) {
+  if (error !== null) {
     throw error;
   }
 
