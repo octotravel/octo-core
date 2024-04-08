@@ -1,6 +1,7 @@
-import { SubMetadata, SubRequestData } from './SubRequestData';
+import { SubRequestData } from './SubRequestData';
 import { DataGenerationService } from '../services/DataGenerationService';
 import { SubRequestRetryData } from './SubRequestRetryData';
+import { SubMetadata } from './SubMetadata';
 
 export class SubRequestContext {
   private readonly dataGenerationService = new DataGenerationService();

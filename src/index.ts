@@ -19,6 +19,7 @@ export * from './models/RequestContext';
 export * from './models/RequestLogger';
 export * from './models/SubRequestData';
 export * from './models/BaseRequestData';
+export * from './models/SubMetadata';
 export * from './models/SubRequestContext';
 export * from './models/SubRequestRetryContext';
 export * from './models/SubRequestRetryData';
