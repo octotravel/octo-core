@@ -20,6 +20,7 @@ export * from './models/RequestLogger';
 export * from './models/SubRequestData';
 export * from './models/BaseRequestData';
 export * from './models/SubRequestContext';
+export * from './models/SubRequestRetryContext';
 export * from './models/UnitItemsHelper';
 export * from './models/DefaultResponseHandler';
 export * from './models/PhoneParser';

@@ -1,5 +1,5 @@
 import { SubRequestContext } from '../models/SubRequestContext';
-import { SubRequestRetryContext } from '../models/SubrequestRetryContext';
+import { SubRequestRetryContext } from '../models/SubRequestRetryContext';
 
 const DEFAULT_MAX_RETRY_ATTEMPTS = 3;
 const DEFAULT_RETRY_DELAY_MULTIPLIER_IN_MS = 1000;
