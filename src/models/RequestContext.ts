@@ -52,6 +52,10 @@ export class RequestContext {
     this.response = response;
   }
 
+  public getResponse(): Response | null {
+    return this.response;
+  }
+
   private readonly generateRequestId = (): string => this.dataGenerationService.generateUUID();
 
   public setConnection = (connection: BaseConnection): void => {
@@ -162,7 +166,7 @@ export class RequestContext {
   }
 
   public getRequestData = (): RequestData => {
-    if (this.response === null) {
+    if (this.getResponse() === null) {
       throw new Error('Response is not set');
     }
 
@@ -181,8 +185,8 @@ export class RequestContext {
       date: this.date,
       connection: connectionMetaData,
       action: this.action,
-      status: this.response.status,
-      success: this.response.ok,
+      status: this.getResponse()!.status,
+      success: this.getResponse()!.ok,
       duration: this.getDuration(this.date, new Date()),
       environment: this.environment ?? Environment.LOCAL,
     };
@@ -198,7 +202,7 @@ export class RequestContext {
       id,
       request: this.getRequest(),
       metadata,
-      response: this.response,
+      response: this.getResponse()!,
       error: this.error,
       logsEnabled: this.logsEnabled,
       subrequests: this.subrequests,
