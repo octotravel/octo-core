@@ -166,7 +166,9 @@ export class RequestContext {
   }
 
   public getRequestData = (): RequestData => {
-    if (this.getResponse() === null) {
+    const reponse = this.getResponse();
+
+    if (reponse === null) {
       throw new Error('Response is not set');
     }
 
@@ -185,8 +187,8 @@ export class RequestContext {
       date: this.date,
       connection: connectionMetaData,
       action: this.action,
-      status: this.getResponse()!.status,
-      success: this.getResponse()!.ok,
+      status: reponse.status,
+      success: reponse.ok,
       duration: this.getDuration(this.date, new Date()),
       environment: this.environment ?? Environment.LOCAL,
     };
@@ -202,7 +204,7 @@ export class RequestContext {
       id,
       request: this.getRequest(),
       metadata,
-      response: this.getResponse()!,
+      response: reponse,
       error: this.error,
       logsEnabled: this.logsEnabled,
       subrequests: this.subrequests,
