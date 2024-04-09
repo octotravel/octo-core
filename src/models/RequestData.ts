@@ -28,7 +28,6 @@ export class RequestData extends BaseRequestData implements IBaseRequestData {
   public response: Response;
   public metadata: RequestMetaData;
   public error: Error | null = null;
-  public searchKeys: string[] = [];
   public logsEnabled: boolean;
   public subrequests: SubRequestData[] = [];
   public productIds: string[] = [];
@@ -37,6 +36,7 @@ export class RequestData extends BaseRequestData implements IBaseRequestData {
     id,
     request,
     response,
+    error,
     metadata,
     logsEnabled,
     subrequests,
@@ -45,6 +45,7 @@ export class RequestData extends BaseRequestData implements IBaseRequestData {
     id: string;
     request: Request;
     response: Response;
+    error: Error | null;
     metadata: RequestMetaData;
     logsEnabled: boolean;
     subrequests: SubRequestData[];
@@ -52,19 +53,12 @@ export class RequestData extends BaseRequestData implements IBaseRequestData {
   }) {
     super();
     this.id = id;
-    this.response = response;
     this.request = request;
+    this.response = response;
+    this.error = error;
     this.metadata = metadata;
     this.logsEnabled = logsEnabled;
     this.subrequests = subrequests;
     this.productIds = productIds;
   }
-
-  public setSearchKeys = (searchKeys: string[]): void => {
-    this.searchKeys = searchKeys;
-  };
-
-  public setError = (error: Error): void => {
-    this.error = error;
-  };
 }

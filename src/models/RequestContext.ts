@@ -22,9 +22,9 @@ export class RequestContext {
   private _corsEnabled = false;
   private readonly subrequests: SubRequestData[] = [];
   private readonly environment: Environment | null = null;
-  private error: Error | null = null;
-  private httpError: HttpError | null = null;
   private productIds: string[] = [];
+  private response: Response | null = null;
+  private error: Error | null = null;
 
   public constructor({
     request,
@@ -46,6 +46,14 @@ export class RequestContext {
     this.date = new Date();
     this.channel = channel ?? null;
     this.environment = environment ?? null;
+  }
+
+  public setResponse(response: Response | null): void {
+    this.response = response;
+  }
+
+  public getResponse(): Response | null {
+    return this.response;
   }
 
   private readonly generateRequestId = (): string => this.dataGenerationService.generateUUID();
@@ -90,10 +98,6 @@ export class RequestContext {
 
   public setError = (error: Error): void => {
     this.error = error;
-  };
-
-  public setHttpError = (error: HttpError): void => {
-    this.httpError = error;
   };
 
   public setProductIds = (productIds: string[]): void => {
@@ -149,17 +153,25 @@ export class RequestContext {
     }
   };
 
-  public addSubrequest = (data: SubRequestData): void => {
+  public addSubrequest(data: SubRequestData): void {
     this.subrequests.push(data);
-  };
+  }
 
-  public getSubrequest = (): SubRequestData[] => this.subrequests;
+  public getSubrequests(): SubRequestData[] {
+    return this.subrequests;
+  }
 
   public get corsEnabled(): boolean {
     return this._corsEnabled;
   }
 
-  public getRequestData = (response: Response, error?: Error): RequestData => {
+  public getRequestData = (): RequestData => {
+    const reponse = this.getResponse();
+
+    if (reponse === null) {
+      throw new Error('Response is not set');
+    }
+
     const id = `${this.accountId}/${this.requestId}`;
     const connectionMetaData: ConnectionMetaData = {
       id: this.connection?.id ?? null,
@@ -175,31 +187,29 @@ export class RequestContext {
       date: this.date,
       connection: connectionMetaData,
       action: this.action,
-      status: response.status,
-      success: response.ok,
+      status: reponse.status,
+      success: reponse.ok,
       duration: this.getDuration(this.date, new Date()),
       environment: this.environment ?? Environment.LOCAL,
     };
+
+    if (this.error) {
+      if (this.error instanceof HttpError) {
+        metadata.status = this.error.statusLog;
+        metadata.success = this.error.statusLog >= 200 && this.error.statusLog < 300;
+      }
+    }
 
     const requestData = new RequestData({
       id,
       request: this.getRequest(),
       metadata,
-      response,
+      response: reponse,
+      error: this.error,
       logsEnabled: this.logsEnabled,
       subrequests: this.subrequests,
       productIds: this.productIds,
     });
-
-    const err = this.httpError ?? error;
-
-    if (err) {
-      requestData.setError(err);
-      if (err instanceof HttpError) {
-        metadata.status = err.statusLog;
-        metadata.success = err.statusLog >= 200 && err.statusLog < 300;
-      }
-    }
 
     return requestData;
   };
