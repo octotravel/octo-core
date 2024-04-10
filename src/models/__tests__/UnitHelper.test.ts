@@ -1,5 +1,6 @@
-import { PricingUnit, Unit, UnitType } from '@octocloud/types';
+import { Unit, UnitType } from '@octocloud/types';
 import { UnitHelper } from '../UnitHelper';
+import { describe, expect, it } from 'vitest';
 
 describe('UnitHelper', () => {
   describe('getUniqueUnitsByType', () => {
