@@ -44,7 +44,6 @@
   "devDependencies": {
     "@octocloud/generators": "^1.0.5",
     "@octocloud/types": "^1.5.24",
-    "@types/jest": "^29.5.12",
     "@types/uuid": "8.3.4",
     "@typescript-eslint/eslint-plugin": "6.18.1",
     "@typescript-eslint/parser": "6.18.1",
