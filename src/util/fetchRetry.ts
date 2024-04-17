@@ -32,26 +32,35 @@ export async function fetchRetry(
 
   if (currentRetryAttempt > 0) {
     if (subRequestContext !== null) {
-      const request: Request = input instanceof Request ? input : new Request(input, init);
+      let request: Request;
 
-      subRequestRetryContext = new SubRequestRetryContext({
-        request,
-        accountId: subRequestContext.getAccountId(),
-        requestId: subRequestContext.getRequestId(),
-        subRequestId: subRequestContext.getId(),
-      });
+      if (subRequestContext !== null) {
+        if (typeof input === 'string' || input instanceof String) {
+          request = new Request(input, init);
+        } else {
+          request = input;
+        }
+
+        subRequestRetryContext = new SubRequestRetryContext({
+          request,
+          accountId: subRequestContext.getAccountId(),
+          requestId: subRequestContext.getRequestId(),
+          subRequestId: subRequestContext.getId(),
+        });
+      }
     }
 
     await new Promise((resolve) => setTimeout(resolve, (currentRetryAttempt + 1) * retryDelayMultiplierInMs));
   }
-
   let res: Response | undefined;
   let error: Error | null = null;
 
   try {
     res = await fetch(input, init);
   } catch (e: unknown) {
-    res = new Response(null, { status: 500, statusText: 'Cant get any response data, something went horrinly wrong.' });
+    res = new Response(JSON.stringify({ error: 'Cant get any response data, something went horrinly wrong.' }), {
+      status: 500,
+    });
 
     if (e instanceof Error) {
       error = e;
@@ -69,15 +78,6 @@ export async function fetchRetry(
   }
 
   currentRetryAttempt++;
-
-  if (res === undefined && currentRetryAttempt < maxRetryAttempts) {
-    return await fetchRetry(input, init, {
-      subRequestContext,
-      currentRetryAttempt,
-      maxRetryAttempts,
-      retryDelayMultiplierInMs,
-    });
-  }
 
   const status = res.status;
 

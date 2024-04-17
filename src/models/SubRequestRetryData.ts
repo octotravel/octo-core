@@ -1,46 +1,69 @@
-import { BaseRequestData, IBaseRequestData } from './BaseRequestData';
-import { SubMetadata } from './SubMetadata';
+import { BaseRequestData } from './BaseRequestData';
 
-export class SubRequestRetryData extends BaseRequestData implements IBaseRequestData {
-  public id: string;
-  public request: Request;
-  public response: Response;
-  public error: Error | null = null;
-  public metadata: SubMetadata;
-  public logsEnabled: boolean;
+export interface SubrequestRetryMetaData {
+  id: string;
+  requestId: string;
+  subRequestId: string;
+  date: Date;
+  url: string;
+  method: string;
+  status: number;
+  success: boolean;
+  duration: number;
+}
+
+export class SubRequestRetryData implements BaseRequestData<SubrequestRetryMetaData> {
+  private readonly id: string;
+  private readonly request: Request;
+  private readonly response: Response;
+  private readonly error: Error | null = null;
+  private readonly metaData: SubrequestRetryMetaData;
+  private readonly logsEnabled: boolean;
 
   public constructor({
     id,
     request,
     response,
     error,
-    metadata,
+    metaData,
     logsEnabled,
   }: {
     id: string;
     request: Request;
     response: Response;
     error: Error | null;
-    metadata: SubMetadata;
+    metaData: SubrequestRetryMetaData;
     logsEnabled: boolean;
   }) {
-    super();
     this.id = id;
-    this.response = response;
-    this.request = request;
+    this.response = response.clone();
+    this.request = request.clone();
     this.error = error;
-    this.metadata = metadata;
+    this.metaData = metaData;
     this.logsEnabled = logsEnabled;
   }
 
-  public clone = (): SubRequestRetryData => {
-    return new SubRequestRetryData({
-      id: this.id,
-      request: this.request.clone(),
-      response: this.response.clone(),
-      error: this.error,
-      metadata: this.metadata,
-      logsEnabled: this.logsEnabled,
-    });
-  };
+  public getId(): string {
+    return this.id;
+  }
+
+  public getRequest(): Request {
+    return this.request.clone();
+  }
+
+  public getResponse(): Response {
+    return this.response.clone();
+  }
+
+  public getError(): Error | null {
+    return this.error;
+  }
+
+  public getMetaData(): SubrequestRetryMetaData {
+    return this.metaData;
+  }
+
+  public areLogsEnabled(): boolean {
+    return this.logsEnabled;
+  }
 }

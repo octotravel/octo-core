@@ -1,7 +1,6 @@
-import { SubRequestData } from './SubRequestData';
+import { SubRequestData, SubrequestMetaData } from './SubRequestData';
 import { DataGenerationService } from '../services/DataGenerationService';
 import { SubRequestRetryData } from './SubRequestRetryData';
-import { SubMetadata } from './SubMetadata';
 
 export class SubRequestContext {
   private readonly dataGenerationService = new DataGenerationService();
@@ -22,16 +21,32 @@ export class SubRequestContext {
     this.subRequestId = this.generateRequestId();
     this.accountId = accountId;
     this.requestId = requestId;
-    this.request = request;
+    this.request = request.clone();
     this.startDate = new Date();
   }
 
+  public getRequest(): Request {
+    return this.request;
+  }
+
   public setResponse(response: Response | null): void {
-    this.response = response;
+    if (response !== null) {
+      this.response = response.clone();
+    } else {
+      this.response = null;
+    }
+  }
+
+  public getResponse(): Response | null {
+    return this.response;
   }
 
   public setError(error: Error | null): void {
     this.error = error;
+  }
+
+  public getError(): Error | null {
+    return this.error;
   }
 
   public enableLogs(): void {
@@ -40,6 +55,10 @@ export class SubRequestContext {
 
   public disableLogs(): void {
     this.logsEnabled = false;
+  }
+
+  public areLogsEnabled(): boolean {
+    return this.logsEnabled;
   }
 
   public addRetry(data: SubRequestRetryData): void {
@@ -67,28 +86,30 @@ export class SubRequestContext {
   }
 
   public getRequestData(): SubRequestData {
-    if (this.response === null) {
+    const response = this.getResponse();
+
+    if (response === null) {
       throw new Error('Response is not set');
     }
 
     const id = `${this.accountId}/${this.requestId}/${this.subRequestId}`;
-    const metadata: SubMetadata = {
+    const metaData: SubrequestMetaData = {
       id: this.subRequestId,
       requestId: this.requestId,
       date: this.startDate,
-      url: this.request.url,
-      method: this.request.method,
-      status: this.response.status,
-      success: this.response.ok,
+      url: this.getRequest().url,
+      method: this.getRequest().method,
+      status: response.status,
+      success: response.ok,
       duration: this.getDuration(this.startDate, new Date()),
     };
     const requestData = new SubRequestData({
       id,
-      request: this.request,
-      response: this.response,
+      request: this.getRequest(),
+      response,
       retries: this.retries,
       error: this.error,
-      metadata,
+      metaData,
       logsEnabled: this.logsEnabled,
     });
 
