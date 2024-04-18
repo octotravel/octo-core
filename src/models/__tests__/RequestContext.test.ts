@@ -155,6 +155,13 @@ describe('RequestContext', () => {
     });
   });
 
+  describe('getRequestDurationInMs', () => {
+    it('should return duration in ms', () => {
+      const date = addSeconds(requestContext.getDate(), 1000);
+      expect(requestContext.getRequestDuration(date)).toBe(1000);
+    });
+  });
+
   describe('getRequestData', () => {
     it('should correctly return RequestData', () => {
       requestContext.setConnection(connection);

@@ -187,6 +187,15 @@ export class RequestContext {
     return this.getDuration(this.date, date);
   }
 
+  public getRequestDurationInMs(date: Date): number {
+    const milliseconds = Math.ceil(this.getRequestDuration(date) * 1000);
+    if (milliseconds < 1) {
+      return 1;
+    } else {
+      return milliseconds;
+    }
+  }
+
   public addSubrequest(data: SubRequestData): void {
     this.subRequests.push(data);
   }
