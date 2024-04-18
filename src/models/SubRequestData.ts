@@ -1,15 +1,9 @@
 import { BaseRequestData } from './BaseRequestData';
+import { BaseRequestMetaData } from './BaseRequestMetaData';
 import { SubRequestRetryData } from './SubRequestRetryData';
 
-export interface SubrequestMetaData {
-  id: string;
+export interface SubrequestMetaData extends BaseRequestMetaData {
   requestId: string;
-  date: Date;
-  url: string;
-  method: string;
-  status: number;
-  success: boolean;
-  duration: number;
 }
 
 export class SubRequestData implements BaseRequestData<SubrequestMetaData> {

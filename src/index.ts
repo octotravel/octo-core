@@ -16,6 +16,7 @@ export * from './models/PricingUnitHelper';
 export * from './models/ProductHelper';
 export * from './models/RequestLogger';
 export * from './models/BaseRequestData';
+export * from './models/BaseRequestMetaData';
 export * from './models/RequestContext';
 export * from './models/RequestData';
 export * from './models/SubRequestContext';

@@ -1,4 +1,5 @@
 import { BaseRequestData } from './BaseRequestData';
+import { BaseRequestMetaData } from './BaseRequestMetaData';
 import { Environment } from './Config';
 import { SubRequestData } from './SubRequestData';
 
@@ -11,16 +12,9 @@ export interface ConnectionMetaData {
   environment: Environment;
 }
 
-export interface RequestMetaData {
-  id: string;
-  date: Date;
+export interface RequestMetaData extends BaseRequestMetaData {
   connection: ConnectionMetaData;
   action: string;
-  url: string;
-  method: string;
-  status: number;
-  success: boolean;
-  duration: number;
   environment: Environment;
 }
 

@@ -1,4 +1,6 @@
-export interface BaseRequestData<MetaData> {
+import { BaseRequestMetaData } from './BaseRequestMetaData';
+
+export interface BaseRequestData<MetaData extends BaseRequestMetaData> {
   getId: () => string;
   getRequest: () => Request;
   getResponse: () => Response;
