@@ -10,7 +10,7 @@ export class RequestContext {
   private readonly dataGenerationService = new DataGenerationService();
 
   private readonly request: Request;
-  private readonly requestId: string;
+  private requestId: string;
   private response: Response | null = null;
   private readonly date: Date;
   private connection: BaseConnection | null = null;
@@ -50,6 +50,10 @@ export class RequestContext {
 
   public getRequest(): Request {
     return this.request;
+  }
+
+  public setRequestId(requestId: string): void {
+    this.requestId = requestId;
   }
 
   public getRequestId(): string {
