@@ -50,7 +50,7 @@ export class RequestContext {
 
   public getRequest = (): Request => {
     return this.request;
-  }
+  };
 
   public setRequestId(requestId: string): void {
     this.requestId = requestId;
@@ -62,7 +62,7 @@ export class RequestContext {
 
   public getResponse = (): Response | null => {
     return this.response;
-  }
+  };
 
   public setResponse(response: Response | null): void {
     this.response = response?.clone() ?? null;
