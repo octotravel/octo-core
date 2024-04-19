@@ -48,7 +48,7 @@ export class RequestContext {
     this.environment = environment ?? Environment.LOCAL;
   }
 
-  public getRequest(): Request {
+  public getRequest = (): Request => {
     return this.request;
   }
 
@@ -60,7 +60,7 @@ export class RequestContext {
     return this.requestId;
   }
 
-  public getResponse(): Response | null {
+  public getResponse = (): Response | null => {
     return this.response;
   }
 
