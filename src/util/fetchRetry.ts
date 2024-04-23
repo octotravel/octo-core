@@ -58,7 +58,7 @@ export async function fetchRetry(
   try {
     res = await fetch(input, init);
   } catch (e: unknown) {
-    res = new Response(JSON.stringify({ error: 'Cant get any response data, something went horrinly wrong.' }), {
+    res = new Response(JSON.stringify({ error: 'Cant get any response data, something went horribly wrong.' }), {
       status: 500,
     });
 
