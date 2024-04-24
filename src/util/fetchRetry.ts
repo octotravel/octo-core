@@ -29,18 +29,17 @@ export async function fetchRetry(
     retryDelayMultiplierInMs = DEFAULT_RETRY_DELAY_MULTIPLIER_IN_MS,
   } = options;
   let subRequestRetryContext: SubRequestRetryContext | null = null;
+  let request: Request;
+
+  if (typeof input === 'string' || input instanceof String) {
+    request = new Request(input, init);
+  } else {
+    request = input;
+  }
 
   if (currentRetryAttempt > 0) {
     if (subRequestContext !== null) {
-      let request: Request;
-
       if (subRequestContext !== null) {
-        if (typeof input === 'string' || input instanceof String) {
-          request = new Request(input, init);
-        } else {
-          request = input;
-        }
-
         subRequestRetryContext = new SubRequestRetryContext({
           request,
           accountId: subRequestContext.getAccountId(),
@@ -56,7 +55,7 @@ export async function fetchRetry(
   let error: Error | null = null;
 
   try {
-    res = await fetch(input, init);
+    res = await fetch(request.clone(), init);
   } catch (e: unknown) {
     res = new Response(JSON.stringify({ error: 'Cant get any response data, something went horribly wrong.' }), {
       status: 500,
@@ -82,12 +81,15 @@ export async function fetchRetry(
   const status = res.status;
 
   if ((status < 200 || status >= 400) && currentRetryAttempt < maxRetryAttempts) {
-    return await fetchRetry(input, init, {
+    return await fetchRetry(request, undefined, {
       subRequestContext,
       currentRetryAttempt,
       maxRetryAttempts,
       retryDelayMultiplierInMs,
     });
+  } else {
+    // Retry is not needed anymore, so we can consume the request object
+    request.text();
   }
 
   if (error !== null) {
