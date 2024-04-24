@@ -1,86 +1,103 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { SubRequestRetryContext } from '../SubRequestRetryContext';
 import { SubRequestRetryData } from '../SubRequestRetryData';
+import { RequestMethod } from '../../types/Request';
+import { SubRequestRetryDataDataProvider } from './dataProviders/SubRequestRetryDataDataProvider';
 
 describe('SubRequestRetryContext', () => {
-  let context: SubRequestRetryContext;
-  const request = new Request('http://example.com', { method: 'GET' });
-  const accountId = '2635034e-3094-428b-b8f0-9d0cc0960c0c';
-  const requestId = '89d08dfb-6bff-4ad6-b01c-1b2f643fddce';
-  const subRequestId = 'dbd751df-be23-435f-a0ae-2bc5b1dc6c26';
+  let subRequestRetryDataDataProvider: SubRequestRetryDataDataProvider;
+  let subRequestRetryContext: SubRequestRetryContext;
+  const request = new Request('http://example.com', { method: RequestMethod.Get });
 
   beforeEach(() => {
-    context = new SubRequestRetryContext({
-      request,
-      accountId,
-      requestId,
-      subRequestId,
+    subRequestRetryDataDataProvider = new SubRequestRetryDataDataProvider();
+    subRequestRetryContext = new SubRequestRetryContext({
+      request: subRequestRetryDataDataProvider.request,
+      accountId: subRequestRetryDataDataProvider.accountId,
+      requestId: subRequestRetryDataDataProvider.requestId,
+      subRequestId: subRequestRetryDataDataProvider.subRequestId,
     });
   });
 
   describe('constructor', () => {
-    it('should initialize class properties correctly in the constructor', () => {
-      expect(context.getAccountId()).toBe(accountId);
-      expect(context.getRequestId()).toBe(requestId);
-      expect(context.getSubRequestId()).toBe(subRequestId);
-      expect(context.getSubRequestRetryId()).toBeDefined();
+    it('should correctly initialize class properties', () => {
+      expect(subRequestRetryContext.getId()).toBeDefined();
+      expect(subRequestRetryContext.getRequest()).toContain(request);
+      expect(subRequestRetryContext.getAccountId()).toBe(subRequestRetryDataDataProvider.accountId);
+      expect(subRequestRetryContext.getRequestId()).toBe(subRequestRetryDataDataProvider.requestId);
+      expect(subRequestRetryContext.getSubRequestId()).toBe(subRequestRetryDataDataProvider.subRequestId);
+    });
+  });
+
+  describe('getResponse', () => {
+    it('should get null response', () => {
+      expect(subRequestRetryContext.getResponse()).toEqual(null);
     });
   });
 
   describe('setResponse', () => {
-    it('should set response correctly', () => {
-      const response = new Response(null, { status: 204 });
-      context.setResponse(response);
-      expect(context.getResponse()).toBe(response);
+    it('should set non null response', () => {
+      subRequestRetryContext.setResponse(subRequestRetryDataDataProvider.response);
+      expect(subRequestRetryContext.getResponse()).toContain(subRequestRetryDataDataProvider.response);
+    });
+
+    it('should set null response', () => {
+      const response = null;
+      subRequestRetryContext.setResponse(response);
+      expect(subRequestRetryContext.getResponse()).toEqual(response);
     });
   });
 
   describe('setError', () => {
-    it('should set error correctly', () => {
-      const error = new Error('Test Error');
-      context.setError(error);
-      expect(context.getError()).toBe(error);
+    it('should set non null error', () => {
+      subRequestRetryContext.setError(subRequestRetryDataDataProvider.error);
+      expect(subRequestRetryContext.getError()).toBe(subRequestRetryDataDataProvider.error);
     });
   });
 
   describe('enableLogs', () => {
     it('should enable logs', () => {
-      context.enableLogs();
-      expect(context.areLogsEnabled()).toBe(true);
+      subRequestRetryContext.enableLogs();
+      expect(subRequestRetryContext.areLogsEnabled()).toBe(true);
     });
   });
 
   describe('disableLogs', () => {
     it('should disable logs', () => {
-      context.disableLogs();
-      expect(context.areLogsEnabled()).toBe(false);
+      subRequestRetryContext.disableLogs();
+      expect(subRequestRetryContext.areLogsEnabled()).toBe(false);
     });
   });
 
   describe('getRequestData', () => {
-    it('should construct and return SubRequestRetryData object with correct data', () => {
-      const response = new Response(null, { status: 204 });
-      context.setResponse(response);
+    it('should correctly return SubRequestRetryData', () => {
+      const response = new Response('', { status: 200 });
+      subRequestRetryContext.setResponse(response);
 
-      const subRequestRetryData: SubRequestRetryData = context.getRequestData();
-      expect(subRequestRetryData.id).toBe(`${accountId}/${requestId}/${subRequestId}/${subRequestId}`);
-      expect(subRequestRetryData.request).toBe(request);
-      expect(subRequestRetryData.response).toBe(response);
-      expect(subRequestRetryData.error).toBe(null);
-      expect(subRequestRetryData.metadata.id).toBe(subRequestId);
-      expect(subRequestRetryData.metadata.requestId).toBe(requestId);
-      expect(subRequestRetryData.metadata.url).toBe(request.url);
-      expect(subRequestRetryData.metadata.method).toBe(request.method);
-      expect(subRequestRetryData.metadata.status).toBe(response.status);
-      expect(subRequestRetryData.metadata.success).toBe(response.ok);
-      expect(subRequestRetryData.metadata.duration).toBeDefined();
+      const subRequestRetryData: SubRequestRetryData = subRequestRetryContext.getRequestData();
+      const metaData = subRequestRetryData.getMetaData();
+      expect(subRequestRetryData.getId()).toBe(
+        `${subRequestRetryContext.getAccountId()}/${subRequestRetryContext.getRequestId()}/${subRequestRetryContext.getSubRequestId()}/${subRequestRetryContext.getId()}`,
+      );
+      expect(subRequestRetryData.getRequest()).toContain(subRequestRetryContext.getRequest());
+      expect(subRequestRetryData.getResponse()).toContain(subRequestRetryContext.getResponse());
+      expect(subRequestRetryData.getError()).toBe(null);
+      expect(metaData.id).toBe(subRequestRetryContext.getId());
+      expect(metaData.requestId).toBe(subRequestRetryContext.getRequestId());
+      expect(metaData.subRequestId).toBe(subRequestRetryContext.getSubRequestId());
+      expect(metaData.url).toBe(subRequestRetryContext.getRequest().url);
+      expect(metaData.method).toBe(subRequestRetryContext.getRequest().method);
+      expect(metaData.status).toBe(subRequestRetryContext.getResponse()!.status);
+      expect(metaData.success).toBe(subRequestRetryContext.getResponse()!.ok);
+      expect(metaData.duration).toBeDefined();
     });
-  });
 
-  it('should return the expected values from getter methods', () => {
-    expect(context.getAccountId()).toBe(accountId);
-    expect(context.getRequestId()).toBe(requestId);
-    expect(context.getSubRequestId()).toBe(subRequestId);
-    expect(context.getSubRequestRetryId()).toBeDefined();
+    it('should throw error due to missing response', async () => {
+      const responseCallback = async (): Promise<SubRequestRetryData> => {
+        return subRequestRetryContext.getRequestData();
+      };
+
+      await expect(responseCallback).rejects.toThrowError(Error);
+    });
   });
 });

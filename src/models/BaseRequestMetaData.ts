@@ -1,6 +1,5 @@
-export interface SubMetadata {
+export interface BaseRequestMetaData {
   id: string;
-  requestId: string;
   date: Date;
   url: string;
   method: string;

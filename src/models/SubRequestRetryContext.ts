@@ -1,6 +1,5 @@
 import { DataGenerationService } from '../services/DataGenerationService';
-import { SubMetadata } from './SubMetadata';
-import { SubRequestRetryData } from './SubRequestRetryData';
+import { SubRequestRetryData, SubrequestRetryMetaData } from './SubRequestRetryData';
 
 export class SubRequestRetryContext {
   private readonly dataGenerationService = new DataGenerationService();
@@ -8,7 +7,7 @@ export class SubRequestRetryContext {
   private readonly accountId: string;
   private readonly requestId: string;
   private readonly subRequestId: string;
-  private readonly subRequestRetryId: string;
+  private readonly id: string;
   private readonly startDate: Date = new Date();
 
   private response: Response | null = null;
@@ -28,16 +27,24 @@ export class SubRequestRetryContext {
     requestId: string;
     subRequestId: string;
   }) {
-    this.subRequestRetryId = this.generateRequestId();
-    this.request = request;
+    this.id = this.generateRequestId();
+    this.request = request.clone();
     this.accountId = accountId;
     this.requestId = requestId;
     this.subRequestId = subRequestId;
     this.startDate = new Date();
   }
 
+  public getRequest(): Request {
+    return this.request;
+  }
+
   public setResponse(response: Response | null): void {
-    this.response = response;
+    if (response !== null) {
+      this.response = response.clone();
+    } else {
+      this.response = null;
+    }
   }
 
   public getResponse(): Response | null {
@@ -80,32 +87,33 @@ export class SubRequestRetryContext {
     return this.subRequestId;
   }
 
-  public getSubRequestRetryId(): string {
-    return this.subRequestRetryId;
+  public getId(): string {
+    return this.id;
   }
 
   public getRequestData(): SubRequestRetryData {
-    if (this.response === null) {
+    if (this.response === null || this.response === undefined) {
       throw new Error('Response is not set');
     }
 
-    const id = `${this.accountId}/${this.requestId}/${this.subRequestId}/${this.subRequestId}`;
-    const metadata: SubMetadata = {
-      id: this.subRequestId,
+    const id = `${this.accountId}/${this.requestId}/${this.subRequestId}/${this.id}`;
+    const metaData: SubrequestRetryMetaData = {
+      id: this.id,
       requestId: this.requestId,
+      subRequestId: this.subRequestId,
       date: this.startDate,
-      url: this.request.url,
-      method: this.request.method,
+      url: this.getRequest().url,
+      method: this.getRequest().method,
       status: this.response.status,
       success: this.response.ok,
       duration: this.getDuration(this.startDate, new Date()),
     };
     const requestData = new SubRequestRetryData({
       id,
-      request: this.request,
-      response: this.response,
+      request: this.getRequest(),
+      response: this.getResponse()!,
       error: this.error,
-      metadata,
+      metaData,
       logsEnabled: this.logsEnabled,
     });
 
