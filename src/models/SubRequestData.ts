@@ -33,8 +33,8 @@ export class SubRequestData implements BaseRequestData<SubrequestMetaData> {
     logsEnabled: boolean;
   }) {
     this.id = id;
-    this.response = response.clone();
-    this.request = request.clone();
+    this.response = response;
+    this.request = request;
     this.retries = retries;
     this.error = error;
     this.metaData = metaData;

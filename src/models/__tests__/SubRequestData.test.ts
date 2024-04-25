@@ -18,9 +18,6 @@ describe('SubRequestData', () => {
       expect(subRequestData.getRetries()[0]).toContain(dataProvider.subRequestRetryDataProvider.data);
       expect(subRequestData.areLogsEnabled()).toEqual(dataProvider.logsEnabled);
 
-      await dataProvider.request.text();
-      await dataProvider.response.text();
-
       await subRequestData.getRequest().text();
       await subRequestData.getResponse().text();
 

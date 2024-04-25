@@ -80,7 +80,7 @@ export async function fetchRetry(
 
   const status = res.status;
 
-  if ((status < 200 || status >= 400) && currentRetryAttempt < maxRetryAttempts) {
+  if (((status >= 500 && status < 599) || status === 429) && currentRetryAttempt < maxRetryAttempts) {
     return await fetchRetry(request, undefined, {
       subRequestContext,
       currentRetryAttempt,

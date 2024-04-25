@@ -17,9 +17,6 @@ describe('RequestData', () => {
       expect(requestData.areLogsEnabled()).toEqual(dataProvider.logsEnabled);
       expect(requestData.getProductIds()).toEqual(dataProvider.productIds);
 
-      await dataProvider.request.text();
-      await dataProvider.response.text();
-
       await requestData.getRequest().text();
       await requestData.getResponse().text();
 
