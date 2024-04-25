@@ -30,8 +30,8 @@ export class SubRequestRetryData implements BaseRequestData<SubrequestRetryMetaD
     logsEnabled: boolean;
   }) {
     this.id = id;
-    this.response = response.clone();
-    this.request = request.clone();
+    this.response = response;
+    this.request = request;
     this.error = error;
     this.metaData = metaData;
     this.logsEnabled = logsEnabled;
@@ -42,11 +42,11 @@ export class SubRequestRetryData implements BaseRequestData<SubrequestRetryMetaD
   }
 
   public getRequest(): Request {
-    return this.request.clone();
+    return this.request;
   }
 
   public getResponse(): Response {
-    return this.response.clone();
+    return this.response;
   }
 
   public getError(): Error | null {

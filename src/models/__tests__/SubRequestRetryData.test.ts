@@ -14,9 +14,6 @@ describe('SubRequestRetryContext', () => {
       expect(subRequestRetryData.getMetaData()).toEqual(dataProvider.metaData);
       expect(subRequestRetryData.areLogsEnabled()).toEqual(dataProvider.logsEnabled);
 
-      await dataProvider.request.text();
-      await dataProvider.response.text();
-
       await subRequestRetryData.getRequest().text();
       await subRequestRetryData.getResponse().text();
     });

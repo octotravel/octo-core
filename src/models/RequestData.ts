@@ -48,8 +48,8 @@ export class RequestData implements BaseRequestData<RequestMetaData> {
     productIds: string[];
   }) {
     this.id = id;
-    this.request = request.clone();
-    this.response = response.clone();
+    this.request = request;
+    this.response = response;
     this.error = error;
     this.metaData = metaData;
     this.logsEnabled = logsEnabled;

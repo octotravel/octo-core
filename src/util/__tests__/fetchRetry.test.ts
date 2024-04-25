@@ -68,16 +68,6 @@ describe('fetchRetry', () => {
           expect(response.status).toBe(200);
         });
 
-        it('should fail after three retries with client error response', async () => {
-          global.fetch = vi
-            .fn()
-            .mockReturnValueOnce(Promise.resolve(new Response('403 Forbidden', { status: 403 })))
-            .mockReturnValueOnce(Promise.resolve(new Response('401 Unauthorized', { status: 401 })))
-            .mockReturnValue(Promise.resolve(new Response('400 Bad Request', { status: 400 })));
-          response = await fetchRetry(input, init, { retryDelayMultiplierInMs: RETRY_DELAY_MULTIPLIER_IN_MS });
-          expect(response.status).toBe(400);
-        });
-
         it('should fail after three retries with server error response', async () => {
           global.fetch = vi
             .fn()
@@ -298,16 +288,6 @@ describe('fetchRetry', () => {
           expect(response.status).toBe(200);
         });
 
-        it('should fail after three retries with client error response', async () => {
-          global.fetch = vi
-            .fn()
-            .mockReturnValueOnce(Promise.resolve(new Response('403 Forbidden', { status: 403 })))
-            .mockReturnValueOnce(Promise.resolve(new Response('401 Unauthorized', { status: 401 })))
-            .mockReturnValue(Promise.resolve(new Response('400 Bad Request', { status: 400 })));
-          response = await fetchRetry(input, init, { retryDelayMultiplierInMs: RETRY_DELAY_MULTIPLIER_IN_MS });
-          expect(response.status).toBe(400);
-        });
-
         it('should fail after three retries with server error response', async () => {
           global.fetch = vi
             .fn()
@@ -496,16 +476,6 @@ describe('fetchRetry', () => {
           expect(response.status).toBe(200);
         });
 
-        it('should fail after three retries with client error response', async () => {
-          global.fetch = vi
-            .fn()
-            .mockReturnValueOnce(Promise.resolve(new Response('403 Forbidden', { status: 403 })))
-            .mockReturnValueOnce(Promise.resolve(new Response('401 Unauthorized', { status: 401 })))
-            .mockReturnValue(Promise.resolve(new Response('400 Bad Request', { status: 400 })));
-          response = await fetchRetry(input, init, { retryDelayMultiplierInMs: RETRY_DELAY_MULTIPLIER_IN_MS });
-          expect(response.status).toBe(400);
-        });
-
         it('should fail after three retries with server error response', async () => {
           global.fetch = vi
             .fn()
@@ -667,16 +637,6 @@ describe('fetchRetry', () => {
             .mockReturnValue(Promise.resolve(new Response('{}', { status: 200 })));
           response = await fetchRetry(input, init, { retryDelayMultiplierInMs: RETRY_DELAY_MULTIPLIER_IN_MS });
           expect(response.status).toBe(200);
-        });
-
-        it('should fail after three retries with client error response', async () => {
-          global.fetch = vi
-            .fn()
-            .mockReturnValueOnce(Promise.resolve(new Response('403 Forbidden', { status: 403 })))
-            .mockReturnValueOnce(Promise.resolve(new Response('401 Unauthorized', { status: 401 })))
-            .mockReturnValue(Promise.resolve(new Response('400 Bad Request', { status: 400 })));
-          response = await fetchRetry(input, init, { retryDelayMultiplierInMs: RETRY_DELAY_MULTIPLIER_IN_MS });
-          expect(response.status).toBe(400);
         });
 
         it('should fail after three retries with server error response', async () => {
