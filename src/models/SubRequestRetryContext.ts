@@ -28,7 +28,7 @@ export class SubRequestRetryContext {
     subRequestId: string;
   }) {
     this.id = this.generateRequestId();
-    this.request = request.clone();
+    this.request = request;
     this.accountId = accountId;
     this.requestId = requestId;
     this.subRequestId = subRequestId;
@@ -40,11 +40,7 @@ export class SubRequestRetryContext {
   }
 
   public setResponse(response: Response | null): void {
-    if (response !== null) {
-      this.response = response.clone();
-    } else {
-      this.response = null;
-    }
+    this.response = response;
   }
 
   public getResponse(): Response | null {

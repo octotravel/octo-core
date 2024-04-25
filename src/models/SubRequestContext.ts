@@ -21,7 +21,7 @@ export class SubRequestContext {
     this.subRequestId = this.generateRequestId();
     this.accountId = accountId;
     this.requestId = requestId;
-    this.request = request.clone();
+    this.request = request;
     this.startDate = new Date();
   }
 
@@ -30,11 +30,7 @@ export class SubRequestContext {
   }
 
   public setResponse(response: Response | null): void {
-    if (response !== null) {
-      this.response = response.clone();
-    } else {
-      this.response = null;
-    }
+    this.response = response;
   }
 
   public getResponse(): Response | null {

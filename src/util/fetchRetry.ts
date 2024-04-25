@@ -39,14 +39,12 @@ export async function fetchRetry(
 
   if (currentRetryAttempt > 0) {
     if (subRequestContext !== null) {
-      if (subRequestContext !== null) {
-        subRequestRetryContext = new SubRequestRetryContext({
-          request,
-          accountId: subRequestContext.getAccountId(),
-          requestId: subRequestContext.getRequestId(),
-          subRequestId: subRequestContext.getId(),
-        });
-      }
+      subRequestRetryContext = new SubRequestRetryContext({
+        request,
+        accountId: subRequestContext.getAccountId(),
+        requestId: subRequestContext.getRequestId(),
+        subRequestId: subRequestContext.getId(),
+      });
     }
 
     await new Promise((resolve) => setTimeout(resolve, (currentRetryAttempt + 1) * retryDelayMultiplierInMs));

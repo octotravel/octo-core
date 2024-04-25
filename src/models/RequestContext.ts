@@ -40,7 +40,7 @@ export class RequestContext {
     environment?: Environment;
   }) {
     this.requestId = this.dataGenerationService.generateUUID();
-    this.request = request.clone();
+    this.request = request;
     this.date = new Date();
     this.accountId = connection?.accountId ?? accountId ?? null;
     this.connection = connection ?? null;
@@ -65,7 +65,7 @@ export class RequestContext {
   };
 
   public setResponse(response: Response | null): void {
-    this.response = response?.clone() ?? null;
+    this.response = response;
   }
 
   public getConnection = <T extends BaseConnection>(): T => {
