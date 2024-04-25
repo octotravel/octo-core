@@ -79,8 +79,6 @@ export async function fetchRetry(
   const status = res.status;
 
   if (((status >= 500 && status < 599) || status === 429) && currentRetryAttempt < maxRetryAttempts) {
-    // When returning response from a retry, we need to consume the previous response object as it is not used anywhere
-    res.text();
     return await fetchRetry(request, undefined, {
       subRequestContext,
       currentRetryAttempt,

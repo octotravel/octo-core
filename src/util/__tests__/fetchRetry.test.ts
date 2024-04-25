@@ -126,12 +126,6 @@ describe('fetchRetry', () => {
             const consumedRetryRequest = await subrequestRetryData.getRequest().text();
             const consumedRetryResponse = await subrequestRetryData.getResponse().text();
           }
-
-          const consumedRequest = await request.text();
-
-          if (response !== undefined) {
-            const consumedResponse = await response.text();
-          }
         });
 
         it('should succeed at first try with successful response', async () => {
@@ -346,11 +340,6 @@ describe('fetchRetry', () => {
             const consumedRetryRequest = await subrequestRetryData.getRequest().text();
             const consumedRetryResponse = await subrequestRetryData.getResponse().text();
           }
-
-          const consumedRequest = await request.text();
-          if (response !== undefined) {
-            const consumedResponse = await response.text();
-          }
         });
 
         it('should succeed at first try with successful response', async () => {
@@ -509,11 +498,6 @@ describe('fetchRetry', () => {
             const consumedRetryRequest = await subrequestRetryData.getRequest().text();
             const consumedRetryResponse = await subrequestRetryData.getResponse().text();
           }
-
-          const consumedRequest = await request.text();
-          if (response !== undefined) {
-            const consumedResponse = await response.text();
-          }
         });
 
         it('should succeed at first try with successful response', async () => {
@@ -671,11 +655,6 @@ describe('fetchRetry', () => {
           for (const subrequestRetryData of subrequestData.getRetries()) {
             const consumedRetryRequest = await subrequestRetryData.getRequest().text();
             const consumedRetryResponse = await subrequestRetryData.getResponse().text();
-          }
-
-          const consumedRequest = await request.text();
-          if (response !== undefined) {
-            const consumedResponse = await response.text();
           }
         });
 
