@@ -26,7 +26,6 @@ export * from './models/SubRequestRetryData';
 export * from './models/UnitItemsHelper';
 export * from './models/DefaultResponseHandler';
 export * from './models/PhoneParser';
-export * from './models/FinanceHelper';
 
 export * from './services/DataGenerationService';
 
