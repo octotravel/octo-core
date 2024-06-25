@@ -9,21 +9,21 @@ import { AlertData } from './AlertData';
 export class RequestContext {
   private readonly dataGenerationService = new DataGenerationService();
 
+  private readonly request: Request;
+  private requestId: string;
+  private response: Response | null = null;
   private readonly date: Date;
   private connection: BaseConnection | null = null;
   private accountId: string | null = null;
-  private readonly request: Request;
-  private requestId: string;
   private channel: string | null = null;
   private action = '';
   private logsEnabled = true;
   private _isRequestImportant = false;
   private alertData: AlertData | null = null;
-  private _corsEnabled = false;
-  private readonly subrequests: SubRequestData[] = [];
-  private readonly environment: Environment | null = null;
+  private corsEnabled = false;
+  private readonly subRequests: SubRequestData[] = [];
+  private readonly environment: Environment;
   private productIds: string[] = [];
-  private response: Response | null = null;
   private error: Error | null = null;
 
   public constructor({
@@ -39,60 +39,123 @@ export class RequestContext {
     accountId?: string;
     environment?: Environment;
   }) {
-    this.requestId = this.generateRequestId();
-    this.request = request;
+    this.requestId = this.dataGenerationService.generateUUID();
+    this.request = request.clone();
+    this.date = new Date();
     this.accountId = connection?.accountId ?? accountId ?? null;
     this.connection = connection ?? null;
-    this.date = new Date();
     this.channel = channel ?? null;
-    this.environment = environment ?? null;
+    this.environment = environment ?? Environment.LOCAL;
   }
+
+  public getRequest = (): Request => {
+    return this.request;
+  };
+
+  public setRequestId(requestId: string): void {
+    this.requestId = requestId;
+  }
+
+  public getRequestId(): string {
+    return this.requestId;
+  }
+
+  public getResponse = (): Response | null => {
+    return this.response;
+  };
 
   public setResponse(response: Response | null): void {
-    this.response = response;
+    this.response = response?.clone() ?? null;
   }
 
-  public getResponse(): Response | null {
-    return this.response;
-  }
+  public getConnection = <T extends BaseConnection>(): T => {
+    if (this.connection === null) {
+      throw new Error('connection is not set');
+    }
 
-  private readonly generateRequestId = (): string => this.dataGenerationService.generateUUID();
+    return this.connection as T;
+  };
 
   public setConnection = (connection: BaseConnection): void => {
     this.connection = connection;
   };
 
-  public setRequestId = (requestId: string): void => {
-    this.requestId = requestId;
-  };
+  public getAccountId(): string {
+    if (this.accountId === null) {
+      throw new Error('accountId is not set');
+    }
+
+    return this.accountId;
+  }
 
   public setAccountId = (accountId: string): void => {
     this.accountId = accountId;
   };
 
-  public setAction = (action: string): void => {
+  public setChannel(channel: string): void {
+    this.channel = channel;
+  }
+
+  public getChannel(): string {
+    if (this.channel === null) {
+      throw new Error('channel is not set');
+    }
+
+    return this.channel;
+  }
+
+  public setAction(action: string): void {
     this.action = action;
-  };
+  }
 
-  public enableLogs = (): void => {
+  public getAction(): string {
+    return this.action;
+  }
+
+  public enableLogs(): void {
     this.logsEnabled = true;
-  };
+  }
 
-  public setRequestAsImportant = (): void => {
+  public disableLogs(): void {
+    this.logsEnabled = false;
+  }
+
+  public areLogsEnabled(): boolean {
+    return this.logsEnabled;
+  }
+
+  public setRequestAsImportant(): void {
     this._isRequestImportant = true;
-  };
+  }
 
   public isRequestImportant = (): boolean => {
     return this._isRequestImportant;
   };
 
-  public enableCORS = (): void => {
-    this._corsEnabled = true;
-  };
+  public enableCors(): void {
+    this.corsEnabled = true;
+  }
 
-  public disableLogs = (): void => {
-    this.logsEnabled = false;
-  };
+  public areCorsEnabled(): boolean {
+    return this.corsEnabled;
+  }
+
+  public enableAlert(alertData: AlertData = new AlertData()): void {
+    this.alertData = alertData;
+    this.enableLogs();
+  }
+
+  public disableAlert(): void {
+    this.alertData = null;
+  }
+
+  public isAlertEnabled(): boolean {
+    return this.alertData !== null;
+  }
+
+  public getAlertData(): AlertData | null {
+    return this.alertData;
+  }
 
   public getError = (): Error | null => this.error;
 
@@ -104,65 +167,41 @@ export class RequestContext {
     this.productIds = productIds;
   };
 
-  public enableAlert = (alertData: AlertData = new AlertData()): void => {
-    this.alertData = alertData;
-    this.enableLogs();
-  };
+  public getProductIds(): string[] {
+    return this.productIds;
+  }
 
-  public disableAlert = (): void => {
-    this.alertData = null;
-  };
+  public getEnvironment(): Environment {
+    return this.environment;
+  }
 
-  public getAlertData = (): AlertData | null => this.alertData;
-
-  public getRequestId = (): string => this.requestId;
-
-  public setChannel = (channel: string): void => {
-    this.channel = channel;
-  };
-
-  public getChannel = (): string => this.channel!;
-
-  public isAlertEnabled = (): boolean => this.alertData !== null;
-
-  public getConnection = <T extends BaseConnection>(): T => {
-    if (this.connection === null) {
-      throw new Error('connection is not set');
-    }
-    return this.connection as T;
-  };
-
-  public getAccountId = (): string => this.accountId!;
-
-  public getRequest = (): Request => this.request;
-
-  public getAction = (): string => this.action;
-
-  private readonly getDuration = (start: Date, end: Date): number => {
+  private getDuration(start: Date, end: Date): number {
     return (end.getTime() - start.getTime()) / 1000;
-  };
+  }
 
-  public getRequestDuration = (): number => this.getDuration(this.date, new Date());
+  public getDate(): Date {
+    return new Date(this.date.getTime());
+  }
 
-  public getRequestDurationMilliseconds = (): number => {
-    const milliseconds = Math.ceil(this.getRequestDuration() * 100);
+  public getRequestDuration(date: Date): number {
+    return this.getDuration(this.date, date);
+  }
+
+  public getRequestDurationInMs(date: Date): number {
+    const milliseconds = Math.ceil(this.getRequestDuration(date) * 1000);
     if (milliseconds < 1) {
       return 1;
     } else {
       return milliseconds;
     }
-  };
+  }
 
   public addSubrequest(data: SubRequestData): void {
-    this.subrequests.push(data);
+    this.subRequests.push(data);
   }
 
-  public getSubrequests(): SubRequestData[] {
-    return this.subrequests;
-  }
-
-  public get corsEnabled(): boolean {
-    return this._corsEnabled;
+  public getSubRequests(): SubRequestData[] {
+    return this.subRequests;
   }
 
   public getRequestData = (): RequestData => {
@@ -179,35 +218,37 @@ export class RequestContext {
       name: this.connection?.name ?? null,
       endpoint: this.connection?.endpoint ?? null,
       account: this.accountId,
-      environment: this.environment ?? Environment.LOCAL,
+      environment: this.environment,
     };
 
-    const metadata: RequestMetaData = {
-      id: this.requestId ?? '',
+    const metaData: RequestMetaData = {
+      id: this.getRequestId(),
       date: this.date,
       connection: connectionMetaData,
-      action: this.action,
+      action: this.getAction(),
+      url: this.getRequest().url,
+      method: this.getRequest().method,
       status: reponse.status,
       success: reponse.ok,
       duration: this.getDuration(this.date, new Date()),
-      environment: this.environment ?? Environment.LOCAL,
+      environment: this.environment,
     };
 
     if (this.error) {
       if (this.error instanceof HttpError) {
-        metadata.status = this.error.statusLog;
-        metadata.success = this.error.statusLog >= 200 && this.error.statusLog < 300;
+        metaData.status = this.error.statusLog;
+        metaData.success = this.error.statusLog >= 200 && this.error.statusLog < 300;
       }
     }
 
     const requestData = new RequestData({
       id,
       request: this.getRequest(),
-      metadata,
-      response: reponse,
+      metaData,
+      response: this.getResponse()!,
       error: this.error,
       logsEnabled: this.logsEnabled,
-      subrequests: this.subrequests,
+      subRequests: this.subRequests,
       productIds: this.productIds,
     });
 

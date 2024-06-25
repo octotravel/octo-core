@@ -29,29 +29,37 @@ export async function fetchRetry(
     retryDelayMultiplierInMs = DEFAULT_RETRY_DELAY_MULTIPLIER_IN_MS,
   } = options;
   let subRequestRetryContext: SubRequestRetryContext | null = null;
+  let request: Request;
+
+  if (typeof input === 'string' || input instanceof String) {
+    request = new Request(input, init);
+  } else {
+    request = input;
+  }
 
   if (currentRetryAttempt > 0) {
     if (subRequestContext !== null) {
-      const request: Request = input instanceof Request ? input : new Request(input, init);
-
-      subRequestRetryContext = new SubRequestRetryContext({
-        request,
-        accountId: subRequestContext.getAccountId(),
-        requestId: subRequestContext.getRequestId(),
-        subRequestId: subRequestContext.getId(),
-      });
+      if (subRequestContext !== null) {
+        subRequestRetryContext = new SubRequestRetryContext({
+          request,
+          accountId: subRequestContext.getAccountId(),
+          requestId: subRequestContext.getRequestId(),
+          subRequestId: subRequestContext.getId(),
+        });
+      }
     }
 
     await new Promise((resolve) => setTimeout(resolve, (currentRetryAttempt + 1) * retryDelayMultiplierInMs));
   }
-
   let res: Response | undefined;
   let error: Error | null = null;
 
   try {
-    res = await fetch(input, init);
+    res = await fetch(request.clone(), init);
   } catch (e: unknown) {
-    res = new Response(null, { status: 500, statusText: 'Cant get any response data, something went horrinly wrong.' });
+    res = new Response(JSON.stringify({ error: 'Cant get any response data, something went horribly wrong.' }), {
+      status: 500,
+    });
 
     if (e instanceof Error) {
       error = e;
@@ -70,24 +78,18 @@ export async function fetchRetry(
 
   currentRetryAttempt++;
 
-  if (res === undefined && currentRetryAttempt < maxRetryAttempts) {
-    return await fetchRetry(input, init, {
-      subRequestContext,
-      currentRetryAttempt,
-      maxRetryAttempts,
-      retryDelayMultiplierInMs,
-    });
-  }
-
   const status = res.status;
 
-  if ((status < 200 || status >= 400) && currentRetryAttempt < maxRetryAttempts) {
-    return await fetchRetry(input, init, {
+  if (((status >= 500 && status < 599) || status === 429) && currentRetryAttempt < maxRetryAttempts) {
+    return await fetchRetry(request, undefined, {
       subRequestContext,
       currentRetryAttempt,
       maxRetryAttempts,
       retryDelayMultiplierInMs,
     });
+  } else {
+    // Retry is not needed anymore, so we can consume the request object
+    request.text();
   }
 
   if (error !== null) {

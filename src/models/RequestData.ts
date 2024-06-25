@@ -1,4 +1,5 @@
-import { BaseRequestData, IBaseRequestData } from './BaseRequestData';
+import { BaseRequestData } from './BaseRequestData';
+import { BaseRequestMetaData } from './BaseRequestMetaData';
 import { Environment } from './Config';
 import { SubRequestData } from './SubRequestData';
 
@@ -11,54 +12,80 @@ export interface ConnectionMetaData {
   environment: Environment;
 }
 
-export interface RequestMetaData {
-  id: string;
-  date: Date;
+export interface RequestMetaData extends BaseRequestMetaData {
   connection: ConnectionMetaData;
   action: string;
-  status: number;
-  success: boolean;
-  duration: number;
   environment: Environment;
 }
 
-export class RequestData extends BaseRequestData implements IBaseRequestData {
-  public id: string;
-  public request: Request;
-  public response: Response;
-  public metadata: RequestMetaData;
-  public error: Error | null = null;
-  public logsEnabled: boolean;
-  public subrequests: SubRequestData[] = [];
-  public productIds: string[] = [];
+export class RequestData implements BaseRequestData<RequestMetaData> {
+  private readonly id: string;
+  private readonly request: Request;
+  private readonly response: Response;
+  private readonly metaData: RequestMetaData;
+  private readonly error: Error | null = null;
+  private readonly subRequests: SubRequestData[] = [];
+  private readonly logsEnabled: boolean;
+  private readonly productIds: string[] = [];
 
   public constructor({
     id,
     request,
     response,
     error,
-    metadata,
+    metaData,
     logsEnabled,
-    subrequests,
+    subRequests,
     productIds,
   }: {
     id: string;
     request: Request;
     response: Response;
     error: Error | null;
-    metadata: RequestMetaData;
+    metaData: RequestMetaData;
     logsEnabled: boolean;
-    subrequests: SubRequestData[];
+    subRequests: SubRequestData[];
     productIds: string[];
   }) {
-    super();
     this.id = id;
     this.request = request;
     this.response = response;
     this.error = error;
-    this.metadata = metadata;
+    this.metaData = metaData;
     this.logsEnabled = logsEnabled;
-    this.subrequests = subrequests;
+    this.subRequests = subRequests;
     this.productIds = productIds;
+  }
+
+  public getId(): string {
+    return this.id;
+  }
+
+  public getRequest(): Request {
+    return this.request;
+  }
+
+  public getResponse(): Response {
+    return this.response;
+  }
+
+  public getError(): Error | null {
+    return this.error;
+  }
+
+  public getSubRequests(): SubRequestData[] {
+    return this.subRequests;
+  }
+
+  public getMetaData(): RequestMetaData {
+    return this.metaData;
+  }
+
+  public areLogsEnabled(): boolean {
+    return this.logsEnabled;
+  }
+
+  public getProductIds(): string[] {
+    return this.productIds;
   }
 }

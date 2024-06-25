@@ -1,14 +1,10 @@
-export interface IBaseRequestData {
-  id: string;
-  request: Request;
-  response: Response;
-  metadata: any;
-  logsEnabled: boolean;
-  error: Error | null;
-}
+import { BaseRequestMetaData } from './BaseRequestMetaData';
 
-export abstract class BaseRequestData {
-  protected getDuration = (start: Date, end: Date): number => {
-    return (end.getTime() - start.getTime()) / 1000;
-  };
+export interface BaseRequestData<MetaData extends BaseRequestMetaData> {
+  getId: () => string;
+  getRequest: () => Request;
+  getResponse: () => Response;
+  getError: () => Error | null;
+  getMetaData: () => MetaData;
+  areLogsEnabled: () => boolean;
 }
