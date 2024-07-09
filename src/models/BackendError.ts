@@ -114,7 +114,7 @@ export class OctoInvalidBookingUUIDError extends OctoError {
 }
 
 export class OctoBadRequestError extends OctoError {
-  public constructor(errorMessage: string) {
+  public constructor(errorMessage?: string) {
     const body = {
       error: BAD_REQUEST,
       errorMessage: errorMessage ?? ERROR_MESSAGE_BAD_REQUEST,
