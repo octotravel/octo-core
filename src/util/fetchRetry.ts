@@ -8,6 +8,7 @@ const FETCH_RETRY_DEFAULT_OPTIONS = {
   currentRetryAttempt: 0,
   maxRetryAttempts: DEFAULT_MAX_RETRY_ATTEMPTS,
   retryDelayMultiplierInMs: DEFAULT_RETRY_DELAY_MULTIPLIER_IN_MS,
+  shouldForceRetry: (status: number, response: Response) => false,
 };
 
 export interface FetchRetryOptions {
@@ -15,6 +16,7 @@ export interface FetchRetryOptions {
   currentRetryAttempt?: number;
   maxRetryAttempts?: number;
   retryDelayMultiplierInMs?: number;
+  shouldForceRetry: (status: number, response: Response) => boolean;
 }
 
 export async function fetchRetry(
@@ -27,6 +29,7 @@ export async function fetchRetry(
     currentRetryAttempt = 0,
     maxRetryAttempts = DEFAULT_MAX_RETRY_ATTEMPTS,
     retryDelayMultiplierInMs = DEFAULT_RETRY_DELAY_MULTIPLIER_IN_MS,
+    shouldForceRetry = (status: number, response: Response) => false,
   } = options;
   let subRequestRetryContext: SubRequestRetryContext | null = null;
   let request: Request;
@@ -80,12 +83,16 @@ export async function fetchRetry(
 
   const status = res.status;
 
-  if (((status >= 500 && status < 599) || status === 429) && currentRetryAttempt < maxRetryAttempts) {
+  if (
+    ((status >= 500 && status < 599) || status === 429 || shouldForceRetry(status, res.clone())) &&
+    currentRetryAttempt < maxRetryAttempts
+  ) {
     return await fetchRetry(request, undefined, {
       subRequestContext,
       currentRetryAttempt,
       maxRetryAttempts,
       retryDelayMultiplierInMs,
+      shouldForceRetry,
     });
   } else {
     // Retry is not needed anymore, so we can consume the request object
