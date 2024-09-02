@@ -4,7 +4,7 @@ import { SubRequestRetryContext } from '../models/SubRequestRetryContext';
 const DEFAULT_MAX_RETRY_ATTEMPTS = 3;
 const DEFAULT_RETRY_DELAY_MULTIPLIER_IN_MS = 1000;
 const FETCH_RETRY_DEFAULT_OPTIONS = {
-  subrequestContext: null,
+  subRequestContext: null,
   currentRetryAttempt: 0,
   maxRetryAttempts: DEFAULT_MAX_RETRY_ATTEMPTS,
   retryDelayMultiplierInMs: DEFAULT_RETRY_DELAY_MULTIPLIER_IN_MS,
@@ -16,7 +16,7 @@ export interface FetchRetryOptions {
   currentRetryAttempt?: number;
   maxRetryAttempts?: number;
   retryDelayMultiplierInMs?: number;
-  shouldForceRetry: (status: number, response: Response) => boolean;
+  shouldForceRetry?: (status: number, response: Response) => boolean;
 }
 
 export async function fetchRetry(
