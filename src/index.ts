@@ -41,3 +41,4 @@ export * from './types/Request';
 export * from './types/Response';
 
 export * from './util/fetchRetry';
+export * from './util/SchemaValidator';
