@@ -1,6 +1,6 @@
 {
   "name": "@octocloud/core",
-  "version": "1.0.61",
+  "version": "1.0.62",
   "license": "ISC",
   "author": "",
   "exports": {
@@ -43,7 +43,7 @@
   },
   "devDependencies": {
     "@octocloud/generators": "^1.0.5",
-    "@octocloud/types": "^1.5.29",
+    "@octocloud/types": "octotravel/octo-types#feat/yup",
     "@types/uuid": "8.3.4",
     "@typescript-eslint/eslint-plugin": "6.18.1",
     "@typescript-eslint/parser": "6.18.1",
@@ -65,7 +65,8 @@
     "unbuild": "2.0.0",
     "vite": "4.5.2",
     "vitest": "0.34.6",
-    "vitest-mock-extended": "1.3.1"
+    "vitest-mock-extended": "1.3.1",
+    "yup": "1.4.0"
   },
   "lint-staged": {
     "./package.json": "npm run format:package",

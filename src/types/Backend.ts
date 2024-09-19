@@ -41,7 +41,7 @@ import {
   updateBookingBodySchema,
   updateBookingPathParamsSchema,
 } from '@octocloud/types';
-import * as yup from 'yup';
+import { ObjectSchema } from 'yup';
 
 export interface CoreParams {
   ctx: RequestContext;
@@ -56,12 +56,12 @@ export interface BackendParams extends CoreParams {
 // deno-lint-ignore no-empty-interface
 export interface GetBookingSchema extends GetBookingPathParamsSchema {}
 
-export const getBookingSchema: yup.SchemaOf<GetBookingSchema> = getBookingPathParamsSchema.clone();
+export const getBookingSchema: ObjectSchema<GetBookingSchema> = getBookingPathParamsSchema.clone();
 
 // deno-lint-ignore no-empty-interface
 export interface GetBookingsSchema extends GetBookingsQueryParamsSchema {}
 
-export const getBookingsSchema: yup.SchemaOf<GetBookingsSchema> = getBookingsQueryParamsSchema.clone();
+export const getBookingsSchema: ObjectSchema<GetBookingsSchema> = getBookingsQueryParamsSchema.clone();
 
 // deno-lint-ignore no-empty-interface
 export interface CreateBookingSchema extends CreateBookingBodySchema {}
@@ -70,31 +70,23 @@ export const createBookingSchema = createBookingBodySchema.clone();
 
 export interface ConfirmBookingSchema extends ConfirmBookingPathParamsSchema, ConfirmBookingBodySchema {}
 
-export const confirmBookingSchema: yup.SchemaOf<ConfirmBookingSchema> = yup.object().shape({
-  ...confirmBookingPathParamsSchema.fields,
-  ...confirmBookingBodySchema.fields,
-});
+export const confirmBookingSchema: ObjectSchema<ConfirmBookingSchema> =
+  confirmBookingPathParamsSchema.concat(confirmBookingBodySchema);
 
 export interface UpdateBookingSchema extends UpdateBookingBodySchema, UpdateBookingPathParamsSchema {}
 
-export const updateBookingSchema: yup.SchemaOf<UpdateBookingSchema> = yup.object().shape({
-  ...updateBookingPathParamsSchema.fields,
-  ...updateBookingBodySchema.fields,
-});
+export const updateBookingSchema: ObjectSchema<UpdateBookingSchema> =
+  updateBookingPathParamsSchema.concat(updateBookingBodySchema);
 
 export interface CancelBookingSchema extends CancelBookingBodySchema, CancelBookingPathParamsSchema {}
 
-export const cancelBookingSchema: yup.SchemaOf<CancelBookingSchema> = yup.object().shape({
-  ...cancelBookingBodySchema.fields,
-  ...cancelBookingPathParamsSchema.fields,
-});
+export const cancelBookingSchema: ObjectSchema<CancelBookingSchema> =
+  cancelBookingBodySchema.concat(cancelBookingPathParamsSchema);
 
 export interface ExtendBookingSchema extends ExtendBookingBodySchema, ExtendBookingPathParamsSchema {}
 
-export const extendBookingSchema: yup.SchemaOf<ExtendBookingSchema> = yup.object().shape({
-  ...extendBookingBodySchema.fields,
-  ...extendBookingPathParamsSchema.fields,
-});
+export const extendBookingSchema: ObjectSchema<ExtendBookingSchema> =
+  extendBookingBodySchema.concat(extendBookingPathParamsSchema);
 
 export enum LookupType {
   email = 'email',

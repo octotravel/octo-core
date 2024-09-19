@@ -1,4 +1,4 @@
-import * as yup from 'yup';
+import { AnySchema, mixed, object, ObjectSchema, string, ValidationError } from 'yup';
 import { HttpBadRequest } from '../models/Error';
 
 export enum BackendType {
@@ -8,21 +8,21 @@ export enum BackendType {
 }
 
 export interface OctoBackend {
-  type: BackendType;
+  type: BackendType.octo;
   endpoint: string;
   apiKey: string;
   supplierId: string;
 }
 
 export interface OctoBackendPatch {
-  type: BackendType;
+  type: BackendType.octo;
   endpoint?: string;
   apiKey?: string;
   supplierId?: string;
 }
 
 export interface AnchorBackend {
-  type: BackendType;
+  type: BackendType.anchor;
   endpoint: string;
   apiKey: string;
 }
@@ -67,68 +67,68 @@ export interface BaseConnectionPatch {
   supplierId?: string;
 }
 
-const octoBackendSchema: yup.SchemaOf<OctoBackend> = yup.object().shape({
-  type: yup.mixed().oneOf(Object.values(BackendType)).required(),
-  endpoint: yup.string().url().required(),
-  apiKey: yup.string().required(),
-  supplierId: yup.string().required(),
+const octoBackendSchema: ObjectSchema<OctoBackend> = object().shape({
+  type: string<BackendType.octo>().required(),
+  endpoint: string().url().required(),
+  apiKey: string().required(),
+  supplierId: string().required(),
 });
 
-const octoBackendPatchSchema: yup.SchemaOf<OctoBackendPatch> = yup.object().shape({
-  type: yup.mixed().oneOf(Object.values(BackendType)).required(),
-  endpoint: yup.string().url().optional(),
-  apiKey: yup.string().optional(),
-  supplierId: yup.string().optional(),
+const octoBackendPatchSchema: ObjectSchema<OctoBackendPatch> = object().shape({
+  type: string<BackendType.octo>().required(),
+  endpoint: string().url().optional(),
+  apiKey: string().optional(),
+  supplierId: string().optional(),
 });
 
-const anchorBackendSchema: yup.SchemaOf<AnchorBackend> = yup.object().shape({
-  type: yup.mixed().oneOf(Object.values(BackendType)).required(),
-  endpoint: yup.string().url().required(),
-  apiKey: yup.string().required(),
+const anchorBackendSchema: ObjectSchema<AnchorBackend> = object().shape({
+  type: string<BackendType.anchor>().required(),
+  endpoint: string().url().required(),
+  apiKey: string().required(),
 });
 
-const anchorBackendPatchSchema: yup.SchemaOf<AnchorBackendPatch> = yup.object().shape({
-  type: yup.mixed().oneOf(Object.values(BackendType)).required(),
-  endpoint: yup.string().url().optional(),
-  apiKey: yup.string().optional(),
+const anchorBackendPatchSchema: ObjectSchema<AnchorBackendPatch> = object().shape({
+  type: string<BackendType.anchor>().required(),
+  endpoint: string().url().optional(),
+  apiKey: string().optional(),
 });
 
-const cityconnectBackendSchema: yup.SchemaOf<CityConnectBackend> = yup.object().shape({
-  type: yup.mixed().oneOf(Object.values(BackendType)).required(),
-  endpoint: yup.string().url().required(),
-  username: yup.string().required(),
-  password: yup.string().required(),
+const cityconnectBackendSchema: ObjectSchema<CityConnectBackend> = object().shape({
+  type: string<BackendType.cityconnect>().required(),
+  endpoint: string().url().required(),
+  username: string().required(),
+  password: string().required(),
 });
 
-const cityconnectBackendPatchSchema: yup.SchemaOf<CityConnectBackendPatch> = yup.object().shape({
-  type: yup.mixed().oneOf(Object.values(BackendType)).required(),
-  endpoint: yup.string().url().optional(),
-  username: yup.string().optional(),
-  password: yup.string().optional(),
+const cityconnectBackendPatchSchema: ObjectSchema<CityConnectBackendPatch> = object().shape({
+  type: string<BackendType.cityconnect>().required(),
+  endpoint: string().url().optional(),
+  username: string().optional(),
+  password: string().optional(),
 });
 
-export const createConnectionSchema: yup.SchemaOf<BaseConnection> = yup.object().shape({
-  id: yup.string().defined(),
-  supplierId: yup.string().uuid().required(),
-  apiKey: yup.string().uuid().required(),
-  endpoint: yup.string().required(),
-  accountId: yup.string().uuid().required(),
-  name: yup.string().required(),
+export const createConnectionSchema: ObjectSchema<BaseConnection> = object().shape({
+  id: string().defined(),
+  supplierId: string().uuid().required(),
+  apiKey: string().uuid().required(),
+  endpoint: string().required(),
+  accountId: string().uuid().required(),
+  name: string().required(),
 });
 
-export const deleteConnectionSchema = yup.string().required();
+export const deleteConnectionSchema = string().required();
 
-export const getConnectionSchema = yup.string().required();
+export const getConnectionSchema = string().required();
 
-export const patchConnectionSchema: yup.SchemaOf<BaseConnectionPatch> = yup.object().shape({
-  id: yup.string().required(),
-  supplierId: yup.string().uuid().optional(),
-  apiKey: yup.string().uuid().optional(),
-  endpoint: yup.string().optional(),
-  name: yup.string().optional(),
+export const patchConnectionSchema: ObjectSchema<BaseConnectionPatch> = object().shape({
+  id: string().required(),
+  supplierId: string().uuid().optional(),
+  apiKey: string().uuid().optional(),
+  endpoint: string().optional(),
+  name: string().optional(),
 });
 
-export const validateSchema = async <T>(schema: yup.SchemaOf<T>, data: any): Promise<T> => {
+export const validateSchema = async <T>(schema: AnySchema<T>, data: any): Promise<T> => {
   await schema.validate(data);
   return schema.cast(data) as T;
 };
@@ -174,7 +174,7 @@ const validateBackendPatchSchema = async (backendType: BackendType, data: any): 
 /**
  * @throws HttpBadRequest when there is validation error
  */
-export const validateConnectionSchema = async <T>(schema: yup.SchemaOf<T>, data: any): Promise<T> => {
+export const validateConnectionSchema = async <T>(schema: AnySchema<T>, data: any): Promise<T> => {
   try {
     const connection = await validateSchema<T>(schema, data);
     const backend = await validateBackendSchema(data.backend.type, data.backend);
@@ -183,7 +183,7 @@ export const validateConnectionSchema = async <T>(schema: yup.SchemaOf<T>, data:
       backend,
     };
   } catch (err) {
-    if (err instanceof yup.ValidationError) {
+    if (err instanceof ValidationError) {
       throw new HttpBadRequest({ error: err.errors[0] });
     }
     throw err;
@@ -193,7 +193,7 @@ export const validateConnectionSchema = async <T>(schema: yup.SchemaOf<T>, data:
 /**
  * @throws HttpBadRequest when there is validation error
  */
-export const validateConnectionPatchSchema = async <T>(schema: yup.SchemaOf<T>, data: any): Promise<T> => {
+export const validateConnectionPatchSchema = async <T>(schema: AnySchema<T>, data: any): Promise<T> => {
   try {
     const connection = (await validateSchema<T>(schema, data)) as any;
     if (connection.backend) {
@@ -205,7 +205,7 @@ export const validateConnectionPatchSchema = async <T>(schema: yup.SchemaOf<T>, 
     }
     return connection;
   } catch (err) {
-    if (err instanceof yup.ValidationError) {
+    if (err instanceof ValidationError) {
       throw new HttpBadRequest({ error: err.errors[0] });
     }
     throw err;
