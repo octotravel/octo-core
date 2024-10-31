@@ -8,14 +8,14 @@ const FETCH_RETRY_DEFAULT_OPTIONS = {
   currentRetryAttempt: 0,
   maxRetryAttempts: DEFAULT_MAX_RETRY_ATTEMPTS,
   retryDelayMultiplierInMs: DEFAULT_RETRY_DELAY_MULTIPLIER_IN_MS,
-  fetchImplementation: async (input: string | URL | Request, init?: RequestInit) => {
+  fetchImplementation: async (input: string | URL | Request, init?: RequestInit): Promise<Response> => {
     if (input instanceof Request) {
       return await fetch(input.clone(), init);
     }
 
     return await fetch(input, init);
   },
-  shouldForceRetry: async (status: number, response: Response) => false,
+  shouldForceRetry: async (status: number, response: Response): Promise<boolean> => false,
 };
 
 export interface FetchRetryOptions {
@@ -37,7 +37,7 @@ export async function fetchRetry(
     currentRetryAttempt = 0,
     maxRetryAttempts = DEFAULT_MAX_RETRY_ATTEMPTS,
     retryDelayMultiplierInMs = DEFAULT_RETRY_DELAY_MULTIPLIER_IN_MS,
-    fetchImplementation = async (input: string | URL | Request, init?: RequestInit) => Response,
+    fetchImplementation = async (input: string | URL | Request, init?: RequestInit) => Promise<Response>,
     shouldForceRetry = async (status: number, response: Response) => false,
   } = options;
   let subRequestRetryContext: SubRequestRetryContext | null = null;
