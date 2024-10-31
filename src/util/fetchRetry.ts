@@ -8,6 +8,13 @@ const FETCH_RETRY_DEFAULT_OPTIONS = {
   currentRetryAttempt: 0,
   maxRetryAttempts: DEFAULT_MAX_RETRY_ATTEMPTS,
   retryDelayMultiplierInMs: DEFAULT_RETRY_DELAY_MULTIPLIER_IN_MS,
+  fetchImplementation: async (input: string | URL | Request, init?: RequestInit) => {
+    if (input instanceof Request) {
+      return await fetch(input.clone(), init);
+    }
+
+    return await fetch(input, init);
+  },
   shouldForceRetry: async (status: number, response: Response) => false,
 };
 
@@ -16,6 +23,7 @@ export interface FetchRetryOptions {
   currentRetryAttempt?: number;
   maxRetryAttempts?: number;
   retryDelayMultiplierInMs?: number;
+  fetchImplementation?: (input: string | URL | globalThis.Request, init?: RequestInit) => Promise<Response>;
   shouldForceRetry?: (status: number, response: Response) => Promise<boolean>;
 }
 
@@ -29,6 +37,7 @@ export async function fetchRetry(
     currentRetryAttempt = 0,
     maxRetryAttempts = DEFAULT_MAX_RETRY_ATTEMPTS,
     retryDelayMultiplierInMs = DEFAULT_RETRY_DELAY_MULTIPLIER_IN_MS,
+    fetchImplementation = async (input: string | URL | Request, init?: RequestInit) => Response,
     shouldForceRetry = async (status: number, response: Response) => false,
   } = options;
   let subRequestRetryContext: SubRequestRetryContext | null = null;
@@ -58,7 +67,7 @@ export async function fetchRetry(
   let error: Error | null = null;
 
   try {
-    res = await fetch(request.clone(), init);
+    res = (await fetchImplementation(request)) as Response;
   } catch (e: unknown) {
     res = new Response(JSON.stringify({ error: 'Cant get any response data, something went horribly wrong.' }), {
       status: 500,
