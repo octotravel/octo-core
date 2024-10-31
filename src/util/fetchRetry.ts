@@ -37,8 +37,10 @@ export async function fetchRetry(
     currentRetryAttempt = 0,
     maxRetryAttempts = DEFAULT_MAX_RETRY_ATTEMPTS,
     retryDelayMultiplierInMs = DEFAULT_RETRY_DELAY_MULTIPLIER_IN_MS,
-    fetchImplementation = async (input: string | URL | Request, init?: RequestInit) => Promise<Response>,
-    shouldForceRetry = async (status: number, response: Response) => false,
+    fetchImplementation = async (input: string | URL | Request, init?: RequestInit) =>
+      await FETCH_RETRY_DEFAULT_OPTIONS.fetchImplementation(input, init),
+    shouldForceRetry = async (status: number, response: Response) =>
+      await FETCH_RETRY_DEFAULT_OPTIONS.shouldForceRetry(status, response),
   } = options;
   let subRequestRetryContext: SubRequestRetryContext | null = null;
   let request: Request;
@@ -67,7 +69,7 @@ export async function fetchRetry(
   let error: Error | null = null;
 
   try {
-    res = (await fetchImplementation(request)) as Response;
+    res = await fetchImplementation(request);
   } catch (e: unknown) {
     res = new Response(JSON.stringify({ error: 'Cant get any response data, something went horribly wrong.' }), {
       status: 500,
