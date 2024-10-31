@@ -103,6 +103,7 @@ export async function fetchRetry(
       currentRetryAttempt,
       maxRetryAttempts,
       retryDelayMultiplierInMs,
+      fetchImplementation,
       shouldForceRetry,
     });
   } else {
