@@ -1,5 +1,5 @@
-import { DateHelper } from '../DateHelper';
 import { describe, expect, it } from 'vitest';
+import { DateHelper } from '../DateHelper';
 
 describe('DateHelper', () => {
   const date = '2023-12-01';
