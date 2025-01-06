@@ -108,7 +108,7 @@ describe('fetchRetry', () => {
         let subRequestContext: SubRequestContext;
 
         beforeEach(() => {
-          request = new Request(url, { method: RequestMethod.Get });
+          request = new Request(url, { method: RequestMethod.Get, body: null });
           subRequestContext = new SubRequestContext({
             request,
             accountId: '2635034e-3094-428b-b8f0-9d0cc0960c0c',
@@ -118,19 +118,38 @@ describe('fetchRetry', () => {
 
         afterEach(async () => {
           const subrequestData = subRequestContext.getRequestData();
+          const subrequestRequest = subrequestData.getRequest();
+          const subrequestResponse = subrequestData.getResponse();
 
-          const consumedSubrequestRequest = await subrequestData.getRequest().text();
-          const consumedSubrequestResponse = await subrequestData.getResponse().text();
+          const consumedSubrequestRequest = await subrequestRequest.text();
+          const consumedSubrequestResponse = await subrequestResponse.text();
+
+          if (subrequestRequest.body !== null) {
+            expect(subrequestRequest.bodyUsed).toBe(true);
+          }
+          expect(subrequestResponse.bodyUsed).toBe(true);
 
           for (const subrequestRetryData of subrequestData.getRetries()) {
-            const consumedRetryRequest = await subrequestRetryData.getRequest().text();
-            const consumedRetryResponse = await subrequestRetryData.getResponse().text();
+            const retryRequest = subrequestRetryData.getRequest();
+            const retryResponse = subrequestRetryData.getResponse();
+
+            const consumedRetryRequest = await retryRequest.text();
+            const consumedRetryResponse = await retryResponse.text();
+
+            if (retryRequest.body !== null) {
+              expect(retryRequest.bodyUsed).toBe(true);
+            }
+            expect(retryResponse.bodyUsed).toBe(true);
           }
 
           const consumedRequest = await request.text();
+          if (request.body !== null) {
+            expect(request.bodyUsed).toBe(true);
+          }
 
           if (response !== undefined) {
             const consumedResponse = await response.text();
+            expect(response.bodyUsed).toBe(true);
           }
         });
 
@@ -338,18 +357,38 @@ describe('fetchRetry', () => {
 
         afterEach(async () => {
           const subrequestData = subRequestContext.getRequestData();
+          const subrequestRequest = subrequestData.getRequest();
+          const subrequestResponse = subrequestData.getResponse();
 
-          const consumedSubrequestRequest = await subrequestData.getRequest().text();
-          const consumedSubrequestResponse = await subrequestData.getResponse().text();
+          const consumedSubrequestRequest = await subrequestRequest.text();
+          const consumedSubrequestResponse = await subrequestResponse.text();
+
+          if (subrequestRequest.body !== null) {
+            expect(subrequestRequest.bodyUsed).toBe(true);
+          }
+          expect(subrequestResponse.bodyUsed).toBe(true);
 
           for (const subrequestRetryData of subrequestData.getRetries()) {
-            const consumedRetryRequest = await subrequestRetryData.getRequest().text();
-            const consumedRetryResponse = await subrequestRetryData.getResponse().text();
+            const retryRequest = subrequestRetryData.getRequest();
+            const retryResponse = subrequestRetryData.getResponse();
+
+            const consumedRetryRequest = await retryRequest.text();
+            const consumedRetryResponse = await retryResponse.text();
+
+            if (retryRequest.body !== null) {
+              expect(retryRequest.bodyUsed).toBe(true);
+            }
+            expect(retryResponse.bodyUsed).toBe(true);
           }
 
           const consumedRequest = await request.text();
+          if (request.body !== null) {
+            expect(request.bodyUsed).toBe(true);
+          }
+
           if (response !== undefined) {
             const consumedResponse = await response.text();
+            expect(response.bodyUsed).toBe(true);
           }
         });
 
@@ -501,18 +540,38 @@ describe('fetchRetry', () => {
 
         afterEach(async () => {
           const subrequestData = subRequestContext.getRequestData();
+          const subrequestRequest = subrequestData.getRequest();
+          const subrequestResponse = subrequestData.getResponse();
 
-          const consumedSubrequestRequest = await subrequestData.getRequest().text();
-          const consumedSubrequestResponse = await subrequestData.getResponse().text();
+          const consumedSubrequestRequest = await subrequestRequest.text();
+          const consumedSubrequestResponse = await subrequestResponse.text();
+
+          if (subrequestRequest.body !== null) {
+            expect(subrequestRequest.bodyUsed).toBe(true);
+          }
+          expect(subrequestResponse.bodyUsed).toBe(true);
 
           for (const subrequestRetryData of subrequestData.getRetries()) {
-            const consumedRetryRequest = await subrequestRetryData.getRequest().text();
-            const consumedRetryResponse = await subrequestRetryData.getResponse().text();
+            const retryRequest = subrequestRetryData.getRequest();
+            const retryResponse = subrequestRetryData.getResponse();
+
+            const consumedRetryRequest = await retryRequest.text();
+            const consumedRetryResponse = await retryResponse.text();
+
+            if (retryRequest.body !== null) {
+              expect(retryRequest.bodyUsed).toBe(true);
+            }
+            expect(retryResponse.bodyUsed).toBe(true);
           }
 
           const consumedRequest = await request.text();
+          if (request.body !== null) {
+            expect(request.bodyUsed).toBe(true);
+          }
+
           if (response !== undefined) {
             const consumedResponse = await response.text();
+            expect(response.bodyUsed).toBe(true);
           }
         });
 
@@ -664,18 +723,38 @@ describe('fetchRetry', () => {
 
         afterEach(async () => {
           const subrequestData = subRequestContext.getRequestData();
+          const subrequestRequest = subrequestData.getRequest();
+          const subrequestResponse = subrequestData.getResponse();
 
-          const consumedSubrequestRequest = await subrequestData.getRequest().text();
-          const consumedSubrequestResponse = await subrequestData.getResponse().text();
+          const consumedSubrequestRequest = await subrequestRequest.text();
+          const consumedSubrequestResponse = await subrequestResponse.text();
+
+          if (subrequestRequest.body !== null) {
+            expect(subrequestRequest.bodyUsed).toBe(true);
+          }
+          expect(subrequestResponse.bodyUsed).toBe(true);
 
           for (const subrequestRetryData of subrequestData.getRetries()) {
-            const consumedRetryRequest = await subrequestRetryData.getRequest().text();
-            const consumedRetryResponse = await subrequestRetryData.getResponse().text();
+            const retryRequest = subrequestRetryData.getRequest();
+            const retryResponse = subrequestRetryData.getResponse();
+
+            const consumedRetryRequest = await retryRequest.text();
+            const consumedRetryResponse = await retryResponse.text();
+
+            if (retryRequest.body !== null) {
+              expect(retryRequest.bodyUsed).toBe(true);
+            }
+            expect(retryResponse.bodyUsed).toBe(true);
           }
 
           const consumedRequest = await request.text();
+          if (request.body !== null) {
+            expect(request.bodyUsed).toBe(true);
+          }
+
           if (response !== undefined) {
             const consumedResponse = await response.text();
+            expect(response.bodyUsed).toBe(true);
           }
         });
 

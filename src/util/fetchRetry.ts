@@ -11,7 +11,11 @@ const FETCH_RETRY_DEFAULT_OPTIONS = {
   fetchImplementation: async (input: string | URL | Request, init?: RequestInit): Promise<Response> => {
     return await fetch(input, init);
   },
-  shouldForceRetry: async (status: number, response: Response): Promise<boolean> => false,
+  shouldForceRetry: async (status: number, response: Response): Promise<boolean> => {
+    // consume the cloned response object
+    response.text();
+    return false;
+  },
 };
 
 export interface FetchRetryOptions {
