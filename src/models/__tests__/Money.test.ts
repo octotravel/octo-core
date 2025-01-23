@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { Money } from './../Money';
+import { Money } from '../Money';
 
 describe('Money', () => {
   describe('init', () => {

@@ -9,13 +9,17 @@ describe('SubRequestData', () => {
       const subRequestData = dataProvider.data;
 
       expect(subRequestData.getId()).toEqual(dataProvider.id);
-      expect(subRequestData.getRequest()).toContain(dataProvider.request);
-      expect(subRequestData.getResponse()).toContain(dataProvider.response);
-      expect(subRequestData.getFinalResponse()).toContain(dataProvider.subRequestRetryDataProvider.data.getResponse());
+      expect(JSON.stringify(subRequestData.getRequest())).toBe(JSON.stringify(dataProvider.request));
+      expect(JSON.stringify(subRequestData.getResponse())).toBe(JSON.stringify(dataProvider.response));
+      expect(JSON.stringify(subRequestData.getFinalResponse())).toBe(
+        JSON.stringify(dataProvider.subRequestRetryDataProvider.data.getResponse()),
+      );
       expect(subRequestData.getError()).toEqual(dataProvider.error);
       expect(subRequestData.getMetaData()).toEqual(dataProvider.metaData);
       expect(subRequestData.getRetries().length).toEqual(1);
-      expect(subRequestData.getRetries()[0]).toContain(dataProvider.subRequestRetryDataProvider.data);
+      expect(JSON.stringify(subRequestData.getRetries()[0])).toBe(
+        JSON.stringify(dataProvider.subRequestRetryDataProvider.data),
+      );
       expect(subRequestData.areLogsEnabled()).toEqual(dataProvider.logsEnabled);
 
       await subRequestData.getRequest().text();
@@ -41,7 +45,9 @@ describe('SubRequestData', () => {
         retries: [],
       });
 
-      expect(subRequestData.getFinalResponse()).toContain(dataProvider.subRequestRetryDataProvider.data.getResponse());
+      expect(JSON.stringify(subRequestData.getFinalResponse())).toBe(
+        JSON.stringify(dataProvider.subRequestRetryDataProvider.data.getResponse()),
+      );
     });
   });
 });

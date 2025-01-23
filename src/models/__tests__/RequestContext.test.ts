@@ -46,9 +46,9 @@ describe('RequestContext', () => {
       requestContext.setError(requestDataDataProvider.error);
 
       expect(requestContext.getRequestId()).toBeDefined();
-      expect(requestContext.getRequest()).toContain(requestDataDataProvider.request);
-      expect(requestContext.getResponse()).toContain(requestDataDataProvider.response);
-      expect(requestContext.getError()).toContain(requestDataDataProvider.error);
+      expect(JSON.stringify(requestContext.getRequest())).toBe(JSON.stringify(requestDataDataProvider.request));
+      expect(JSON.stringify(requestContext.getResponse())).toBe(JSON.stringify(requestDataDataProvider.response));
+      expect(JSON.stringify(requestContext.getError())).toBe(JSON.stringify(requestDataDataProvider.error));
       expect(requestContext.getConnection()).toBe(connection);
       expect(requestContext.getAccountId()).toBe(accountId);
       expect(requestContext.getChannel()).toBe(channel);
@@ -174,8 +174,8 @@ describe('RequestContext', () => {
 
       const requestData: RequestData = requestContext.getRequestData();
       expect(requestData.getId()).toBe(`${requestContext.getAccountId()}/${requestContext.getRequestId()}`);
-      expect(requestData.getRequest()).toContain(requestContext.getRequest());
-      expect(requestData.getResponse()).toContain(requestContext.getResponse());
+      expect(JSON.stringify(requestData.getRequest())).toBe(JSON.stringify(requestContext.getRequest()));
+      expect(JSON.stringify(requestData.getResponse())).toBe(JSON.stringify(requestContext.getResponse()));
       expect(requestData.getError()).toBe(requestContext.getError());
       expect(requestData.areLogsEnabled()).toBe(requestContext.areLogsEnabled());
       expect(requestData.getProductIds()).toBe(requestContext.getProductIds());
