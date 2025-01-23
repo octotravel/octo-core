@@ -1,6 +1,6 @@
 import { AvailabilityUnit } from '@octocloud/types';
-import { UnitItemsHelper } from '../UnitItemsHelper';
 import { describe, expect, it } from 'vitest';
+import { UnitItemsHelper } from '../UnitItemsHelper';
 
 describe('UnitItemHelper', () => {
   const firstUnitId = 'firstUnitId';

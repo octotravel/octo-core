@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { SubRequestDataDataProvider } from './dataProviders/SubRequestDataDataProvider';
 import { SubRequestData } from '../SubRequestData';
+import { SubRequestDataDataProvider } from './dataProviders/SubRequestDataDataProvider';
 
 describe('SubRequestData', () => {
   describe('constructor', () => {

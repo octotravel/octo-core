@@ -1,6 +1,6 @@
 import { Availability } from '@octocloud/types';
-import { NoAvailabilityError } from './Error';
 import { DateHelper } from './DateHelper';
+import { NoAvailabilityError } from './Error';
 
 export class AvailabilityHelper {
   public static checkAvailability = (availabilities: Availability[], dateString: string): Availability => {

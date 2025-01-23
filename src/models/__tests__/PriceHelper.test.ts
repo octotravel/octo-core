@@ -1,7 +1,7 @@
 import { PricingModelGenerator, PricingParser } from '@octocloud/generators';
-import { PriceHelper } from '../PriceHelper';
 import { CapabilityId, Currency } from '@octocloud/types';
 import { describe, expect, it } from 'vitest';
+import { PriceHelper } from '../PriceHelper';
 
 describe('PricingHelper', () => {
   const pricingModelGenerator = new PricingModelGenerator();

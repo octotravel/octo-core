@@ -1,8 +1,8 @@
 import { OptionModelGenerator, OptionParser } from '@octocloud/generators';
-import { OptionHelper } from '../OptionHelper';
-import { InvalidUnitsError, InvalidUnitError, OptionRestrictionsError } from '../Error';
 import { UnitType } from '@octocloud/types';
 import { describe, expect, it } from 'vitest';
+import { InvalidUnitError, InvalidUnitsError, OptionRestrictionsError } from '../Error';
+import { OptionHelper } from '../OptionHelper';
 
 describe('OptionHelper', () => {
   const optionModelGenerator = new OptionModelGenerator();

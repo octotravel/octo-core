@@ -1,6 +1,4 @@
-import { RequestContext } from '../models/RequestContext';
 import type {
-  CapabilityId,
   Availability,
   AvailabilityBodySchema,
   AvailabilityCalendar,
@@ -9,24 +7,25 @@ import type {
   CancelBookingBodySchema,
   CancelBookingPathParamsSchema,
   Capability,
+  CapabilityId,
   ConfirmBookingBodySchema,
   ConfirmBookingPathParamsSchema,
   Contact,
   CreateBookingBodySchema,
+  CreateWebhookBodyParamsSchema,
+  DeleteWebhookPathParamsSchema,
   ExtendBookingBodySchema,
   ExtendBookingPathParamsSchema,
   GetBookingPathParamsSchema,
   GetBookingsQueryParamsSchema,
   GetProductPathParamsSchema,
   Mapping,
+  Order,
   Product,
   Supplier,
   UpdateBookingBodySchema,
   UpdateBookingPathParamsSchema,
   Webhook,
-  CreateWebhookBodyParamsSchema,
-  DeleteWebhookPathParamsSchema,
-  Order,
 } from '@octocloud/types';
 import {
   cancelBookingBodySchema,
@@ -42,6 +41,7 @@ import {
   updateBookingPathParamsSchema,
 } from '@octocloud/types';
 import * as yup from 'yup';
+import { RequestContext } from '../models/RequestContext';
 
 export interface CoreParams {
   ctx: RequestContext;

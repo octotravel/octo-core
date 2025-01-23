@@ -1,11 +1,11 @@
+import { addSeconds } from 'date-fns';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { DataGenerationService } from '../../services/DataGenerationService';
-import { RequestContext } from '../RequestContext';
-import { AlertData } from '../AlertData';
 import { AlertType } from '../../types/AlertType';
-import { RequestData } from '../RequestData';
+import { AlertData } from '../AlertData';
 import { Environment } from '../Config';
-import { addSeconds } from 'date-fns';
+import { RequestContext } from '../RequestContext';
+import { RequestData } from '../RequestData';
 import { RequestDataDataProvider } from './dataProviders/RequestDataDataProvider';
 
 describe('RequestContext', () => {

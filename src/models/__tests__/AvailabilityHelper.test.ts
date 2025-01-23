@@ -1,8 +1,8 @@
 import { AvailabilityModelGenerator, AvailabilityParser } from '@octocloud/generators';
+import { Availability, AvailabilityStatus, PricingUnit, UnitType } from '@octocloud/types';
+import { describe, expect, it } from 'vitest';
 import { AvailabilityHelper } from '../AvailabilityHelper';
 import { NoAvailabilityError } from '../Error';
-import { Availability, PricingUnit, AvailabilityStatus, UnitType } from '@octocloud/types';
-import { describe, expect, it } from 'vitest';
 
 describe('AvailabilityHelper', () => {
   const availabilityModelGenerator = new AvailabilityModelGenerator();

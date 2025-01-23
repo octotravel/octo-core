@@ -9,7 +9,7 @@ export abstract class DateHelper {
   }
 
   public static toISOString = (date: Date): string => {
-    return date.toISOString().split('.')[0] + 'Z';
+    return `${date.toISOString().split('.')[0]}Z`;
   };
 
   public static availabilityIdFormat = (date: Date | string, timeZone: string): string => {

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
+import { RequestMethod } from '../../types/Request';
 import { SubRequestRetryContext } from '../SubRequestRetryContext';
 import { SubRequestRetryData } from '../SubRequestRetryData';
-import { RequestMethod } from '../../types/Request';
 import { SubRequestRetryDataDataProvider } from './dataProviders/SubRequestRetryDataDataProvider';
 
 describe('SubRequestRetryContext', () => {

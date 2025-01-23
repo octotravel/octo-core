@@ -1,10 +1,10 @@
+import { DataGenerationService } from '../services/DataGenerationService';
 import { BaseConnection } from '../types/Connection';
+import { AlertData } from './AlertData';
+import { Environment } from './Config';
+import { HttpError } from './Error';
 import { ConnectionMetaData, RequestData, RequestMetaData } from './RequestData';
 import { SubRequestData } from './SubRequestData';
-import { DataGenerationService } from '../services/DataGenerationService';
-import { HttpError } from './Error';
-import { Environment } from './Config';
-import { AlertData } from './AlertData';
 
 export class RequestContext {
   private readonly dataGenerationService = new DataGenerationService();
