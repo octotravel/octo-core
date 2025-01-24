@@ -43,7 +43,7 @@
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@octocloud/generators": "^1.0.5",
-    "@octocloud/types": "^1.5.29",
+    "@octocloud/types": "octotravel/octo-types#feat/biomejs",
     "@types/uuid": "^9.0.0",
     "@types/node": "^22.9.0",
     "typescript": "^5.7.2",
