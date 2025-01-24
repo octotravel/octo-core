@@ -7,13 +7,14 @@ on:
       - '!master'
       - '**'
 
+env:
+  NODE_VERSION: 22.9.0
+
 jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    env:
-      working-directory: .
 
     steps:
       - name: Checkout
@@ -24,7 +25,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v4
         with:
-          node-version: 22.9.0
+          node-version: $NODE_VERSION
 
       - uses: actions/cache@v4
         name: Setup node modules cache
@@ -38,7 +39,6 @@ jobs:
       - name: Install node modules
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: npm install --no-lockfile --ignore-scripts --prefer-offline --unsafe-perm
-        working-directory: ${{ env.working-directory }}
 
       - name: Build the project
         run: npm run build
@@ -48,8 +48,6 @@ jobs:
     name: Check vulnerabilities
     needs: build
     runs-on: ubuntu-latest
-    env:
-      working-directory: .
 
     steps:
       - name: Checkout
@@ -60,7 +58,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v4
         with:
-          node-version: 22.9.0
+          node-version: $NODE_VERSION
 
       - uses: actions/cache/restore@v4
         name: Restore node modules cache
@@ -72,7 +70,6 @@ jobs:
       - name: Install node modules
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: npm install --no-lockfile --ignore-scripts --prefer-offline --unsafe-perm
-        working-directory: ${{ env.working-directory }}
 
       - name: Setup tsc cache
         uses: actions/cache@v4
@@ -84,14 +81,12 @@ jobs:
 
       - name: Do npm audit check
         run: npm run audit
-        working-directory: ${{ env.working-directory }}
 
   check-types:
     name: Check Types
     needs: build
     runs-on: ubuntu-latest
-    env:
-      working-directory: .
+    timeout-minutes: 10
 
     steps:
       - name: Checkout
@@ -102,7 +97,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v4
         with:
-          node-version: 22.9.0
+          node-version: $NODE_VERSION
 
       - uses: actions/cache/restore@v4
         name: Restore node modules cache
@@ -114,7 +109,6 @@ jobs:
       - name: Install node modules
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: npm install --no-lockfile --ignore-scripts --prefer-offline --unsafe-perm
-        working-directory: ${{ env.working-directory }}
 
       - name: Setup tsc cache
         uses: actions/cache@v4
@@ -126,15 +120,12 @@ jobs:
 
       - name: Do dry build
         run: npm run build:dry:ci
-        working-directory: ${{ env.working-directory }}
 
   check-code-quality:
     name: Check code quality
     needs: build
     runs-on: ubuntu-latest
-    timeout-minutes: 5
-    env:
-      working-directory: .
+    timeout-minutes: 10
 
     steps:
       - name: Checkout
@@ -154,9 +145,7 @@ jobs:
     name: Run tests
     needs: build
     runs-on: ubuntu-latest
-    timeout-minutes: 5
-    env:
-      working-directory: .
+    timeout-minutes: 10
 
     steps:
       - name: Checkout
@@ -167,7 +156,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v4
         with:
-          node-version: 22.9.0
+          node-version: $NODE_VERSION
 
       - uses: actions/cache/restore@v4
         name: Restore node modules cache
@@ -179,8 +168,6 @@ jobs:
       - name: Install node modules
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: npm install --no-lockfile --ignore-scripts --prefer-offline --unsafe-perm
-        working-directory: ${{ env.working-directory }}
 
       - name: Run Vitest
         run: npm run test
-        working-directory: ${{ env.working-directory }}
