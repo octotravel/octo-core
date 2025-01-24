@@ -40,6 +40,14 @@
       },
       "performance": {
         "noAccumulatingSpread": "off"
+      },
+      "nursery": {
+        "useConsistentMemberAccessibility": {
+          "level": "error",
+          "options": {
+            "accessibility": "explicit"
+          }
+        }
       }
     }
   },
