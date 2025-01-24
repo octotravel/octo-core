@@ -33,6 +33,7 @@
   },
   "types": "./dist/index.d.ts",
   "dependencies": {
+    "@octocloud/types": "octotravel/octo-types#feat/biomejs",
     "@dinero.js/currencies": "2.0.0-alpha.8",
     "date-fns": "^2.30.0",
     "date-fns-tz": "^2.0.0",
@@ -44,7 +45,6 @@
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@octocloud/generators": "^1.0.5",
-    "@octocloud/types": "octotravel/octo-types#feat/biomejs",
     "@types/uuid": "^9.0.0",
     "@types/node": "^22.9.0",
     "typescript": "^5.7.2",
