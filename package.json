@@ -1,6 +1,5 @@
 {
   "name": "@octocloud/core",
-  "type": "module",
   "version": "1.0.66",
   "license": "ISC",
   "author": "",
@@ -24,8 +23,8 @@
     "format:fix": "biome format --write .",
     "lint": "biome lint",
     "lint:fix": "biome lint --write .",
-    "test": "vitest run --config ./vitest.config.ts",
-    "test:coverage": "vitest run --config ./vitest.config.ts --coverage",
+    "test": "VITE_CJS_IGNORE_WARNING=true vitest run --config ./vitest.config.ts",
+    "test:coverage": "VITE_CJS_IGNORE_WARNING=true vitest run --config ./vitest.config.ts --coverage",
     "dev": "npm run build -- --watch src",
     "lefthook": "lefthook install",
     "audit": "audit-ci --config ./audit-ci.json",
