@@ -28,7 +28,8 @@
     "test:coverage": "vitest run --config ./vitest.config.ts --coverage",
     "dev": "npm run build -- --watch src",
     "lefthook": "lefthook install",
-    "audit": "audit-ci --config ./audit-ci.json"
+    "audit": "audit-ci --config ./audit-ci.json",
+    "prepare": "npm run build"
   },
   "types": "./dist/index.d.ts",
   "dependencies": {
