@@ -691,11 +691,29 @@ describe('fetchRetry', () => {
         it('should succeed at third retry with successful response', async () => {
           global.fetch = vi
             .fn()
-            .mockReturnValueOnce(Promise.resolve(new Response('503 Service Unavailable', { status: 503 })))
-            .mockReturnValueOnce(Promise.resolve(new Response('502 Bad Gateway', { status: 502 })))
+            .mockReturnValueOnce(
+              Promise.resolve(
+                new Response('503 Service Unavailable', { status: 503, headers: { 'Retry-After': '1' } }),
+              ),
+            )
+            .mockReturnValueOnce(
+              Promise.resolve(new Response('502 Bad Gateway', { status: 502, headers: { 'Retry-After': '2' } })),
+            )
             .mockReturnValue(Promise.resolve(new Response('{}', { status: 200 })));
           response = await fetchRetry(input, init, { retryDelayMultiplierInMs: RETRY_DELAY_MULTIPLIER_IN_MS });
           expect(response.status).toBe(200);
+        });
+
+        it('should fail without any retries based on retry-again header', async () => {
+          global.fetch = vi
+            .fn()
+            .mockReturnValueOnce(
+              Promise.resolve(
+                new Response('500 Internal Server Error', { status: 500, headers: { 'Retry-After': '100' } }),
+              ),
+            );
+          response = await fetchRetry(input, init, { retryDelayMultiplierInMs: RETRY_DELAY_MULTIPLIER_IN_MS });
+          expect(response.status).toBe(500);
         });
 
         it('should fail after three retries with server error response', async () => {

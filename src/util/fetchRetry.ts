@@ -1,5 +1,6 @@
 import { SubRequestContext } from '../models/SubRequestContext';
 import { SubRequestRetryContext } from '../models/SubRequestRetryContext';
+import { HeaderParser } from '../models/HeaderParser';
 
 const DEFAULT_MAX_RETRY_ATTEMPTS = 3;
 const DEFAULT_RETRY_DELAY_MULTIPLIER_IN_MS = 1000;
@@ -92,11 +93,13 @@ export async function fetchRetry(
 
   currentRetryAttempt++;
 
+  const retryAfterInSeconds = HeaderParser.getRetryAfterInSeconds(res);
   const status = res.status;
 
   if (
     ((status >= 500 && status < 599) || status === 429 || (await shouldForceRetry(status, res.clone()))) &&
-    currentRetryAttempt < maxRetryAttempts
+    currentRetryAttempt < maxRetryAttempts &&
+    retryAfterInSeconds <= currentRetryAttempt
   ) {
     return await fetchRetry(request, undefined, {
       subRequestContext,
