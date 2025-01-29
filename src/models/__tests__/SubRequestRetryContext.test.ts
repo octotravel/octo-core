@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
+import { RequestMethod } from '../../types/Request';
 import { SubRequestRetryContext } from '../SubRequestRetryContext';
 import { SubRequestRetryData } from '../SubRequestRetryData';
-import { RequestMethod } from '../../types/Request';
 import { SubRequestRetryDataDataProvider } from './dataProviders/SubRequestRetryDataDataProvider';
 
 describe('SubRequestRetryContext', () => {
@@ -22,7 +22,7 @@ describe('SubRequestRetryContext', () => {
   describe('constructor', () => {
     it('should correctly initialize class properties', () => {
       expect(subRequestRetryContext.getId()).toBeDefined();
-      expect(subRequestRetryContext.getRequest()).toContain(request);
+      expect(JSON.stringify(subRequestRetryContext.getRequest())).toBe(JSON.stringify(request));
       expect(subRequestRetryContext.getAccountId()).toBe(subRequestRetryDataDataProvider.accountId);
       expect(subRequestRetryContext.getRequestId()).toBe(subRequestRetryDataDataProvider.requestId);
       expect(subRequestRetryContext.getSubRequestId()).toBe(subRequestRetryDataDataProvider.subRequestId);
@@ -38,7 +38,9 @@ describe('SubRequestRetryContext', () => {
   describe('setResponse', () => {
     it('should set non null response', () => {
       subRequestRetryContext.setResponse(subRequestRetryDataDataProvider.response);
-      expect(subRequestRetryContext.getResponse()).toContain(subRequestRetryDataDataProvider.response);
+      expect(JSON.stringify(subRequestRetryContext.getResponse())).toBe(
+        JSON.stringify(subRequestRetryDataDataProvider.response),
+      );
     });
 
     it('should set null response', () => {
@@ -79,8 +81,12 @@ describe('SubRequestRetryContext', () => {
       expect(subRequestRetryData.getId()).toBe(
         `${subRequestRetryContext.getAccountId()}/${subRequestRetryContext.getRequestId()}/${subRequestRetryContext.getSubRequestId()}/${subRequestRetryContext.getId()}`,
       );
-      expect(subRequestRetryData.getRequest()).toContain(subRequestRetryContext.getRequest());
-      expect(subRequestRetryData.getResponse()).toContain(subRequestRetryContext.getResponse());
+      expect(JSON.stringify(subRequestRetryData.getRequest())).toBe(
+        JSON.stringify(subRequestRetryContext.getRequest()),
+      );
+      expect(JSON.stringify(subRequestRetryData.getResponse())).toBe(
+        JSON.stringify(subRequestRetryContext.getResponse()),
+      );
       expect(subRequestRetryData.getError()).toBe(null);
       expect(metaData.id).toBe(subRequestRetryContext.getId());
       expect(metaData.requestId).toBe(subRequestRetryContext.getRequestId());

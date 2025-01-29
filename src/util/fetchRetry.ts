@@ -1,6 +1,6 @@
+import { HeaderParser } from '../models/HeaderParser';
 import { SubRequestContext } from '../models/SubRequestContext';
 import { SubRequestRetryContext } from '../models/SubRequestRetryContext';
-import { HeaderParser } from '../models/HeaderParser';
 
 const DEFAULT_MAX_RETRY_ATTEMPTS = 3;
 const DEFAULT_RETRY_DELAY_MULTIPLIER_IN_MS = 1000;

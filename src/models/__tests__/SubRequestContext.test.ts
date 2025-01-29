@@ -20,8 +20,7 @@ describe('SubRequestContext', () => {
 
   describe('constructor', () => {
     it('should correctly initialize class properties', () => {
-      expect(subRequestContext.getId()).toBeDefined();
-      expect(subRequestContext.getRequest()).toContain(subRequestDataDataProvider.request);
+      expect(JSON.stringify(subRequestContext.getRequest())).toBe(JSON.stringify(subRequestDataDataProvider.request));
       expect(subRequestContext.getAccountId()).toBe(subRequestDataDataProvider.accountId);
       expect(subRequestContext.getRequestId()).toBe(subRequestDataDataProvider.requestId);
     });
@@ -36,7 +35,7 @@ describe('SubRequestContext', () => {
   describe('setResponse', () => {
     it('should set non null response', () => {
       subRequestContext.setResponse(subRequestDataDataProvider.response);
-      expect(subRequestContext.getResponse()).toContain(subRequestDataDataProvider.response);
+      expect(JSON.stringify(subRequestContext.getResponse())).toBe(JSON.stringify(subRequestDataDataProvider.response));
     });
 
     it('should set null response', () => {
@@ -84,8 +83,8 @@ describe('SubRequestContext', () => {
       expect(subRequestData.getId()).toBe(
         `${subRequestContext.getAccountId()}/${subRequestContext.getRequestId()}/${subRequestContext.getId()}`,
       );
-      expect(subRequestData.getRequest()).toContain(subRequestContext.getRequest());
-      expect(subRequestData.getResponse()).toContain(subRequestContext.getResponse());
+      expect(JSON.stringify(subRequestData.getRequest())).toBe(JSON.stringify(subRequestContext.getRequest()));
+      expect(JSON.stringify(subRequestData.getResponse())).toBe(JSON.stringify(subRequestContext.getResponse()));
       expect(subRequestData.getError()).toBe(null);
       expect(subRequestData.getRetries().length).toBe(1);
       expect(subRequestData.getRetries()[0]).toBe(subRequestContext.getRetries()[0]);

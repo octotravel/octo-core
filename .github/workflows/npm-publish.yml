@@ -5,20 +5,43 @@ on:
     branches:
       - master
       - main
-  workflow_dispatch:
+
+env:
+  NODE_VERSION: 22.9.0
 
 jobs:
   publish-npm:
     name: Publish to NPM
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
-          node-version: 20
-          registry-url: https://registry.npmjs.org/
-      - run: npm install
-      - run: npm run build
-      - run: npm publish
+          fetch-depth: 0
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          registry-url: 'https://registry.npmjs.org'
+
+      - uses: actions/cache@v4
+        name: Setup node modules cache
+        id: cache-node-modules
+        with:
+          path: ./node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('./package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-
+
+      - name: Install node modules
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        run: npm install --no-lockfile --ignore-scripts --prefer-offline --unsafe-perm
+
+      - name: Build the project
+        run: npm run build
+
+      - name: Publish the project
+        run: npm publish
         env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}

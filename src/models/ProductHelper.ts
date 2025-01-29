@@ -1,6 +1,6 @@
 import { Option, Product, Unit, UnitType } from '@octocloud/types';
-import { OptionHelper } from './OptionHelper';
 import { InvalidOptionError } from './Error';
+import { OptionHelper } from './OptionHelper';
 
 export class ProductHelper {
   /**

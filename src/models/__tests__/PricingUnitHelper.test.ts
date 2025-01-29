@@ -1,6 +1,6 @@
 import { PricingUnit, UnitType } from '@octocloud/types';
-import { PricingUnitHelper } from '../PricingUnitHelper';
 import { describe, expect, it } from 'vitest';
+import { PricingUnitHelper } from '../PricingUnitHelper';
 
 describe('PricingUnitHelper', () => {
   describe('filterFirstUnitPricing', () => {

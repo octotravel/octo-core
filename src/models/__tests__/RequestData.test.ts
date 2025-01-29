@@ -8,12 +8,14 @@ describe('RequestData', () => {
       const requestData = dataProvider.data;
 
       expect(requestData.getId()).toEqual(dataProvider.id);
-      expect(requestData.getRequest()).toContain(dataProvider.request);
-      expect(requestData.getResponse()).toContain(dataProvider.response);
+      expect(JSON.stringify(requestData.getRequest())).toBe(JSON.stringify(dataProvider.request));
+      expect(JSON.stringify(requestData.getResponse())).toBe(JSON.stringify(dataProvider.response));
       expect(requestData.getError()).toEqual(dataProvider.error);
       expect(requestData.getMetaData()).toEqual(dataProvider.metaData);
       expect(requestData.getSubRequests().length).toEqual(1);
-      expect(requestData.getSubRequests()[0]).toContain(dataProvider.subRequestDataProvider.data);
+      expect(JSON.stringify(requestData.getSubRequests()[0])).toBe(
+        JSON.stringify(dataProvider.subRequestDataProvider.data),
+      );
       expect(requestData.areLogsEnabled()).toEqual(dataProvider.logsEnabled);
       expect(requestData.getProductIds()).toEqual(dataProvider.productIds);
 

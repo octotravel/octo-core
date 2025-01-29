@@ -8,9 +8,9 @@ describe('SubRequestRetryContext', () => {
       const subRequestRetryData = dataProvider.data;
 
       expect(subRequestRetryData.getId()).toEqual(dataProvider.id);
-      expect(subRequestRetryData.getRequest()).toContain(dataProvider.request);
-      expect(subRequestRetryData.getResponse()).toContain(dataProvider.response);
-      expect(subRequestRetryData.getError()).toContain(dataProvider.error);
+      expect(JSON.stringify(subRequestRetryData.getRequest())).toBe(JSON.stringify(dataProvider.request));
+      expect(JSON.stringify(subRequestRetryData.getResponse())).toBe(JSON.stringify(dataProvider.response));
+      expect(JSON.stringify(subRequestRetryData.getError())).toBe(JSON.stringify(dataProvider.error));
       expect(subRequestRetryData.getMetaData()).toEqual(dataProvider.metaData);
       expect(subRequestRetryData.areLogsEnabled()).toEqual(dataProvider.logsEnabled);
 

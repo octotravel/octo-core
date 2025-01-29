@@ -1,5 +1,5 @@
-import { RequestData } from './RequestData';
 import { RequestContext } from './RequestContext';
+import { RequestData } from './RequestData';
 
 export interface IRequestLogger {
   logRequest: (data: RequestData, ctx: RequestContext) => Promise<void>;

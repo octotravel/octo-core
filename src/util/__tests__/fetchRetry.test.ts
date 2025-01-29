@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { fetchRetry } from '../fetchRetry';
 import { SubRequestContext } from '../../models/SubRequestContext';
 import { RequestMethod } from '../../types/Request';
+import { fetchRetry } from '../fetchRetry';
 
 describe('fetchRetry', () => {
   const url = 'https://octo.ventrata.com';
