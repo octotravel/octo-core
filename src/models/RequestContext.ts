@@ -159,7 +159,7 @@ export class RequestContext {
 
   public getError = (): Error | null => this.error;
 
-  public setError = (error: Error): void => {
+  public setError = (error: Error | null): void => {
     this.error = error;
   };
 
