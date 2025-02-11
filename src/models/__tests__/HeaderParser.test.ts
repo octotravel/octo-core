@@ -1,4 +1,6 @@
+import { addSeconds, subSeconds } from 'date-fns';
 import { describe, expect, it, vi } from 'vitest';
+import { DateFactory } from '../DateFactory';
 import { HeaderParser } from '../HeaderParser';
 
 describe('HeaderParser.getRetryAfterInSeconds', () => {
@@ -52,7 +54,7 @@ describe('HeaderParser.getRetryAfterInSeconds', () => {
   });
 
   it('should return the difference in seconds if "retry-after" is a valid date string in the future', () => {
-    const futureDate = new Date(Date.now() + 5000).toUTCString(); // 5 seconds in the future
+    const futureDate = addSeconds(DateFactory.createUTCDateNow(), 5).toUTCString(); // 5 seconds in the future
     const response = {
       headers: {
         get: vi.fn().mockReturnValue(futureDate),
@@ -64,7 +66,7 @@ describe('HeaderParser.getRetryAfterInSeconds', () => {
   });
 
   it('should return 1 if "retry-after" is a valid date string in the past', () => {
-    const pastDate = new Date(Date.now() - 5000).toUTCString(); // 5 seconds in the past
+    const pastDate = subSeconds(DateFactory.createUTCDateNow(), 5).toUTCString(); // 5 seconds in the past
     const response = {
       headers: {
         get: vi.fn().mockReturnValue(pastDate),

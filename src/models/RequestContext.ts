@@ -1,7 +1,9 @@
+import { UTCDate } from '@date-fns/utc';
 import { DataGenerationService } from '../services/DataGenerationService';
 import { BaseConnection } from '../types/Connection';
 import { AlertData } from './AlertData';
 import { Environment } from './Config';
+import { DateFactory } from './DateFactory';
 import { HttpError } from './Error';
 import { ConnectionMetaData, RequestData, RequestMetaData } from './RequestData';
 import { SubRequestData } from './SubRequestData';
@@ -12,7 +14,7 @@ export class RequestContext {
   private readonly request: Request;
   private requestId: string;
   private response: Response | null = null;
-  private readonly date: Date;
+  private readonly date: UTCDate;
   private connection: BaseConnection | null = null;
   private accountId: string | null = null;
   private channel: string | null = null;
@@ -41,7 +43,7 @@ export class RequestContext {
   }) {
     this.requestId = this.dataGenerationService.generateUUID();
     this.request = request.clone();
-    this.date = new Date();
+    this.date = DateFactory.createUTCDateNow();
     this.accountId = connection?.accountId ?? accountId ?? null;
     this.connection = connection ?? null;
     this.channel = channel ?? null;
@@ -175,19 +177,19 @@ export class RequestContext {
     return this.environment;
   }
 
-  private getDuration(start: Date, end: Date): number {
+  private getDuration(start: UTCDate, end: UTCDate): number {
     return (end.getTime() - start.getTime()) / 1000;
   }
 
-  public getDate(): Date {
-    return new Date(this.date.getTime());
+  public getDate(): UTCDate {
+    return DateFactory.createUTCDate(this.date.getTime());
   }
 
-  public getRequestDuration(date: Date): number {
+  public getRequestDuration(date: UTCDate): number {
     return this.getDuration(this.date, date);
   }
 
-  public getRequestDurationInMs(date: Date): number {
+  public getRequestDurationInMs(date: UTCDate): number {
     const milliseconds = Math.ceil(this.getRequestDuration(date) * 1000);
     if (milliseconds < 1) {
       return 1;
@@ -230,7 +232,7 @@ export class RequestContext {
       method: this.getRequest().method,
       status: reponse.status,
       success: reponse.ok,
-      duration: this.getDuration(this.date, new Date()),
+      duration: this.getDuration(this.date, DateFactory.createUTCDateNow()),
       environment: this.environment,
     };
 
