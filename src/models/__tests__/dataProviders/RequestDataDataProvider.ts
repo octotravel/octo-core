@@ -1,5 +1,6 @@
 import { DataGenerationService } from '../../../services/DataGenerationService';
 import { Environment } from '../../Config';
+import { DateFactory } from '../../DateFactory';
 import { RequestData, RequestMetaData } from '../../RequestData';
 import { SubRequestDataDataProvider } from './SubRequestDataDataProvider';
 
@@ -21,7 +22,7 @@ export class RequestDataDataProvider {
 
   public readonly metaData: RequestMetaData = {
     id: this.id,
-    date: new Date(),
+    date: DateFactory.createUTCDateNow(),
     connection: {
       id: null,
       channel: null,

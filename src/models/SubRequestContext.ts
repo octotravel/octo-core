@@ -1,4 +1,6 @@
+import { UTCDate } from '@date-fns/utc';
 import { DataGenerationService } from '../services/DataGenerationService';
+import { DateFactory } from './DateFactory';
 import { SubRequestData, SubrequestMetaData } from './SubRequestData';
 import { SubRequestRetryData } from './SubRequestRetryData';
 
@@ -8,7 +10,7 @@ export class SubRequestContext {
   private readonly request: Request;
   private readonly requestId: string;
   private readonly subRequestId: string;
-  private readonly startDate: Date = new Date();
+  private readonly startDate: UTCDate;
   private readonly retries: SubRequestRetryData[] = [];
 
   private response: Response | null = null;
@@ -22,7 +24,7 @@ export class SubRequestContext {
     this.accountId = accountId;
     this.requestId = requestId;
     this.request = request.clone();
-    this.startDate = new Date();
+    this.startDate = DateFactory.createUTCDateNow();
   }
 
   public getRequest(): Request {
@@ -69,7 +71,7 @@ export class SubRequestContext {
     return this.retries;
   }
 
-  private readonly getDuration = (start: Date, end: Date): number => {
+  private readonly getDuration = (start: UTCDate, end: UTCDate): number => {
     return (end.getTime() - start.getTime()) / 1000;
   };
 
@@ -101,7 +103,7 @@ export class SubRequestContext {
       method: this.getRequest().method,
       status: response.status,
       success: response.ok,
-      duration: this.getDuration(this.startDate, new Date()),
+      duration: this.getDuration(this.startDate, DateFactory.createUTCDateNow()),
     };
     const requestData = new SubRequestData({
       id,

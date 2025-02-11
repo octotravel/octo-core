@@ -1,4 +1,5 @@
 import { DataGenerationService } from '../../../services/DataGenerationService';
+import { DateFactory } from '../../DateFactory';
 import { SubRequestData, SubrequestMetaData } from '../../SubRequestData';
 import { SubRequestRetryDataDataProvider } from './SubRequestRetryDataDataProvider';
 
@@ -23,7 +24,7 @@ export class SubRequestDataDataProvider {
   public readonly metaData: SubrequestMetaData = {
     id: this.id,
     requestId: this.requestId,
-    date: new Date(),
+    date: DateFactory.createUTCDateNow(),
     url: this.url,
     method: this.method,
     status: this.status,
