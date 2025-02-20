@@ -6,8 +6,8 @@ describe('DateHelper', () => {
   const time = '00:00';
   const dateTime = `${date}T${time}`;
   const dateTimeIso = `${date}T${time}:00Z`;
-  const timeZone = 'Europe/Prague';
-  const convertedTimeZone = '+01:00';
+  const timeZone = 'Europe/London';
+  const convertedTimeZone = '+00:00';
   const dateTimeWithTimeZone = `${date}T${time}:00${convertedTimeZone}`;
 
   describe('getTime', () => {
@@ -30,8 +30,8 @@ describe('DateHelper', () => {
 
   describe('availabilityIdFormat', () => {
     it('should return date formatted as availability id', async () => {
-      expect(DateHelper.availabilityIdFormat(date, timeZone)).toStrictEqual(dateTimeWithTimeZone);
-      // expect(DateHelper.availabilityIdFormat(new Date(date), timeZone)).toStrictEqual(dateTimeWithTimeZone);
+      expect(DateHelper.availabilityIdFormat(dateTime, timeZone)).toStrictEqual(dateTimeWithTimeZone);
+      expect(DateHelper.availabilityIdFormat(new Date(dateTime), timeZone)).toStrictEqual(dateTimeWithTimeZone);
     });
   });
 });

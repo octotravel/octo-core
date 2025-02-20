@@ -1,4 +1,6 @@
+import { UTCDate } from '@date-fns/utc';
 import { DataGenerationService } from '../services/DataGenerationService';
+import { DateFactory } from './DateFactory';
 import { SubRequestRetryData, SubrequestRetryMetaData } from './SubRequestRetryData';
 
 export class SubRequestRetryContext {
@@ -8,7 +10,7 @@ export class SubRequestRetryContext {
   private readonly requestId: string;
   private readonly subRequestId: string;
   private readonly id: string;
-  private readonly startDate: Date = new Date();
+  private readonly startDate: UTCDate;
 
   private response: Response | null = null;
   private error: Error | null = null;
@@ -32,7 +34,7 @@ export class SubRequestRetryContext {
     this.accountId = accountId;
     this.requestId = requestId;
     this.subRequestId = subRequestId;
-    this.startDate = new Date();
+    this.startDate = DateFactory.createUTCDateNow();
   }
 
   public getRequest(): Request {
@@ -71,7 +73,7 @@ export class SubRequestRetryContext {
     return this.logsEnabled;
   }
 
-  private readonly getDuration = (start: Date, end: Date): number => {
+  private readonly getDuration = (start: UTCDate, end: UTCDate): number => {
     return (end.getTime() - start.getTime()) / 1000;
   };
 
@@ -106,7 +108,7 @@ export class SubRequestRetryContext {
       method: this.getRequest().method,
       status: this.response.status,
       success: this.response.ok,
-      duration: this.getDuration(this.startDate, new Date()),
+      duration: this.getDuration(this.startDate, DateFactory.createUTCDateNow()),
     };
     const requestData = new SubRequestRetryData({
       id,
