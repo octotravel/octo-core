@@ -71,7 +71,9 @@ describe('DateTZ', () => {
         '2025-02-05T11:15:00+00:00',
       );
     });
+  });
 
+  describe('get internalDate', () => {
     it('should get internalDate', () => {
       expect(format(new DateTZ().internalDate, dateTimeFormat)).toEqual('2025-02-05T11:15:00+01:00');
       expect(format(new DateTZ(dateString).internalDate, dateTimeFormat)).toEqual('2025-02-05T11:15:00+01:00');
@@ -91,7 +93,8 @@ describe('DateTZ', () => {
         '2025-02-05T11:15:00+00:00',
       );
     });
-
+  });
+  describe('get timeZone', () => {
     it('should get timeZone', () => {
       expect(new DateTZ().timeZone).toBe(null);
       expect(new DateTZ(dateString).timeZone).toBe(null);
@@ -105,7 +108,8 @@ describe('DateTZ', () => {
       expect(DateTZ.tz(timeZoneUTC).timeZone).toBe(timeZoneUTC);
       expect(new DateTZ(dateString, timeZoneUTC).timeZone).toBe(timeZoneUTC);
     });
-
+  });
+  describe('toUTC', () => {
     it('should convert toUTC', () => {
       expect(new DateTZ(dateString, timeZonePrague).toUTC().timeZone).toBe(timeZoneUTC);
       expect(new DateTZ(dateString, timeZonePrague).toUTC().toISOString()).toBe('2025-02-05T10:15:00.000Z');
