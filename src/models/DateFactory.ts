@@ -18,10 +18,10 @@ export abstract class DateFactory {
   }
 
   /**
-   * Constructs a new `TZDate` instance.
+   * Constructs a new `TZDate` instance with datetime in provided timezone.
    *
    * @param date date string | unix timestamp | Date object can be used
-   * @param tz timezone, when omited, system timezone is used (IANA or UTC offset)
+   * @param tz timezone, in which the date is created, when omited, system timezone is used (IANA or UTC offset)
    * @returns local date in sepcific timezone
    */
   public static createLocalDate(date: string | Date | number, timezone?: string): TZDate {
@@ -39,11 +39,17 @@ export abstract class DateFactory {
     }
     if (timezone) {
       return parseISO(format(date, "yyyy-MM-dd'T'HH:mm"), { in: tz(timezone) });
-      // return parseISO(format(date, "yyyy-MM-dd'T'HH:mm"), "yyyy-MM-dd'T'HH:mm", date, { in: tz(timezone) })
     }
     return parseISO(format(date, "yyyy-MM-dd'T'HH:mm"));
   }
 
+  /**
+   * Constructs a new `TZDate` instance with datetime in provided timezone.
+   *
+   * @param date date string | unix timestamp | Date object can be used
+   * @param tz timezone, in which the date is converted to, when omited, system timezone is used (IANA or UTC offset)
+   * @returns local date in sepcific timezone
+   */
   public static convertToLocalDateInZone(date: string | Date | number, timezone?: string): TZDate {
     if (typeof date === 'string') {
       return new TZDate(date, timezone);

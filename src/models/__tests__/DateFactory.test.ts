@@ -69,6 +69,21 @@ describe('DateFactory', () => {
       expect(format(DateFactory.createLocalDate(new Date().getTime(), 'Europe/Prague'), dateTimeFormat)).toEqual(
         '2025-02-05T11:15:00+01:00',
       );
+
+      // mit objekt, ktera storuje datum a tz
+      // OctoDate
+      // internal date = Date | TZDate | UTCDate
+
+      // TZDate()
+      expect(
+        format(
+          DateFactory.convertToLocalDateInZone(
+            DateFactory.createLocalDate(new Date().getTime(), 'America/Los_Angeles'),
+            'Europe/Prague',
+          ),
+          dateTimeFormat,
+        ),
+      ).toBe('2025-02-05T11:15:00+01:00');
     });
   });
 
@@ -119,35 +134,35 @@ describe('DateFactory', () => {
     });
   });
 
-  //   describe('convertLocalDateToUTC', () => {
-  //     it('should convertLocalDateToUTC and compare date objects', async () => {
-  //       expect(DateFactory.convertLocalDateToUTC(DateFactory.createLocalDateNow())).toStrictEqual(
-  //         DateFactory.createUTCDateNow(),
-  //       );
-  //       expect(DateFactory.convertLocalDateToUTC(DateFactory.createLocalDateNow('UTC'))).toStrictEqual(
-  //         DateFactory.createUTCDateNow(),
-  //       );
-  //       expect(DateFactory.convertLocalDateToUTC(DateFactory.createLocalDateNow('America/Los_Angeles'))).toStrictEqual(
-  //         DateFactory.createUTCDateNow(),
-  //       );
-  //       expect(DateFactory.convertLocalDateToUTC(DateFactory.createLocalDateNow('Europe/Prague'))).toStrictEqual(
-  //         DateFactory.createUTCDateNow(),
-  //       );
-  //     });
-  //     it('should convertLocalDateToUTC and compare formated date objects', async () => {
-  //       expect(DateFactory.convertLocalDateToUTC(DateFactory.createLocalDateNow()).toISOString()).toStrictEqual(
-  //         DateFactory.createUTCDateNow().toISOString(),
-  //       );
-  //       expect(DateFactory.convertLocalDateToUTC(DateFactory.createLocalDateNow('UTC')).toISOString()).toStrictEqual(
-  //         DateFactory.createUTCDateNow().toISOString(),
-  //       );
-  //       expect(
-  //         DateFactory.convertLocalDateToUTC(DateFactory.createLocalDateNow('America/Los_Angeles')).toISOString(),
-  //       ).toStrictEqual(DateFactory.createUTCDateNow().toISOString());
-  //       expect(
-  //         DateFactory.convertLocalDateToUTC(DateFactory.createLocalDateNow('Europe/Prague')).toISOString(),
-  //       ).toStrictEqual(DateFactory.createUTCDateNow().toISOString());
-  //     });
+  // describe('convertLocalDateToUTC', () => {
+  //   it('should convertLocalDateToUTC and compare date objects', async () => {
+  //     expect(DateFactory.convertLocalDateToUTC(DateFactory.createLocalDateNow())).toStrictEqual(
+  //       DateFactory.createUTCDateNow(),
+  //     );
+  //     expect(DateFactory.convertLocalDateToUTC(DateFactory.createLocalDateNow('UTC'))).toStrictEqual(
+  //       DateFactory.createUTCDateNow(),
+  //     );
+  //     expect(DateFactory.convertLocalDateToUTC(DateFactory.createLocalDateNow('America/Los_Angeles'))).toStrictEqual(
+  //       DateFactory.createUTCDateNow(),
+  //     );
+  //     expect(DateFactory.convertLocalDateToUTC(DateFactory.createLocalDateNow('Europe/Prague'))).toStrictEqual(
+  //       DateFactory.createUTCDateNow(),
+  //     );
+  //   });
+  //   it('should convertLocalDateToUTC and compare formated date objects', async () => {
+  //     expect(DateFactory.convertLocalDateToUTC(DateFactory.createLocalDateNow()).toISOString()).toStrictEqual(
+  //       DateFactory.createUTCDateNow().toISOString(),
+  //     );
+  //     expect(DateFactory.convertLocalDateToUTC(DateFactory.createLocalDateNow('UTC')).toISOString()).toStrictEqual(
+  //       DateFactory.createUTCDateNow().toISOString(),
+  //     );
+  //     expect(
+  //       DateFactory.convertLocalDateToUTC(DateFactory.createLocalDateNow('America/Los_Angeles')).toISOString(),
+  //     ).toStrictEqual(DateFactory.createUTCDateNow().toISOString());
+  //     expect(
+  //       DateFactory.convertLocalDateToUTC(DateFactory.createLocalDateNow('Europe/Prague')).toISOString(),
+  //     ).toStrictEqual(DateFactory.createUTCDateNow().toISOString());
+  //   });
 
   //     it.skip('should fap', async () => {
   //       console.log(format(new TZDate("2024-01-01", 'Europe/London'), 'yyyy-MM-dd'))
