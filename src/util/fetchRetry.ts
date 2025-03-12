@@ -52,12 +52,12 @@ export async function fetchRetry(
 
   if (options.currentRetryAttempt > 0) {
     if (options.subRequestContext !== null) {
-        subRequestRetryContext = new SubRequestRetryContext({
-          request,
-          accountId: options.subRequestContext.getAccountId(),
-          requestId: options.subRequestContext.getRequestId(),
-          subRequestId: options.subRequestContext.getId(),
-        });
+      subRequestRetryContext = new SubRequestRetryContext({
+        request,
+        accountId: options.subRequestContext.getAccountId(),
+        requestId: options.subRequestContext.getRequestId(),
+        subRequestId: options.subRequestContext.getId(),
+      });
     }
 
     let retryDelayInMs = (options.currentRetryAttempt + 1) * options.retryDelayMultiplierInMs;
