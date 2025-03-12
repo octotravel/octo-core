@@ -264,7 +264,7 @@ describe('fetchRetry', () => {
                 return { forceRetry: false, retryAfter: 0 };
               }
 
-              const jsonResponse = await response.clone().json();
+              const jsonResponse = await response.json();
 
               if (
                 jsonResponse.error &&
