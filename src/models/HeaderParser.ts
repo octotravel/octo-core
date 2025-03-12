@@ -11,7 +11,7 @@ export class HeaderParser {
 
     const retryAfterHeaderNumberValue = Number(retryAfterHeader);
     if (Number.isFinite(retryAfterHeaderNumberValue)) {
-      return retryAfterHeaderNumberValue || 1;
+      return retryAfterHeaderNumberValue || 0;
     }
 
     const retryDateMS = Date.parse(retryAfterHeader);
@@ -20,6 +20,6 @@ export class HeaderParser {
     }
 
     const deltaMS = retryDateMS - Date.now();
-    return deltaMS > 0 ? Math.ceil(deltaMS / 1000) : 1;
+    return deltaMS > 0 ? Math.ceil(deltaMS / 1000) : 0;
   }
 }

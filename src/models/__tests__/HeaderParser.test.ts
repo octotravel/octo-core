@@ -34,7 +34,7 @@ describe('HeaderParser.getRetryAfterInSeconds', () => {
     expect(response.headers.get).toHaveBeenCalledWith('retry-after');
   });
 
-  it('should return 1 if "retry-after" header is 0 or NaN when parsed as a number', () => {
+  it('should return 0 if "retry-after" header is 0 or NaN when parsed as a number', () => {
     const responseWithZero = {
       headers: {
         get: vi.fn().mockReturnValue('0'),
@@ -47,7 +47,7 @@ describe('HeaderParser.getRetryAfterInSeconds', () => {
       },
     } as unknown as Response;
 
-    expect(HeaderParser.getRetryAfterInSeconds(responseWithZero)).toBe(1);
+    expect(HeaderParser.getRetryAfterInSeconds(responseWithZero)).toBe(0);
     expect(HeaderParser.getRetryAfterInSeconds(responseWithNaN)).toBe(0);
   });
 
@@ -63,7 +63,7 @@ describe('HeaderParser.getRetryAfterInSeconds', () => {
     expect(HeaderParser.getRetryAfterInSeconds(response)).toBeLessThanOrEqual(5);
   });
 
-  it('should return 1 if "retry-after" is a valid date string in the past', () => {
+  it('should return 0 if "retry-after" is a valid date string in the past', () => {
     const pastDate = new Date(Date.now() - 5000).toUTCString(); // 5 seconds in the past
     const response = {
       headers: {
@@ -71,7 +71,7 @@ describe('HeaderParser.getRetryAfterInSeconds', () => {
       },
     } as unknown as Response;
 
-    expect(HeaderParser.getRetryAfterInSeconds(response)).toBe(1);
+    expect(HeaderParser.getRetryAfterInSeconds(response)).toBe(0);
   });
 
   it('should return 0 if "retry-after" is an invalid date string', () => {
