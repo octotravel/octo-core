@@ -3,19 +3,24 @@ import { SubRequestContext } from '../models/SubRequestContext';
 import { SubRequestRetryContext } from '../models/SubRequestRetryContext';
 
 const DEFAULT_MAX_RETRY_ATTEMPTS = 3;
+const DEFAULT_RETRY_AFTER = 0;
 const DEFAULT_RETRY_DELAY_MULTIPLIER_IN_MS = 1000;
-const FETCH_RETRY_DEFAULT_OPTIONS = {
+const FETCH_RETRY_DEFAULT_OPTIONS: Required<FetchRetryOptions> = {
   subRequestContext: null,
   currentRetryAttempt: 0,
   maxRetryAttempts: DEFAULT_MAX_RETRY_ATTEMPTS,
+  retryAfter: DEFAULT_RETRY_AFTER,
   retryDelayMultiplierInMs: DEFAULT_RETRY_DELAY_MULTIPLIER_IN_MS,
-  fetchImplementation: async (input: string | URL | Request, init?: RequestInit): Promise<Response> => {
-    return await fetch(input, init);
+  fetchImplementation: async (request: Request): Promise<Response> => {
+    return await fetch(request);
   },
-  shouldForceRetry: async (status: number, response: Response): Promise<boolean> => {
+  shouldForceRetry: async (response: Response): Promise<ShouldForceRetryResult> => {
     // consume the cloned response object
-    response.text();
-    return false;
+    await response.text();
+    return {
+      forceRetry: false,
+      retryAfter: 1,
+    };
   },
 };
 
@@ -23,95 +28,106 @@ export interface FetchRetryOptions {
   subRequestContext?: SubRequestContext | null;
   currentRetryAttempt?: number;
   maxRetryAttempts?: number;
+  retryAfter?: number;
   retryDelayMultiplierInMs?: number;
-  fetchImplementation?: (input: string | URL | globalThis.Request, init?: RequestInit) => Promise<Response>;
-  shouldForceRetry?: (status: number, response: Response) => Promise<boolean>;
+  fetchImplementation?: (request: Request) => Promise<Response>;
+  shouldForceRetry?: (response: Response) => Promise<ShouldForceRetryResult>;
+}
+
+export interface ShouldForceRetryResult {
+  forceRetry: boolean;
+  retryAfter: number;
 }
 
 export async function fetchRetry(
-  input: RequestInfo,
-  init?: RequestInit,
-  options: FetchRetryOptions = FETCH_RETRY_DEFAULT_OPTIONS,
+  request: Request,
+  defaultOptions: FetchRetryOptions = FETCH_RETRY_DEFAULT_OPTIONS,
 ): Promise<Response> {
-  let {
-    subRequestContext = null,
-    currentRetryAttempt = 0,
-    maxRetryAttempts = DEFAULT_MAX_RETRY_ATTEMPTS,
-    retryDelayMultiplierInMs = DEFAULT_RETRY_DELAY_MULTIPLIER_IN_MS,
-    fetchImplementation = async (input: string | URL | Request, init?: RequestInit) =>
-      await FETCH_RETRY_DEFAULT_OPTIONS.fetchImplementation(input, init),
-    shouldForceRetry = async (status: number, response: Response) =>
-      await FETCH_RETRY_DEFAULT_OPTIONS.shouldForceRetry(status, response),
-  } = options;
+  const options: Required<FetchRetryOptions> = {
+    ...FETCH_RETRY_DEFAULT_OPTIONS,
+    ...defaultOptions,
+  };
+
   let subRequestRetryContext: SubRequestRetryContext | null = null;
-  let request: Request;
 
-  if (typeof input === 'string' || input instanceof String) {
-    request = new Request(input, init);
-  } else {
-    request = input;
-  }
-
-  if (currentRetryAttempt > 0) {
-    if (subRequestContext !== null) {
-      if (subRequestContext !== null) {
-        subRequestRetryContext = new SubRequestRetryContext({
-          request,
-          accountId: subRequestContext.getAccountId(),
-          requestId: subRequestContext.getRequestId(),
-          subRequestId: subRequestContext.getId(),
-        });
-      }
+  if (options.currentRetryAttempt > 0) {
+    if (options.subRequestContext !== null) {
+      subRequestRetryContext = new SubRequestRetryContext({
+        request,
+        accountId: options.subRequestContext.getAccountId(),
+        requestId: options.subRequestContext.getRequestId(),
+        subRequestId: options.subRequestContext.getId(),
+      });
     }
 
-    await new Promise((resolve) => setTimeout(resolve, (currentRetryAttempt + 1) * retryDelayMultiplierInMs));
+    let retryDelayInMs = (options.currentRetryAttempt + 1) * options.retryDelayMultiplierInMs;
+
+    if (options.retryAfter > 0) {
+      retryDelayInMs = options.retryAfter * 1000;
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, retryDelayInMs));
   }
+
   let res: Response | undefined;
   let error: Error | null = null;
 
   try {
-    res = await fetchImplementation(request.clone());
+    res = await options.fetchImplementation(request.clone());
   } catch (e: unknown) {
-    res = new Response(JSON.stringify({ error: 'Cant get any response data, something went horribly wrong.' }), {
-      status: 500,
-    });
+    res = new Response(
+      JSON.stringify({ error: 'Unable to retrieve a response from the server. Please try again later.' }),
+      {
+        status: 500,
+      },
+    );
 
     if (e instanceof Error) {
       error = e;
     }
   }
 
-  if (currentRetryAttempt === 0 && subRequestContext !== null) {
-    subRequestContext.setResponse(res);
-    subRequestContext.setError(error);
-  } else if (currentRetryAttempt > 0 && subRequestContext !== null && subRequestRetryContext !== null) {
+  if (options.currentRetryAttempt === 0 && options.subRequestContext !== null) {
+    options.subRequestContext.setResponse(res);
+    options.subRequestContext.setError(error);
+  } else if (options.currentRetryAttempt > 0 && options.subRequestContext !== null && subRequestRetryContext !== null) {
     subRequestRetryContext.setResponse(res);
     subRequestRetryContext.setError(error);
     const requestData = subRequestRetryContext.getRequestData();
-    subRequestContext.addRetry(requestData);
+    options.subRequestContext.addRetry(requestData);
   }
 
-  currentRetryAttempt++;
+  options.currentRetryAttempt++;
 
-  const retryAfterInSeconds = HeaderParser.getRetryAfterInSeconds(res);
-  const status = res.status;
+  const shouldForceRetryResult = await options.shouldForceRetry(res.clone());
 
-  if (
-    ((status >= 500 && status < 599) || status === 429 || (await shouldForceRetry(status, res.clone()))) &&
-    currentRetryAttempt < maxRetryAttempts &&
-    retryAfterInSeconds <= currentRetryAttempt
-  ) {
-    return await fetchRetry(request, undefined, {
-      subRequestContext,
-      currentRetryAttempt,
-      maxRetryAttempts,
-      retryDelayMultiplierInMs,
-      fetchImplementation,
-      shouldForceRetry,
-    });
-  } else {
+  if (options.currentRetryAttempt < options.maxRetryAttempts) {
+    if (shouldForceRetryResult.forceRetry) {
+      const retryAfter = shouldForceRetryResult.retryAfter;
+
+      if (retryAfter > 0) {
+        options.retryAfter = retryAfter;
+      }
+
+      return await fetchRetry(request, options);
+    }
+
+    const status = res.status;
+
+    if ((status >= 500 && status < 599) || status === 429) {
+      const retryAfter = HeaderParser.getRetryAfterInSeconds(res);
+
+      if (retryAfter > 0) {
+        options.retryAfter = retryAfter;
+      }
+
+      if (options.retryAfter <= options.currentRetryAttempt) {
+        return await fetchRetry(request, options);
+      }
+    }
+
     // Retry is not needed anymore, so we can consume the request object
-    request.text();
+    await request.text();
   }
 
   if (error !== null) {
