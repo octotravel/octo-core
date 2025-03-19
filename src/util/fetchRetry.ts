@@ -51,7 +51,7 @@ export async function fetchRetry(
   let subRequestRetryContext: SubRequestRetryContext | null = null;
 
   if (options.currentRetryAttempt > 0) {
-    if (options.subRequestContext !== null) {
+    if (options.subRequestContext !== null && options.subRequestContext !== undefined) {
       subRequestRetryContext = new SubRequestRetryContext({
         request,
         accountId: options.subRequestContext.getAccountId(),
@@ -87,10 +87,19 @@ export async function fetchRetry(
     }
   }
 
-  if (options.currentRetryAttempt === 0 && options.subRequestContext !== null) {
+  if (
+    options.currentRetryAttempt === 0 &&
+    options.subRequestContext !== null &&
+    options.subRequestContext !== undefined
+  ) {
     options.subRequestContext.setResponse(res);
     options.subRequestContext.setError(error);
-  } else if (options.currentRetryAttempt > 0 && options.subRequestContext !== null && subRequestRetryContext !== null) {
+  } else if (
+    options.currentRetryAttempt > 0 &&
+    options.subRequestContext !== null &&
+    options.subRequestContext !== undefined &&
+    subRequestRetryContext !== null
+  ) {
     subRequestRetryContext.setResponse(res);
     subRequestRetryContext.setError(error);
     const requestData = subRequestRetryContext.getRequestData();
