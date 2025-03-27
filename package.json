@@ -1,6 +1,6 @@
 {
   "name": "@octocloud/core",
-  "version": "1.0.69",
+  "version": "1.0.70",
   "license": "ISC",
   "author": "",
   "exports": {
@@ -47,12 +47,11 @@
     "@types/uuid": "^9.0.0",
     "@types/node": "^22.9.0",
     "typescript": "^5.7.2",
-    "@vitest/coverage-v8": "3.0.6",
+    "@vitest/coverage-v8": "3.0.9",
     "audit-ci": "7.1.0",
     "lefthook": "1.10.10",
     "tsup": "8.3.5",
-    "vite": "6.1.1",
-    "vitest": "3.0.6",
+    "vitest": "3.0.9",
     "vitest-mock-extended": "3.0.1"
   },
   "overrides": {

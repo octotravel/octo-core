@@ -51,6 +51,7 @@ export interface BackendParams extends CoreParams {
   locale?: string;
   capabilities?: CapabilityId[];
   useIdempotency?: boolean;
+  useQueueOverflow?: boolean;
 }
 
 // deno-lint-ignore no-empty-interface
