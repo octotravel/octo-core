@@ -1,7 +1,6 @@
 import { addSeconds } from 'date-fns';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { DataGenerationService } from '../../services/DataGenerationService';
-import { AlertType } from '../../types/AlertType';
 import { AlertData } from '../AlertData';
 import { Environment } from '../Config';
 import { RequestContext } from '../RequestContext';
@@ -134,7 +133,7 @@ describe('RequestContext', () => {
 
   describe('enableAlert', () => {
     it('should enable alert', () => {
-      const alertData = new AlertData(AlertType.GENERAL, 'Test Alert');
+      const alertData = new AlertData('GENERAL', 'Test Alert');
       requestContext.enableAlert(alertData);
       expect(requestContext.isAlertEnabled()).toBe(true);
       expect(requestContext.getAlertData()).toBe(alertData);
