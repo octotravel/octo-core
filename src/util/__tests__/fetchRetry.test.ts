@@ -289,6 +289,26 @@ describe('fetchRetry', () => {
       });
     });
 
+    describe('with skipRetryStatusCodes', () => {
+      it('should not retry when response status code is in skipRetryStatusCodes', async () => {
+        global.fetch = vi
+          .fn()
+          .mockReturnValueOnce(Promise.resolve(new Response('504 Gateway Timeout', { status: 504 })));
+
+        response = await fetchRetry(request, {
+          subRequestContext,
+          retryDelayMultiplierInMs: RETRY_DELAY_MULTIPLIER_IN_MS,
+          skipRetryStatusCodes: [504],
+        });
+        const subrequestData = subRequestContext.getRequestData();
+
+        expect(response.status).toBe(504);
+        expect(subrequestData.getResponse().status).toBe(504);
+        expect(subrequestData.getRetries().length).toBe(0);
+        expect(global.fetch).toHaveBeenCalledTimes(1);
+      });
+    });
+
     it('should fail the first try due to unknown error in fetch then succeed', async () => {
       global.fetch = vi
         .fn()
