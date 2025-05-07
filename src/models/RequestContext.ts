@@ -25,6 +25,7 @@ export class RequestContext {
   private readonly environment: Environment;
   private productIds: string[] = [];
   private error: Error | null = null;
+  private _redirectURL: string | null = null;
 
   public constructor({
     request,
@@ -131,6 +132,14 @@ export class RequestContext {
   public isRequestImportant = (): boolean => {
     return this._isRequestImportant;
   };
+
+  public setRedirectURL(url: string): void {
+    this._redirectURL = url;
+  }
+
+  public get redirectURL(): string | null {
+    return this._redirectURL;
+  }
 
   public enableCors(): void {
     this.corsEnabled = true;
