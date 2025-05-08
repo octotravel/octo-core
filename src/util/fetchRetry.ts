@@ -11,7 +11,7 @@ const FETCH_RETRY_DEFAULT_OPTIONS: Required<FetchRetryOptions> = {
   maxRetryAttempts: DEFAULT_MAX_RETRY_ATTEMPTS,
   retryAfter: DEFAULT_RETRY_AFTER,
   retryDelayMultiplierInMs: DEFAULT_RETRY_DELAY_MULTIPLIER_IN_MS,
-  skipRetryStatusCodes: [],
+  retryOnStatus: [429, 500, 502, 503, 504],
   fetchImplementation: async (request: Request): Promise<Response> => {
     return await fetch(request);
   },
@@ -31,7 +31,7 @@ export interface FetchRetryOptions {
   maxRetryAttempts?: number;
   retryAfter?: number;
   retryDelayMultiplierInMs?: number;
-  skipRetryStatusCodes?: number[];
+  retryOnStatus?: number[];
   fetchImplementation?: (request: Request) => Promise<Response>;
   shouldForceRetry?: (response: Response) => Promise<ShouldForceRetryResult>;
 }
@@ -125,7 +125,7 @@ export async function fetchRetry(
 
     const status = res.status;
 
-    if (!options.skipRetryStatusCodes.includes(status) && ((status >= 500 && status < 599) || status === 429)) {
+    if (options.retryOnStatus.includes(status)) {
       const retryAfter = HeaderParser.getRetryAfterInSeconds(res);
 
       if (retryAfter > 0) {

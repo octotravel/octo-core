@@ -298,7 +298,7 @@ describe('fetchRetry', () => {
         response = await fetchRetry(request, {
           subRequestContext,
           retryDelayMultiplierInMs: RETRY_DELAY_MULTIPLIER_IN_MS,
-          skipRetryStatusCodes: [504],
+          retryOnStatus: [429, 500, 502, 503],
         });
         const subrequestData = subRequestContext.getRequestData();
 
