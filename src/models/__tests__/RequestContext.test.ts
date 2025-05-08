@@ -124,6 +124,16 @@ describe('RequestContext', () => {
     });
   });
 
+  describe('setRedirectURL', () => {
+    it('should get redirect url', () => {
+      expect(requestContext.redirectURL).toBe(null);
+    });
+    it('should set redirect url', () => {
+      requestContext.setRedirectURL('https://example.com');
+      expect(requestContext.redirectURL).toBe('https://example.com');
+    });
+  });
+
   describe('enableCors', () => {
     it('should enable cors', () => {
       requestContext.enableCors();
