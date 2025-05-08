@@ -5,13 +5,14 @@ import { SubRequestRetryContext } from '../models/SubRequestRetryContext';
 const DEFAULT_MAX_RETRY_ATTEMPTS = 3;
 const DEFAULT_RETRY_AFTER = 0;
 const DEFAULT_RETRY_DELAY_MULTIPLIER_IN_MS = 1000;
+const DEFAULT_RETRY_ON_STATUS = [429, 500, 502, 503, 504, 506, 507, 508, 510, 511];
 const FETCH_RETRY_DEFAULT_OPTIONS: Required<FetchRetryOptions> = {
   subRequestContext: null,
   currentRetryAttempt: 0,
   maxRetryAttempts: DEFAULT_MAX_RETRY_ATTEMPTS,
   retryAfter: DEFAULT_RETRY_AFTER,
   retryDelayMultiplierInMs: DEFAULT_RETRY_DELAY_MULTIPLIER_IN_MS,
-  retryOnStatus: [429, 500, 502, 503, 504],
+  retryOnStatus: DEFAULT_RETRY_ON_STATUS,
   fetchImplementation: async (request: Request): Promise<Response> => {
     return await fetch(request);
   },
