@@ -10,6 +10,8 @@ export const UNPROCESSABLE_ENTITY = 'UNPROCESSABLE_ENTITY';
 export const INTERNAL_SERVER_ERROR = 'INTERNAL_SERVER_ERROR';
 export const UNAUTHORIZED = 'UNAUTHORIZED';
 export const FORBIDDEN = 'FORBIDDEN';
+export const GATEWAY_TIMEOUT = 'GATEWAY_TIMEOUT';
+export const CLIENT_CLOSED_REQUEST = 'CLIENT_CLOSED_REQUEST';
 
 const ERROR_MESSAGE_INVALID_PRODUCT_ID = "The productId was missing or invalid'";
 const ERROR_MESSAGE_INVALID_OPTION_ID = "The optionId was missing or invalid'";
