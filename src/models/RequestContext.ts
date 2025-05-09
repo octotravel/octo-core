@@ -27,7 +27,7 @@ export class RequestContext {
   private error: Error | null = null;
   private _redirectURL: string | null = null;
   private _requestTimeout = 120000;
-  private _shouldChainClientAbort = false;
+  private _shouldChainClientRequestAbort = false;
 
   public constructor({
     request,
@@ -151,12 +151,12 @@ export class RequestContext {
     return this._requestTimeout;
   }
 
-  public setShouldChainClientAbort(shouldChainClientAbort: boolean): void {
-    this._shouldChainClientAbort = shouldChainClientAbort;
+  public setShouldChainClientRequestAbort(shouldChainClientRequestAbort: boolean): void {
+    this._shouldChainClientRequestAbort = shouldChainClientRequestAbort;
   }
 
-  public get shouldChainClientAbort(): boolean {
-    return this._shouldChainClientAbort;
+  public get shouldChainClientRequestAbort(): boolean {
+    return this._shouldChainClientRequestAbort;
   }
 
   public enableCors(): void {
