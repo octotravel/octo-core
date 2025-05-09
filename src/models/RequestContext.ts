@@ -28,6 +28,7 @@ export class RequestContext {
   private _redirectURL: string | null = null;
   private _requestTimeout = 120000;
   private _shouldChainClientRequestAbort = false;
+  private abortController: AbortController = new AbortController();
 
   public constructor({
     request,
@@ -157,6 +158,10 @@ export class RequestContext {
 
   public get shouldChainClientRequestAbort(): boolean {
     return this._shouldChainClientRequestAbort;
+  }
+
+  public getAbortController(): AbortController {
+    return this.abortController;
   }
 
   public enableCors(): void {
