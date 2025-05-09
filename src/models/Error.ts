@@ -5,14 +5,19 @@ export const STATUS_BAD_REQUEST = 400;
 export const STATUS_UNAUTHORIZED = 401;
 export const STATUS_FORBIDDEN = 403;
 export const STATUS_NOT_FOUD = 404;
+export const STATUS_CLIENT_CLOSED_REQUEST = 499;
 export const STATUS_INTERNAL_SERVER_ERROR = 500;
 export const STATUS_SERVICE_UNAVAILABLE_ERROR = 503;
+export const STATUS_GATEWAY_TIMEOUT = 504;
+
 export const MESSAGE_BAD_REQUEST = 'Bad Request';
 export const MESSAGE_NOT_FOUND = 'Not Found';
+export const MESSAGE_CLIENT_CLOSED_REQUEST = 'Client Closed Request';
 export const MESSAGE_UNAUTHORIZED = 'Unauthorized';
 export const MESSAGE_FORBIDDEN = 'Forbidden';
 export const MESSAGE_INTERNAL_SERVER_ERROR = 'Internal Server Error';
 export const MESSAGE_SERVICE_UNAVAILABLE_ERROR = 'Service Unavailable Error';
+export const MESSAGE_GATEWAY_TIMEOUT = 'Gateway Timeout Error';
 
 export const MESSAGE_NO_AVAILABILITY_ERROR = 'No Availability';
 export const MESSAGE_OPTION_RESTRICTIONS_ERROR = "Option Restrictions aren't met";
@@ -168,6 +173,15 @@ export class HttpNotFound extends HttpError {
   }
 }
 
+export class HttpClientClosedRequestError extends HttpError {
+  public constructor(body?: Record<string, any>) {
+    super(STATUS_CLIENT_CLOSED_REQUEST, {
+      message: MESSAGE_CLIENT_CLOSED_REQUEST,
+      body,
+    });
+  }
+}
+
 export class HttpUnauthorized extends HttpError {
   public constructor(body?: Record<string, any>) {
     super(STATUS_UNAUTHORIZED, {
@@ -199,6 +213,15 @@ export class HttpServiceUnavailableError extends HttpError {
   public constructor(body?: Record<string, any>) {
     super(STATUS_SERVICE_UNAVAILABLE_ERROR, {
       message: MESSAGE_SERVICE_UNAVAILABLE_ERROR,
+      body,
+    });
+  }
+}
+
+export class HttpGatewayTimeoutError extends HttpError {
+  public constructor(body?: Record<string, any>) {
+    super(STATUS_GATEWAY_TIMEOUT, {
+      message: MESSAGE_GATEWAY_TIMEOUT,
       body,
     });
   }
