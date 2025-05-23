@@ -139,7 +139,13 @@ export async function fetchRetry(
     }
 
     // Retry is not needed anymore, so we can consume the request object
-    await request.text();
+    if (request.method !== 'GET' && request.method !== 'HEAD' && request.bodyUsed === false) {
+      try {
+        await request.text();
+      } catch (e: unknown) {
+        // ignore
+      }
+    }
   }
 
   if (error !== null) {
