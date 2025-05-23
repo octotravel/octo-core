@@ -27,6 +27,7 @@ describe('fetchRetry', () => {
 
       return await Promise.resolve(response ?? new Response('', { status: 200 }));
     });
+
     request = new Request(url, {
       method: RequestMethod.Post,
       body: JSON.stringify({}),
