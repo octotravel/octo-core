@@ -8,68 +8,77 @@ describe('fetchRetry', () => {
   let request: Request;
   let response: Response | undefined;
   let error: Error | undefined;
+  let globalFetchResponse: (Response | Error)[] = [];
 
   const RETRY_DELAY_MULTIPLIER_IN_MS = 10;
 
   beforeEach(() => {
-    global.fetch = vi.fn(async () => {
-      return await Promise.resolve(new Response('{}', { status: 200 }));
+    globalFetchResponse = [];
+    global.fetch = vi.fn(async (input: string | URL | globalThis.Request, init?: RequestInit) => {
+      if (input instanceof globalThis.Request) {
+        await input.text();
+      }
+
+      const response = globalFetchResponse.shift();
+
+      if (response instanceof Error) {
+        return await Promise.reject(response ?? new Error('Unknown error'));
+      }
+
+      return await Promise.resolve(response ?? new Response('', { status: 200 }));
     });
     request = new Request(url, {
-      method: RequestMethod.Get,
+      method: RequestMethod.Post,
+      body: JSON.stringify({}),
     });
   });
 
   describe('without provided subrequest context', () => {
     it('should succeed at first try with successful response', async () => {
-      global.fetch = vi.fn().mockReturnValueOnce(Promise.resolve(new Response('', { status: 200 })));
+      globalFetchResponse.push(new Response('', { status: 200 }));
       response = await fetchRetry(request, { retryDelayMultiplierInMs: RETRY_DELAY_MULTIPLIER_IN_MS });
       expect(response.status).toBe(200);
     });
 
     it('should succeed at first try with successful response', async () => {
-      global.fetch = vi.fn().mockReturnValueOnce(Promise.resolve(new Response(null, { status: 204 })));
+      globalFetchResponse.push(new Response(null, { status: 204 }));
       response = await fetchRetry(request);
       expect(response.status).toBe(204);
     });
 
     it('should succeed at first try with redirection message', async () => {
-      global.fetch = vi.fn().mockReturnValue(Promise.resolve(new Response(null, { status: 300 })));
+      globalFetchResponse.push(new Response(null, { status: 300 }));
       response = await fetchRetry(request, { retryDelayMultiplierInMs: RETRY_DELAY_MULTIPLIER_IN_MS });
       expect(response.status).toBe(300);
     });
 
     it('should succeed at first try with redirection message', async () => {
-      global.fetch = vi.fn().mockReturnValue(Promise.resolve(new Response(null, { status: 303 })));
+      globalFetchResponse.push(new Response(null, { status: 303 }));
       response = await fetchRetry(request, { retryDelayMultiplierInMs: RETRY_DELAY_MULTIPLIER_IN_MS });
       expect(response.status).toBe(303);
     });
 
     it('should succeed at second retry with successful response', async () => {
-      global.fetch = vi
-        .fn()
-        .mockReturnValueOnce(Promise.resolve(new Response('503 Service Unavailable', { status: 503 })))
-        .mockReturnValueOnce(Promise.resolve(new Response('{}', { status: 200 })));
+      globalFetchResponse.push(new Response('503 Service Unavailable', { status: 503 }));
+      globalFetchResponse.push(new Response(null, { status: 200 }));
       response = await fetchRetry(request, { retryDelayMultiplierInMs: RETRY_DELAY_MULTIPLIER_IN_MS });
       expect(response.status).toBe(200);
     });
 
     it('should succeed at third retry with successful response', async () => {
-      global.fetch = vi
-        .fn()
-        .mockReturnValueOnce(Promise.resolve(new Response('503 Service Unavailable', { status: 503 })))
-        .mockReturnValueOnce(Promise.resolve(new Response('502 Bad Gateway', { status: 502 })))
-        .mockReturnValue(Promise.resolve(new Response('{}', { status: 200 })));
+      globalFetchResponse.push(new Response('503 Service Unavailable', { status: 503 }));
+      globalFetchResponse.push(new Response('502 Bad Gateway', { status: 502 }));
+      globalFetchResponse.push(new Response('', { status: 200 }));
+
       response = await fetchRetry(request, { retryDelayMultiplierInMs: RETRY_DELAY_MULTIPLIER_IN_MS });
       expect(response.status).toBe(200);
     });
 
     it('should fail after three retries with server error response', async () => {
-      global.fetch = vi
-        .fn()
-        .mockReturnValueOnce(Promise.resolve(new Response('503 Service Unavailable', { status: 503 })))
-        .mockReturnValueOnce(Promise.resolve(new Response('502 Bad Gateway', { status: 502 })))
-        .mockReturnValue(Promise.resolve(new Response('500 Internal Server Error', { status: 500 })));
+      globalFetchResponse.push(new Response('503 Service Unavailable', { status: 503 }));
+      globalFetchResponse.push(new Response('502 Bad Gateway', { status: 502 }));
+      globalFetchResponse.push(new Response('500 Internal Server Error', { status: 500 }));
+
       response = await fetchRetry(request, { retryDelayMultiplierInMs: RETRY_DELAY_MULTIPLIER_IN_MS });
       expect(response.status).toBe(500);
     });
@@ -126,7 +135,7 @@ describe('fetchRetry', () => {
 
     describe('should test basic retry logic', () => {
       it('should succeed at first try with successful response', async () => {
-        global.fetch = vi.fn().mockReturnValueOnce(Promise.resolve(new Response('', { status: 200 })));
+        globalFetchResponse.push(new Response('', { status: 200 }));
         response = await fetchRetry(request, {
           subRequestContext,
           retryDelayMultiplierInMs: RETRY_DELAY_MULTIPLIER_IN_MS,
@@ -139,10 +148,8 @@ describe('fetchRetry', () => {
       });
 
       it('should succeed at second retry with successful response', async () => {
-        global.fetch = vi
-          .fn()
-          .mockReturnValueOnce(Promise.resolve(new Response('503 Service Unavailable', { status: 503 })))
-          .mockReturnValueOnce(Promise.resolve(new Response('{}', { status: 200 })));
+        globalFetchResponse.push(new Response('503 Service Unavailable', { status: 503 }));
+        globalFetchResponse.push(new Response('', { status: 200 }));
         response = await fetchRetry(request, {
           subRequestContext,
           retryDelayMultiplierInMs: RETRY_DELAY_MULTIPLIER_IN_MS,
@@ -156,11 +163,9 @@ describe('fetchRetry', () => {
       });
 
       it('should succeed at third retry with successful response', async () => {
-        global.fetch = vi
-          .fn()
-          .mockReturnValueOnce(Promise.resolve(new Response('503 Service Unavailable', { status: 503 })))
-          .mockReturnValueOnce(Promise.resolve(new Response('502 Bad Gateway', { status: 502 })))
-          .mockReturnValueOnce(Promise.resolve(new Response('{}', { status: 200 })));
+        globalFetchResponse.push(new Response('503 Service Unavailable', { status: 503 }));
+        globalFetchResponse.push(new Response('502 Bad Gateway', { status: 502 }));
+        globalFetchResponse.push(new Response('', { status: 200 }));
         response = await fetchRetry(request, {
           subRequestContext,
           retryDelayMultiplierInMs: RETRY_DELAY_MULTIPLIER_IN_MS,
@@ -175,11 +180,9 @@ describe('fetchRetry', () => {
       });
 
       it('should fail after three retries with server error response', async () => {
-        global.fetch = vi
-          .fn()
-          .mockReturnValueOnce(Promise.resolve(new Response('503 Service Unavailable', { status: 503 })))
-          .mockReturnValueOnce(Promise.resolve(new Response('502 Bad Gateway', { status: 502 })))
-          .mockReturnValueOnce(Promise.resolve(new Response('500 Internal Server Error', { status: 500 })));
+        globalFetchResponse.push(new Response('503 Service Unavailable', { status: 503 }));
+        globalFetchResponse.push(new Response('502 Bad Gateway', { status: 502 }));
+        globalFetchResponse.push(new Response('500 Internal Server Error', { status: 500 }));
         response = await fetchRetry(request, {
           subRequestContext,
           retryDelayMultiplierInMs: RETRY_DELAY_MULTIPLIER_IN_MS,
@@ -196,19 +199,13 @@ describe('fetchRetry', () => {
 
     describe('should use retry-after header', () => {
       it('should succeed at third retry with successful response using retry-after header', async () => {
-        global.fetch = vi
-          .fn()
-          .mockReturnValueOnce(
-            Promise.resolve(
-              new Response('500 Internal Server Error', { status: 500, headers: { 'Retry-After': '1' } }),
-            ),
-          )
-          .mockReturnValueOnce(
-            Promise.resolve(
-              new Response('500 Internal Server Error', { status: 500, headers: { 'Retry-After': '1' } }),
-            ),
-          )
-          .mockReturnValueOnce(Promise.resolve(new Response('{}', { status: 200, headers: { 'Retry-After': '1' } })));
+        globalFetchResponse.push(
+          new Response('500 Internal Server Error', { status: 500, headers: { 'Retry-After': '1' } }),
+        );
+        globalFetchResponse.push(
+          new Response('500 Internal Server Error', { status: 500, headers: { 'Retry-After': '1' } }),
+        );
+        globalFetchResponse.push(new Response('{}', { status: 200, headers: { 'Retry-After': '1' } }));
         response = await fetchRetry(request, {
           subRequestContext,
           retryDelayMultiplierInMs: RETRY_DELAY_MULTIPLIER_IN_MS,
@@ -222,13 +219,9 @@ describe('fetchRetry', () => {
       });
 
       it('should fail without any retries based on high value in retry-again header', async () => {
-        global.fetch = vi
-          .fn()
-          .mockReturnValueOnce(
-            Promise.resolve(
-              new Response('500 Internal Server Error', { status: 500, headers: { 'Retry-After': '100' } }),
-            ),
-          );
+        globalFetchResponse.push(
+          new Response('500 Internal Server Error', { status: 500, headers: { 'Retry-After': '100' } }),
+        );
         response = await fetchRetry(request, {
           subRequestContext,
           retryDelayMultiplierInMs: RETRY_DELAY_MULTIPLIER_IN_MS,
@@ -239,21 +232,17 @@ describe('fetchRetry', () => {
 
     describe('should use force retry callback', () => {
       it('should succeed at third retry with successful response using retry-after header', async () => {
-        global.fetch = vi
-          .fn()
-          .mockReturnValueOnce(
-            Promise.resolve(
-              new Response(
-                JSON.stringify({
-                  error: 'TOO_MANY_REQUESTS',
-                  errorMessage: 'Too many requests, please retry later',
-                  retryAfter: 1,
-                }),
-                { status: 400 },
-              ),
-            ),
-          )
-          .mockReturnValueOnce(Promise.resolve(new Response('{}', { status: 200 })));
+        globalFetchResponse.push(
+          new Response(
+            JSON.stringify({
+              error: 'TOO_MANY_REQUESTS',
+              errorMessage: 'Too many requests, please retry later',
+              retryAfter: 1,
+            }),
+            { status: 400 },
+          ),
+        );
+        globalFetchResponse.push(new Response('{}', { status: 200 }));
 
         response = await fetchRetry(request, {
           subRequestContext,
@@ -291,9 +280,7 @@ describe('fetchRetry', () => {
 
     describe('with skipRetryStatusCodes', () => {
       it('should not retry when response status code is in skipRetryStatusCodes', async () => {
-        global.fetch = vi
-          .fn()
-          .mockReturnValueOnce(Promise.resolve(new Response('504 Gateway Timeout', { status: 504 })));
+        globalFetchResponse.push(new Response('504 Gateway Timeout', { status: 504 }));
 
         response = await fetchRetry(request, {
           subRequestContext,
@@ -310,10 +297,8 @@ describe('fetchRetry', () => {
     });
 
     it('should fail the first try due to unknown error in fetch then succeed', async () => {
-      global.fetch = vi
-        .fn()
-        .mockReturnValueOnce(Promise.reject(new Error('Unknown error')))
-        .mockReturnValue(Promise.resolve(new Response('{}', { status: 200 })));
+      globalFetchResponse.push(new Error('Unknown error'));
+      globalFetchResponse.push(new Response('{}', { status: 200 }));
 
       response = await fetchRetry(request, {
         subRequestContext,
