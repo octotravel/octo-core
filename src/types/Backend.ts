@@ -52,6 +52,7 @@ export interface BackendParams extends CoreParams {
   capabilities?: CapabilityId[];
   useIdempotency?: boolean;
   useQueueOverflow?: boolean;
+  useRawUnits?: boolean;
 }
 
 // deno-lint-ignore no-empty-interface
