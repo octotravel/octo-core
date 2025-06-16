@@ -21,7 +21,7 @@ export class Money {
    * @throws {Error}
    */
   private readonly getCurrency = (code: string): Currency<number> => {
-    const currency = currencies[code];
+    const currency = currencies[code.toUpperCase()];
     if (currency) {
       return currency;
     }
