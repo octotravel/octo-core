@@ -10,7 +10,7 @@ describe('Money', () => {
 
   describe('getAmount', () => {
     it('should get amount', async () => {
-      expect(new Money(1000, 'EUR').getAmount()).toBe(1000);
+      expect(new Money(1000, 'eur').getAmount()).toBe(1000);
     });
   });
   describe('getValue', () => {
@@ -20,7 +20,7 @@ describe('Money', () => {
   });
   describe('getPrecision', () => {
     it('should get precision', async () => {
-      expect(new Money(1000, 'EUR').getPrecision()).toBe(2);
+      expect(new Money(1000, 'eur').getPrecision()).toBe(2);
     });
   });
   describe('add', () => {
