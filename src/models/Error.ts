@@ -52,7 +52,7 @@ export class NoAvailabilityError extends InternalError {
   }
 }
 export class OptionRestrictionsError extends InternalError {
-  public readonly minUnits: number;
+  public readonly minUnits: number | null;
   public readonly maxUnits: number | null;
   public readonly unit: Unit | null;
   public readonly isAccompaniedByOk: boolean;
@@ -63,7 +63,7 @@ export class OptionRestrictionsError extends InternalError {
     unit,
     isAccompaniedByOk = true,
   }: {
-    minUnits: number;
+    minUnits: number | null;
     maxUnits: number | null;
     unit?: Unit;
     isAccompaniedByOk?: boolean;

@@ -1,7 +1,7 @@
 import { PricingUnit } from '@octocloud/types';
 
 export class PricingUnitHelper {
-  public static filterFirstUnitPricing = (pricingUnits: PricingUnit[]): PricingUnit[] => {
+  public static filterFirstUnitPricing = (pricingUnits: (PricingUnit & { unitType: string })[]): PricingUnit[] => {
     const usedUnitTypes: string[] = [];
     const filteredUnitPricings: PricingUnit[] = [];
 

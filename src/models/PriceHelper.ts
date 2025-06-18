@@ -6,7 +6,9 @@ export interface Price {
 }
 
 export abstract class PriceHelper {
-  public static calculatePrice = (pricing: Pricing): Price => {
+  public static calculatePrice = (
+    pricing: Pricing & { offerDiscount: { original: number; retail: number } },
+  ): Price => {
     if (pricing.offerDiscount) {
       return {
         original: pricing.original + pricing.offerDiscount.original,
