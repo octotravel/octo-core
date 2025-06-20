@@ -10,7 +10,7 @@ describe('PricingUnitHelper', () => {
     });
 
     it('should return the same array when all unit IDs are unique', () => {
-      const expectedPricingUnits: PricingUnit[] = [
+      const expectedPricingUnits: (PricingUnit & { unitType: UnitType })[] = [
         {
           unitId: '1',
           original: 10,
@@ -47,7 +47,7 @@ describe('PricingUnitHelper', () => {
     });
 
     it('should filter out duplicate unit IDs and keep only the first occurrence', () => {
-      const pricingUnits: PricingUnit[] = [
+      const pricingUnits: (PricingUnit & { unitType: UnitType })[] = [
         {
           unitId: '1',
           original: 10,
@@ -79,7 +79,7 @@ describe('PricingUnitHelper', () => {
           unitType: UnitType.ADULT,
         },
       ];
-      const expectedPricingUnits: PricingUnit[] = [
+      const expectedPricingUnits: (PricingUnit & { unitType: UnitType })[] = [
         {
           unitId: '1',
           original: 10,
