@@ -1,17 +1,14 @@
-import { PricingModelGenerator, PricingParser } from '@octocloud/generators';
-import { CapabilityId, Currency } from '@octocloud/types';
+import { Currency } from '@octocloud/types';
 import { describe, expect, it } from 'vitest';
 import { PriceHelper } from '../PriceHelper';
 
 describe('PricingHelper', () => {
-  const pricingModelGenerator = new PricingModelGenerator();
-  const pricingParser = new PricingParser();
-  const pricingData = {
+  const pricingDataWithOffer = {
     original: 1000,
     retail: 1000,
     net: 1000,
-    includedTaxes: [],
     currency: Currency.EUR,
+    includedTaxes: [],
     currencyPrecision: 2,
     offerDiscount: {
       original: 500,
@@ -19,26 +16,25 @@ describe('PricingHelper', () => {
       includedTaxes: [],
     },
   };
-  const pricingModel = pricingModelGenerator.generatePricing({
-    pricingData,
-    capabilities: [],
-  });
-  const pricingModelWithOffers = pricingModelGenerator.generatePricing({
-    pricingData,
-    capabilities: [CapabilityId.Offers],
-  });
-  const pricing = pricingParser.parseModelToPOJO(pricingModel);
-  const pricingWithOffer = pricingParser.parseModelToPOJO(pricingModelWithOffers);
+
+  const pricingDataWithoutOffer = {
+    original: 1000,
+    retail: 1000,
+    net: 1000,
+    currency: Currency.EUR,
+    includedTaxes: [],
+    currencyPrecision: 2,
+  };
 
   describe('calculatePrice', () => {
-    it('should calculate price', async () => {
-      const price = PriceHelper.calculatePrice(pricing);
+    it('should calculate price', () => {
+      const price = PriceHelper.calculatePrice(pricingDataWithoutOffer);
       expect(price.original).toBe(1000);
       expect(price.retail).toBe(1000);
     });
 
-    it('should calculate price with offer', async () => {
-      const price = PriceHelper.calculatePrice(pricingWithOffer);
+    it('should calculate price with offer', () => {
+      const price = PriceHelper.calculatePrice(pricingDataWithOffer);
       expect(price.original).toBe(1500);
       expect(price.retail).toBe(1500);
     });

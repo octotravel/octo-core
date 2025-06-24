@@ -36,6 +36,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-modules-
 
+      - name: Remove node modules
+        run: rm -rf node_modules package-lock.json
+
       - name: Install node modules
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: npm install --no-lockfile --ignore-scripts --prefer-offline --unsafe-perm
@@ -97,8 +100,8 @@ jobs:
       - name: Setup Biome
         uses: biomejs/setup-biome@v2
         with:
-          version: 1.9.4
-      
+          version: 2.0.0
+
       - name: Run Biome
         run: biome ci .
 

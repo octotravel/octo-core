@@ -1,55 +1,116 @@
-import { AvailabilityModelGenerator, AvailabilityParser } from '@octocloud/generators';
-import { Availability, AvailabilityStatus, PricingUnit, UnitType } from '@octocloud/types';
-import { describe, expect, it } from 'vitest';
+import { Availability, AvailabilityStatus } from '@octocloud/types';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { AvailabilityHelper } from '../AvailabilityHelper';
+import { DateHelper } from '../DateHelper';
 import { NoAvailabilityError } from '../Error';
 
+vi.mock('../DateHelper', () => ({
+  DateHelper: {
+    getDate: vi.fn(),
+  },
+}));
+
 describe('AvailabilityHelper', () => {
-  const availabilityModelGenerator = new AvailabilityModelGenerator();
-  const availabilityParser = new AvailabilityParser();
+  let mockAvailabilities: Availability[];
 
-  const successLocalDateTimeStart = '2023-12-01T00:00:00+01:00';
-  const unavailableLocalDateTimeStart = '2023-12-02T00:00:00+01:00';
+  beforeEach(() => {
+    vi.resetAllMocks();
 
-  const availabilityModels = availabilityModelGenerator.generateMultipleAvailabilities([
-    {
-      localDateTimeStart: successLocalDateTimeStart,
-    },
-    {
-      localDateTimeStart: unavailableLocalDateTimeStart,
-      available: false,
-    },
-    {
-      localDateTimeStart: '2023-12-03T00:00:00+01:00',
-      available: true,
-      unitPricing: undefined,
-    },
-  ]);
-
-  const availabilyPOJOs = availabilityModels.map((availabilityModel) => {
-    return availabilityParser.parseModelToPOJO(availabilityModel);
+    mockAvailabilities = [
+      {
+        id: '1',
+        localDateTimeStart: '2023-01-01T10:00:00',
+        localDateTimeEnd: '2023-01-01T11:00:00',
+        available: true,
+        allDay: false,
+        utcCutoffAt: '',
+        status: AvailabilityStatus.AVAILABLE,
+        vacancies: null,
+        capacity: null,
+        maxUnits: null,
+        openingHours: [],
+      },
+      {
+        id: '2',
+        localDateTimeStart: '2023-01-02T10:00:00',
+        localDateTimeEnd: '2023-01-02T11:00:00',
+        available: false,
+        allDay: false,
+        utcCutoffAt: '',
+        status: AvailabilityStatus.AVAILABLE,
+        vacancies: null,
+        capacity: null,
+        maxUnits: null,
+        openingHours: [],
+      },
+      {
+        id: '3',
+        localDateTimeStart: '2023-01-03T00:00:00',
+        localDateTimeEnd: '2023-01-03T23:59:59',
+        available: true,
+        allDay: true,
+        utcCutoffAt: '',
+        status: AvailabilityStatus.AVAILABLE,
+        vacancies: null,
+        capacity: null,
+        maxUnits: null,
+        openingHours: [],
+      },
+    ];
   });
 
   describe('checkAvailability', () => {
-    it('should successfully check availability', async () => {
-      const availability = AvailabilityHelper.checkAvailability(availabilyPOJOs, successLocalDateTimeStart);
-      expect(availability !== null);
+    test('returns availability when exact match is found for specific time slot', () => {
+      const dateString = '2023-01-01T10:00:00';
+
+      const result = AvailabilityHelper.checkAvailability(mockAvailabilities, dateString);
+
+      expect(result).toEqual(mockAvailabilities[0]);
     });
 
-    it('should throw NoAvailabilityError due to non existing localDateTimeStart', async () => {
-      const checkAvailability = (): Availability => {
-        return AvailabilityHelper.checkAvailability(availabilyPOJOs, '2023-12-10T00:00:00+01:00');
-      };
+    test('returns availability when all-day match is found', () => {
+      const dateString = '2023-01-03T12:00:00';
 
-      expect(checkAvailability).toThrowError(NoAvailabilityError);
+      vi.mocked(DateHelper.getDate).mockReturnValueOnce('2023-01-03').mockReturnValueOnce('2023-01-03');
+
+      const result = AvailabilityHelper.checkAvailability(mockAvailabilities, dateString);
+
+      expect(result).toEqual(mockAvailabilities[2]);
+      expect(DateHelper.getDate).toHaveBeenCalledTimes(2);
     });
 
-    it('should throw NoAvailabilityError due to unavailability', async () => {
-      const checkAvailability = (): Availability => {
-        return AvailabilityHelper.checkAvailability(availabilyPOJOs, unavailableLocalDateTimeStart);
-      };
+    test('throws NoAvailabilityError when no match is found', () => {
+      const dateString = '2023-12-04T10:00:00';
 
-      expect(checkAvailability).toThrowError(NoAvailabilityError);
+      vi.mocked(DateHelper.getDate).mockReturnValueOnce('2023-01-03').mockReturnValueOnce('2023-12-04');
+
+      expect(() => {
+        AvailabilityHelper.checkAvailability(mockAvailabilities, dateString);
+      }).toThrow(NoAvailabilityError);
+    });
+
+    test('throws NoAvailabilityError when match is found but not available', () => {
+      const dateString = '2023-01-02T10:00:00';
+
+      expect(() => {
+        AvailabilityHelper.checkAvailability(mockAvailabilities, dateString);
+      }).toThrow(NoAvailabilityError);
+    });
+
+    test('throws NoAvailabilityError when match is found but not available (duplicate)', () => {
+      const dateString = '2023-01-02T10:00:00';
+
+      expect(() => {
+        AvailabilityHelper.checkAvailability(mockAvailabilities, dateString);
+      }).toThrow(NoAvailabilityError);
+    });
+
+    test('handles empty availabilities array', () => {
+      const dateString = '2023-01-01T10:00:00';
+
+      expect(() => {
+        AvailabilityHelper.checkAvailability([], dateString);
+      }).toThrow(NoAvailabilityError);
     });
   });
 });
