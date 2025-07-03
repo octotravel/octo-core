@@ -56,7 +56,7 @@ export class OptionHelper {
    */
   public static checkRestrictions = (option: Option, units: AvailabilityUnit[]): void => {
     const count = units.reduce((acc, unit) => acc + unit.quantity, 0);
-    const isMinOk = option.restrictions.minUnits <= count && count > 0;
+    const isMinOk = option.restrictions.minUnits === null || (option.restrictions.minUnits <= count && count > 0);
     const isMaxOk = option.restrictions.maxUnits === null || option.restrictions.maxUnits >= count;
 
     units.forEach((unit) => {

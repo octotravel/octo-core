@@ -1,43 +1,64 @@
-import { BookingModelGenerator, BookingParser } from '@octocloud/generators';
-import { AvailabilityStatus, UnitItem, UnitType } from '@octocloud/types';
-import { describe, expect, it } from 'vitest';
+import { Booking, UnitItem, UnitType } from '@octocloud/types';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { mock } from 'vitest-mock-extended';
 import { BookingHelper } from '../BookingHelper';
 import { InvalidUnitError } from '../Error';
 
 describe('BookingHelper', () => {
-  const bookingModelGenerator = new BookingModelGenerator();
-  const bookingParser = new BookingParser();
-  const bookingModel = bookingModelGenerator.generateBooking({
-    bookingData: {
-      availability: {
-        id: '2023-01-03T09:15:00+01:00',
-        localDateTimeStart: '2023-01-03T09:15:00+01:00',
-        localDateTimeEnd: '2023-01-03T09:39:00+01:00',
-        allDay: false,
-        available: true,
-        status: AvailabilityStatus.AVAILABLE,
-        vacancies: null,
-        capacity: null,
-        maxUnits: null,
-        utcCutoffAt: '18:00',
-        openingHours: [],
-      },
-    },
-  });
-  const booking = bookingParser.parseModelToPOJO(bookingModel);
-
   describe('getUnitItemByType', () => {
-    it('should return unit item', async () => {
-      const unitItem = BookingHelper.getUnitItemByType(UnitType.ADULT, booking);
-      expect(unitItem !== null);
+    let mockBooking: Booking;
+    let adultUnitItem: UnitItem;
+    let childUnitItem: UnitItem;
+
+    beforeEach(() => {
+      adultUnitItem = mock<UnitItem>({
+        unit: {
+          type: UnitType.ADULT,
+        },
+      });
+
+      childUnitItem = mock<UnitItem>({
+        unit: {
+          type: UnitType.CHILD,
+        },
+      });
+
+      mockBooking = mock<Booking>({
+        unitItems: [adultUnitItem, childUnitItem],
+      });
     });
 
-    it('should throw InvalidUnitError due to non existing unit item', async () => {
-      const getUnitItemByType = (): UnitItem => {
-        return BookingHelper.getUnitItemByType(UnitType.MILITARY, booking);
-      };
+    it('should return the correct unit item when a matching type exists', () => {
+      const result = BookingHelper.getUnitItemByType(UnitType.ADULT, mockBooking);
+      expect(result).toStrictEqual(adultUnitItem);
 
-      expect(getUnitItemByType).toThrowError(InvalidUnitError);
+      const childResult = BookingHelper.getUnitItemByType(UnitType.CHILD, mockBooking);
+      expect(childResult).toStrictEqual(childUnitItem);
+    });
+
+    it('should throw InvalidUnitError when no matching unit type exists', () => {
+      expect(() => {
+        BookingHelper.getUnitItemByType(UnitType.INFANT, mockBooking);
+      }).toThrow(InvalidUnitError);
+    });
+
+    it('should throw InvalidUnitError when booking has no unit items', () => {
+      const emptyBooking = mock<Booking>({
+        unitItems: [],
+      });
+
+      expect(() => {
+        BookingHelper.getUnitItemByType(UnitType.ADULT, emptyBooking);
+      }).toThrow(InvalidUnitError);
+    });
+
+    it('should handle case where some unit items might be undefined', () => {
+      const bookingWithUndefined = mock<Booking>({
+        unitItems: [undefined, adultUnitItem, undefined],
+      });
+
+      const result = BookingHelper.getUnitItemByType(UnitType.ADULT, bookingWithUndefined);
+      expect(result).toStrictEqual(adultUnitItem);
     });
   });
 });

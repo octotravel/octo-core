@@ -1,46 +1,58 @@
-import type {
+import {
   Availability,
-  AvailabilityBodySchema,
   AvailabilityCalendar,
-  AvailabilityCalendarBodySchema,
+  AvailabilityCalendarBody,
+  AvailabilityCheckBody,
   Booking,
-  CancelBookingBodySchema,
-  CancelBookingPathParamsSchema,
+  BookingCancellationBody,
+  BookingCancellationRequest_uuid,
+  BookingConfirmationBody,
+  BookingConfirmationRequest_uuid,
+  BookingReservationBody,
+  BookingUpdateBody,
+  BookingUpdateRequest_uuid,
+  bookingCancellationBodySchema,
+  bookingCancellationRequest_uuidSchema,
+  bookingConfirmationBodySchema,
+  bookingConfirmationRequest_uuidSchema,
+  bookingReservationBodySchema,
+  bookingUpdateBodySchema,
+  bookingUpdateRequest_uuidSchema,
   Capability,
   CapabilityId,
-  ConfirmBookingBodySchema,
-  ConfirmBookingPathParamsSchema,
   Contact,
-  CreateBookingBodySchema,
   CreateWebhookBodyParamsSchema,
   DeleteWebhookPathParamsSchema,
-  ExtendBookingBodySchema,
-  ExtendBookingPathParamsSchema,
-  GetBookingPathParamsSchema,
-  GetBookingsQueryParamsSchema,
-  GetProductPathParamsSchema,
+  ExtendReservationBody,
+  extendReservationBodySchema,
+  GetBookingRequest_uuid,
+  GetBookingsRequest_localDate,
+  GetBookingsRequest_localDateEnd,
+  GetBookingsRequest_localDateStart,
+  GetBookingsRequest_optionId,
+  GetBookingsRequest_productId,
+  GetBookingsRequest_resellerReference,
+  GetBookingsRequest_supplierReference,
+  GetProductRequest_id,
+  getBookingRequest_uuidSchema,
+  getBookingsRequest_localDateEndSchema,
+  getBookingsRequest_localDateSchema,
+  getBookingsRequest_localDateStartSchema,
+  getBookingsRequest_optionIdSchema,
+  getBookingsRequest_productIdSchema,
+  getBookingsRequest_resellerReferenceSchema,
+  getBookingsRequest_supplierReferenceSchema,
   Mapping,
   Order,
   Product,
+  RequestHeaders_octoCapabilities,
+  RequestHeadersContent,
+  requestHeaders_octoCapabilitiesSchema,
+  requestHeadersContentSchema,
   Supplier,
-  UpdateBookingBodySchema,
-  UpdateBookingPathParamsSchema,
   Webhook,
 } from '@octocloud/types';
-import {
-  cancelBookingBodySchema,
-  cancelBookingPathParamsSchema,
-  confirmBookingBodySchema,
-  confirmBookingPathParamsSchema,
-  createBookingBodySchema,
-  extendBookingBodySchema,
-  extendBookingPathParamsSchema,
-  getBookingPathParamsSchema,
-  getBookingsQueryParamsSchema,
-  updateBookingBodySchema,
-  updateBookingPathParamsSchema,
-} from '@octocloud/types';
-import * as yup from 'yup';
+import * as z from 'zod';
 import { RequestContext } from '../models/RequestContext';
 
 export interface CoreParams {
@@ -55,48 +67,81 @@ export interface BackendParams extends CoreParams {
   useRawUnits?: boolean;
 }
 
-// deno-lint-ignore no-empty-interface
-export interface GetBookingSchema extends GetBookingPathParamsSchema {}
+export type GetBookingSchema = {
+  bookingUuid: GetBookingRequest_uuid;
+} & RequestHeaders_octoCapabilities &
+  RequestHeadersContent;
 
-export const getBookingSchema: yup.SchemaOf<GetBookingSchema> = getBookingPathParamsSchema.clone();
-
-// deno-lint-ignore no-empty-interface
-export interface GetBookingsSchema extends GetBookingsQueryParamsSchema {}
-
-export const getBookingsSchema: yup.SchemaOf<GetBookingsSchema> = getBookingsQueryParamsSchema.clone();
-
-// deno-lint-ignore no-empty-interface
-export interface CreateBookingSchema extends CreateBookingBodySchema {}
-
-export const createBookingSchema = createBookingBodySchema.clone();
-
-export interface ConfirmBookingSchema extends ConfirmBookingPathParamsSchema, ConfirmBookingBodySchema {}
-
-export const confirmBookingSchema: yup.SchemaOf<ConfirmBookingSchema> = yup.object().shape({
-  ...confirmBookingPathParamsSchema.fields,
-  ...confirmBookingBodySchema.fields,
+export const getBookingSchema = z.object({
+  bookingUuid: getBookingRequest_uuidSchema,
+  'octo-capabilities': requestHeaders_octoCapabilitiesSchema,
+  'content-language': requestHeadersContentSchema.optional(),
 });
 
-export interface UpdateBookingSchema extends UpdateBookingBodySchema, UpdateBookingPathParamsSchema {}
+export type GetBookingsSchema = RequestHeaders_octoCapabilities &
+  GetBookingsRequest_resellerReference &
+  GetBookingsRequest_supplierReference &
+  GetBookingsRequest_localDate &
+  GetBookingsRequest_localDateStart &
+  GetBookingsRequest_localDateEnd &
+  GetBookingsRequest_productId &
+  GetBookingsRequest_optionId &
+  RequestHeadersContent;
 
-export const updateBookingSchema: yup.SchemaOf<UpdateBookingSchema> = yup.object().shape({
-  ...updateBookingPathParamsSchema.fields,
-  ...updateBookingBodySchema.fields,
+export const getBookingsSchema = z.object({
+  'octo-capabilities': requestHeaders_octoCapabilitiesSchema,
+  resellerReference: getBookingsRequest_resellerReferenceSchema.optional(),
+  supplierReference: getBookingsRequest_supplierReferenceSchema.optional(),
+  localDate: getBookingsRequest_localDateSchema.optional(),
+  localDateStart: getBookingsRequest_localDateStartSchema.optional(),
+  localDateEnd: getBookingsRequest_localDateEndSchema.optional(),
+  productId: getBookingsRequest_productIdSchema.optional(),
+  optionId: getBookingsRequest_optionIdSchema.optional(),
+  'content-language': requestHeadersContentSchema.optional(),
 });
 
-export interface CancelBookingSchema extends CancelBookingBodySchema, CancelBookingPathParamsSchema {}
+// Tady toto schema neni v openApi
+export type CreateBookingSchema = BookingReservationBody & RequestHeaders_octoCapabilities & RequestHeadersContent;
 
-export const cancelBookingSchema: yup.SchemaOf<CancelBookingSchema> = yup.object().shape({
-  ...cancelBookingBodySchema.fields,
-  ...cancelBookingPathParamsSchema.fields,
-});
+export const createBookingSchema = bookingReservationBodySchema.merge(
+  z.object({
+    'octo-capabilities': requestHeaders_octoCapabilitiesSchema,
+    'content-language': requestHeadersContentSchema,
+  }),
+);
 
-export interface ExtendBookingSchema extends ExtendBookingBodySchema, ExtendBookingPathParamsSchema {}
+export type ConfirmBookingSchema = BookingConfirmationBody & BookingConfirmationRequest_uuid;
 
-export const extendBookingSchema: yup.SchemaOf<ExtendBookingSchema> = yup.object().shape({
-  ...extendBookingBodySchema.fields,
-  ...extendBookingPathParamsSchema.fields,
-});
+export const confirmBookingSchema = bookingConfirmationBodySchema.merge(
+  z.object({
+    bookingUuid: bookingConfirmationRequest_uuidSchema,
+  }),
+);
+
+export type UpdateBookingSchema = BookingUpdateBody & BookingUpdateRequest_uuid;
+
+export const updateBookingSchema = bookingUpdateBodySchema.merge(
+  z.object({
+    bookingUuid: bookingUpdateRequest_uuidSchema,
+  }),
+);
+
+export type CancelBookingSchema = BookingCancellationBody & BookingCancellationRequest_uuid;
+
+export const cancelBookingSchema = bookingCancellationBodySchema.merge(
+  z.object({
+    bookingUuid: bookingCancellationRequest_uuidSchema,
+  }),
+);
+
+export type ExtendBookingSchema = ExtendReservationBody & RequestHeaders_octoCapabilities & RequestHeadersContent;
+
+export const extendBookingSchema = extendReservationBodySchema.merge(
+  z.object({
+    'octo-capabilities': requestHeaders_octoCapabilitiesSchema,
+    'content-language': requestHeadersContentSchema,
+  }),
+);
 
 export enum LookupType {
   email = 'email',
@@ -154,14 +199,13 @@ export interface GetProductsPathParamsSchema {
   currency?: string;
 }
 
+export type GetProductPathParamsSchema = GetProductRequest_id & RequestHeaders_octoCapabilities & RequestHeadersContent;
+
 export interface Backend {
   getProduct: (schema: GetProductPathParamsSchema, params: BackendParams) => Promise<Product>;
   getProducts: (schema: GetProductsPathParamsSchema, params: BackendParams) => Promise<Product[]>;
-  getAvailability: (schema: AvailabilityBodySchema, params: BackendParams) => Promise<Availability[]>;
-  getAvailabilityCalendar: (
-    schema: AvailabilityCalendarBodySchema,
-    params: BackendParams,
-  ) => Promise<AvailabilityCalendar[]>;
+  getAvailability: (schema: AvailabilityCheckBody, params: BackendParams) => Promise<Availability[]>;
+  getAvailabilityCalendar: (schema: AvailabilityCalendarBody, params: BackendParams) => Promise<AvailabilityCalendar[]>;
   createBooking: (schema: CreateBookingSchema, params: BackendParams) => Promise<Booking>;
   updateBooking: (schema: UpdateBookingSchema, params: BackendParams) => Promise<Booking>;
   getBooking: (schema: GetBookingSchema, params: BackendParams) => Promise<Booking>;

@@ -1,5 +1,5 @@
 import * as dineroCurrencies from '@dinero.js/currencies';
-import { Currency, Dinero, add, dinero, subtract, toDecimal, toSnapshot } from 'dinero.js';
+import { add, Currency, Dinero, dinero, subtract, toDecimal, toSnapshot } from 'dinero.js';
 
 const currencies: Record<string, Currency<number>> = dineroCurrencies;
 

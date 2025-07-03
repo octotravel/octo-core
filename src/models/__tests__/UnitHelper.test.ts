@@ -10,7 +10,7 @@ describe('UnitHelper', () => {
     });
 
     it('should return the same array when all unit IDs are unique', () => {
-      const expectedUnits: Unit[] = [
+      const expectedUnits: (Unit & { visibleContactFields: [] })[] = [
         {
           type: UnitType.ADULT,
           id: '1',
