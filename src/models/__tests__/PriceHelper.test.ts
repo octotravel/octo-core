@@ -1,4 +1,3 @@
-import { Currency } from '@octocloud/types';
 import { describe, expect, it } from 'vitest';
 import { PriceHelper } from '../PriceHelper';
 
@@ -7,7 +6,7 @@ describe('PricingHelper', () => {
     original: 1000,
     retail: 1000,
     net: 1000,
-    currency: Currency.EUR,
+    currency: 'EUR',
     includedTaxes: [],
     currencyPrecision: 2,
     offerDiscount: {
@@ -21,7 +20,7 @@ describe('PricingHelper', () => {
     original: 1000,
     retail: 1000,
     net: 1000,
-    currency: Currency.EUR,
+    currency: 'EUR',
     includedTaxes: [],
     currencyPrecision: 2,
   };
