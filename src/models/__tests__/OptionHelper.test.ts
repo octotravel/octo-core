@@ -1,204 +1,217 @@
-import { OptionModelGenerator, OptionParser } from '@octocloud/generators';
-import { UnitType } from '@octocloud/types';
-import { describe, expect, it } from 'vitest';
+import { fail } from 'node:assert';
+import { Option, Unit, UnitType } from '@octocloud/types';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { mock } from 'vitest-mock-extended';
 import { InvalidUnitError, InvalidUnitsError, OptionRestrictionsError } from '../Error';
 import { OptionHelper } from '../OptionHelper';
 
 describe('OptionHelper', () => {
-  const optionModelGenerator = new OptionModelGenerator();
-  const optionParser = new OptionParser();
+  let mockOption: Option;
+  let adultUnit: Unit;
+  let childUnit: Unit;
+  let infantUnit: Unit;
 
-  const firstUnitId = 'firstUnitId';
-  const secondUnitId = 'secondUnitId';
-  const usedUnitType = UnitType.ADULT;
-  const invalidUnitId = 'invalidUnitId';
-  const unusedUnitType = UnitType.MILITARY;
-  const optionModel = optionModelGenerator.generateOption({
-    optionData: {
-      units: [
-        {
-          id: firstUnitId,
-          type: usedUnitType,
-        },
-        {
-          id: secondUnitId,
-          type: usedUnitType,
-          restrictions: {
-            minAge: 0,
-            maxAge: 99,
-            idRequired: false,
-            minQuantity: 2,
-            maxQuantity: 4,
-            paxCount: 0,
-            accompaniedBy: [firstUnitId],
-          },
-        },
-      ],
-    },
-  });
-  const option = optionParser.parseModelToPOJO(optionModel);
-  const optionModelWithoutUnits = optionModelGenerator.generateOption({
-    optionData: {
+  beforeEach(() => {
+    adultUnit = mock<Unit>({
+      id: 'adult-unit-id',
+      type: UnitType.ADULT,
       restrictions: {
-        minUnits: 1,
-        maxUnits: 2,
-        minPaxCount: 0,
-        maxPaxCount: null,
+        minQuantity: 1,
+        maxQuantity: 10,
+        accompaniedBy: [],
       },
-    },
-  });
-  const optionWithoutUnits = optionParser.parseModelToPOJO(optionModelWithoutUnits);
-
-  describe('checkUnits', () => {
-    it('should successfully pass check', async () => {
-      const checkUnits = (): void => {
-        OptionHelper.checkUnits(option, [
-          {
-            id: firstUnitId,
-            quantity: 1,
-          },
-        ]);
-      };
-
-      expect(checkUnits).not.toThrow();
     });
 
-    it('should fail and throw InvalidUnitsError', async () => {
-      const checkUnits = (): void => {
-        OptionHelper.checkUnits(option, [
-          {
-            id: invalidUnitId,
-            quantity: 1,
-          },
-        ]);
-      };
+    childUnit = mock<Unit>({
+      id: 'child-unit-id',
+      type: UnitType.CHILD,
+      restrictions: {
+        minQuantity: 0,
+        maxQuantity: 5,
+        accompaniedBy: ['adult-unit-id'],
+      },
+    });
 
-      expect(checkUnits).toThrowError(InvalidUnitsError);
+    infantUnit = mock<Unit>({
+      id: 'infant-unit-id',
+      type: UnitType.INFANT,
+      restrictions: {
+        minQuantity: 0,
+        maxQuantity: 2,
+        accompaniedBy: ['adult-unit-id'],
+      },
+    });
+
+    mockOption = mock<Option>({
+      units: [adultUnit, childUnit],
+      restrictions: {
+        minUnits: 1,
+        maxUnits: 15,
+      },
+    });
+  });
+
+  describe('checkUnits', () => {
+    it('should not throw when all units are valid', () => {
+      const units = [
+        { id: 'adult-unit-id', quantity: 2 },
+        { id: 'child-unit-id', quantity: 3 },
+      ];
+
+      expect(() => {
+        OptionHelper.checkUnits(mockOption, units);
+      }).not.toThrow();
+    });
+
+    it('should throw InvalidUnitsError when there are invalid units', () => {
+      const units = [
+        { id: 'adult-unit-id', quantity: 2 },
+        { id: 'invalid-unit-id', quantity: 1 },
+      ];
+
+      expect(() => {
+        OptionHelper.checkUnits(mockOption, units);
+      }).toThrow(InvalidUnitsError);
+    });
+
+    it('should throw with the correct invalid unit IDs', () => {
+      const units = [
+        { id: 'adult-unit-id', quantity: 2 },
+        { id: 'invalid-id-1', quantity: 1 },
+        { id: 'invalid-id-2', quantity: 1 },
+      ];
+
+      try {
+        OptionHelper.checkUnits(mockOption, units);
+        fail('Expected an error to be thrown');
+      } catch (error) {
+        if (error instanceof InvalidUnitsError) {
+          expect(error.invalidUnits).toEqual(['invalid-id-1', 'invalid-id-2']);
+        } else {
+          fail('Expected error to be an instance of InvalidUnitsError');
+        }
+      }
     });
   });
 
   describe('getUnitByID', () => {
-    it('should successfully return unit', async () => {
-      const getUnitByID = (): void => {
-        OptionHelper.getUnitByID(option, firstUnitId);
-      };
-
-      expect(getUnitByID).not.toThrow();
+    it('should return the correct unit when a matching ID exists', () => {
+      const result = OptionHelper.getUnitByID(mockOption, 'adult-unit-id');
+      expect(result).toStrictEqual(adultUnit);
     });
 
-    it('should fail and throw InvalidUnitError', async () => {
-      const getUnitByID = (): void => {
-        OptionHelper.getUnitByID(option, invalidUnitId);
-      };
-
-      expect(getUnitByID).toThrowError(InvalidUnitError);
+    it('should throw InvalidUnitError when no matching unit ID exists', () => {
+      expect(() => {
+        OptionHelper.getUnitByID(mockOption, 'non-existent-id');
+      }).toThrow(InvalidUnitError);
     });
   });
 
   describe('getUnitByType', () => {
-    it('should successfully return unit', async () => {
-      const getUnitByType = (): void => {
-        OptionHelper.getUnitByType(option, usedUnitType);
-      };
-
-      expect(getUnitByType).not.toThrow();
+    it('should return the correct unit when a matching type exists', () => {
+      const result = OptionHelper.getUnitByType(mockOption, UnitType.ADULT);
+      expect(result).toStrictEqual(adultUnit);
     });
 
-    it('should fail and throw InvalidUnitError', async () => {
-      const getUnitByType = (): void => {
-        OptionHelper.getUnitByType(option, unusedUnitType);
-      };
-
-      expect(getUnitByType).toThrowError(InvalidUnitError);
+    it('should throw InvalidUnitError when no matching unit type exists', () => {
+      expect(() => {
+        OptionHelper.getUnitByType(mockOption, UnitType.INFANT);
+      }).toThrow(InvalidUnitError);
     });
   });
 
   describe('checkRestrictions', () => {
-    it('should successfully pass check', async () => {
-      const checkRestrictions = (): void => {
-        OptionHelper.checkRestrictions(option, [
-          {
-            id: firstUnitId,
-            quantity: 1,
-          },
-        ]);
-      };
+    it('should not throw when all restrictions are satisfied', () => {
+      const units = [
+        { id: 'adult-unit-id', quantity: 2 },
+        { id: 'child-unit-id', quantity: 3 },
+      ];
 
-      expect(checkRestrictions).not.toThrow();
+      expect(() => {
+        OptionHelper.checkRestrictions(mockOption, units);
+      }).not.toThrow();
     });
 
-    it('should successfully pass check when one unit has to be accompanied', async () => {
-      const checkRestrictions = (): void => {
-        OptionHelper.checkRestrictions(option, [
-          {
-            id: firstUnitId,
-            quantity: 1,
-          },
-          {
-            id: secondUnitId,
-            quantity: 2,
-          },
-        ]);
-      };
+    it('should throw InvalidUnitError when unit does not exist', () => {
+      const units = [
+        { id: 'adult-unit-id', quantity: 2 },
+        { id: 'non-existent-id', quantity: 1 },
+      ];
 
-      expect(checkRestrictions).not.toThrow();
+      expect(() => {
+        OptionHelper.checkRestrictions(mockOption, units);
+      }).toThrow(InvalidUnitError);
     });
 
-    it('should fail check when one unit has to be accompanied and it is not', async () => {
-      const checkRestrictions = (): void => {
-        OptionHelper.checkRestrictions(option, [
-          {
-            id: secondUnitId,
-            quantity: 1,
-          },
-        ]);
-      };
+    it('should throw OptionRestrictionsError when total count is below min', () => {
+      mockOption.restrictions.minUnits = 10;
+      const units = [
+        { id: 'adult-unit-id', quantity: 2 },
+        { id: 'child-unit-id', quantity: 3 },
+      ];
 
-      expect(checkRestrictions).toThrowError(OptionRestrictionsError);
+      expect(() => {
+        OptionHelper.checkRestrictions(mockOption, units);
+      }).toThrow(OptionRestrictionsError);
     });
 
-    it('should fail when invalid unit is provided', async () => {
-      const checkRestrictions = (): void => {
-        OptionHelper.checkRestrictions(option, [
-          {
-            id: invalidUnitId,
-            quantity: 1,
-          },
-        ]);
-      };
+    it('should throw OptionRestrictionsError when total count exceeds max', () => {
+      mockOption.restrictions.maxUnits = 4;
+      const units = [
+        { id: 'adult-unit-id', quantity: 2 },
+        { id: 'child-unit-id', quantity: 3 },
+      ];
 
-      expect(checkRestrictions).toThrowError(InvalidUnitError);
+      expect(() => {
+        OptionHelper.checkRestrictions(mockOption, units);
+      }).toThrow(OptionRestrictionsError);
     });
 
-    it('should fail on unit`s restrictions and throw OptionRestrictionsError', async () => {
-      const checkRestrictionsIsMinOk = (): void => {
-        OptionHelper.checkRestrictions(option, [
-          {
-            id: secondUnitId,
-            quantity: 1,
-          },
-        ]);
-      };
+    it('should throw OptionRestrictionsError when unit quantity is below min', () => {
+      adultUnit.restrictions.minQuantity = 3;
+      const units = [
+        { id: 'adult-unit-id', quantity: 2 },
+        { id: 'child-unit-id', quantity: 3 },
+      ];
 
-      const checkRestrictionsIsMaxOk = (): void => {
-        OptionHelper.checkRestrictions(option, [
-          {
-            id: secondUnitId,
-            quantity: 5,
-          },
-        ]);
-      };
-
-      expect(checkRestrictionsIsMinOk).toThrowError(OptionRestrictionsError);
-      expect(checkRestrictionsIsMaxOk).toThrowError(OptionRestrictionsError);
+      expect(() => {
+        OptionHelper.checkRestrictions(mockOption, units);
+      }).toThrow(OptionRestrictionsError);
     });
 
-    it('should fail on option`s restrictions and throw OptionRestrictionsError', async () => {
-      const checkRestrictions = (): void => {
-        OptionHelper.checkRestrictions(optionWithoutUnits, []);
-      };
+    it('should throw OptionRestrictionsError when unit quantity exceeds max', () => {
+      childUnit.restrictions.maxQuantity = 2;
+      const units = [
+        { id: 'adult-unit-id', quantity: 2 },
+        { id: 'child-unit-id', quantity: 3 },
+      ];
 
-      expect(checkRestrictions).toThrowError(OptionRestrictionsError);
+      expect(() => {
+        OptionHelper.checkRestrictions(mockOption, units);
+      }).toThrow(OptionRestrictionsError);
+    });
+
+    it('should throw OptionRestrictionsError when accompaniedBy restriction is not satisfied', () => {
+      mockOption.units = [childUnit, infantUnit];
+
+      const units = [{ id: 'infant-unit-id', quantity: 1 }];
+
+      expect(() => {
+        OptionHelper.checkRestrictions(mockOption, units);
+      }).toThrow(OptionRestrictionsError);
+    });
+
+    it('should not throw when accompaniedBy restriction is satisfied', () => {
+      mockOption.units = [adultUnit, childUnit, infantUnit];
+
+      const units = [
+        { id: 'adult-unit-id', quantity: 1 },
+        { id: 'infant-unit-id', quantity: 1 },
+      ];
+
+      expect(() => {
+        OptionHelper.checkRestrictions(mockOption, units);
+      }).not.toThrow();
     });
   });
 });
