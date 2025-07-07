@@ -26,9 +26,6 @@ export class RequestContext {
   private productIds: string[] = [];
   private error: Error | null = null;
   private _redirectURL: string | null = null;
-  private _requestTimeout = 120000;
-  private _shouldChainClientRequestAbort = false;
-  private abortController: AbortController = new AbortController();
 
   public constructor({
     request,
@@ -142,26 +139,6 @@ export class RequestContext {
 
   public get redirectURL(): string | null {
     return this._redirectURL;
-  }
-
-  public setRequestTimeout(requestTimeoutInMs: number): void {
-    this._requestTimeout = requestTimeoutInMs;
-  }
-
-  public get requestTimeout(): number {
-    return this._requestTimeout;
-  }
-
-  public setShouldChainClientRequestAbort(shouldChainClientRequestAbort: boolean): void {
-    this._shouldChainClientRequestAbort = shouldChainClientRequestAbort;
-  }
-
-  public get shouldChainClientRequestAbort(): boolean {
-    return this._shouldChainClientRequestAbort;
-  }
-
-  public getAbortController(): AbortController {
-    return this.abortController;
   }
 
   public enableCors(): void {
