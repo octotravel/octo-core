@@ -26,13 +26,6 @@ import {
   ExtendReservationBody,
   extendReservationBodySchema,
   GetBookingRequest_uuid,
-  GetBookingsRequest_localDate,
-  GetBookingsRequest_localDateEnd,
-  GetBookingsRequest_localDateStart,
-  GetBookingsRequest_optionId,
-  GetBookingsRequest_productId,
-  GetBookingsRequest_resellerReference,
-  GetBookingsRequest_supplierReference,
   GetProductRequest_id,
   getBookingRequest_uuidSchema,
   getBookingsRequest_localDateEndSchema,
@@ -68,25 +61,27 @@ export interface BackendParams extends CoreParams {
 }
 
 export type GetBookingSchema = {
-  bookingUuid: GetBookingRequest_uuid;
+  uuid: GetBookingRequest_uuid;
 } & RequestHeaders_octoCapabilities &
   RequestHeadersContent;
 
 export const getBookingSchema = z.object({
-  bookingUuid: getBookingRequest_uuidSchema,
+  uuid: getBookingRequest_uuidSchema,
   'octo-capabilities': requestHeaders_octoCapabilitiesSchema,
   'content-language': requestHeadersContentSchema.optional(),
 });
 
-export type GetBookingsSchema = RequestHeaders_octoCapabilities &
-  GetBookingsRequest_resellerReference &
-  GetBookingsRequest_supplierReference &
-  GetBookingsRequest_localDate &
-  GetBookingsRequest_localDateStart &
-  GetBookingsRequest_localDateEnd &
-  GetBookingsRequest_productId &
-  GetBookingsRequest_optionId &
-  RequestHeadersContent;
+export type GetBookingsSchema = {
+  'octo-capabilities': z.infer<typeof requestHeaders_octoCapabilitiesSchema>;
+  resellerReference?: z.infer<typeof getBookingsRequest_resellerReferenceSchema>;
+  supplierReference?: z.infer<typeof getBookingsRequest_supplierReferenceSchema>;
+  localDate?: z.infer<typeof getBookingsRequest_localDateSchema>;
+  localDateStart?: z.infer<typeof getBookingsRequest_localDateStartSchema>;
+  localDateEnd?: z.infer<typeof getBookingsRequest_localDateEndSchema>;
+  productId?: z.infer<typeof getBookingsRequest_productIdSchema>;
+  optionId?: z.infer<typeof getBookingsRequest_optionIdSchema>;
+  'content-language'?: z.infer<typeof requestHeadersContentSchema>;
+};
 
 export const getBookingsSchema = z.object({
   'octo-capabilities': requestHeaders_octoCapabilitiesSchema,
@@ -100,7 +95,6 @@ export const getBookingsSchema = z.object({
   'content-language': requestHeadersContentSchema.optional(),
 });
 
-// Tady toto schema neni v openApi
 export type CreateBookingSchema = BookingReservationBody & RequestHeaders_octoCapabilities & RequestHeadersContent;
 
 export const createBookingSchema = bookingReservationBodySchema.merge(
@@ -110,7 +104,7 @@ export const createBookingSchema = bookingReservationBodySchema.merge(
   }),
 );
 
-export type ConfirmBookingSchema = BookingConfirmationBody & BookingConfirmationRequest_uuid;
+export type ConfirmBookingSchema = BookingConfirmationBody & { uuid: BookingConfirmationRequest_uuid };
 
 export const confirmBookingSchema = bookingConfirmationBodySchema.merge(
   z.object({
@@ -118,7 +112,7 @@ export const confirmBookingSchema = bookingConfirmationBodySchema.merge(
   }),
 );
 
-export type UpdateBookingSchema = BookingUpdateBody & BookingUpdateRequest_uuid;
+export type UpdateBookingSchema = BookingUpdateBody & { uuid: BookingUpdateRequest_uuid };
 
 export const updateBookingSchema = bookingUpdateBodySchema.merge(
   z.object({
@@ -126,7 +120,7 @@ export const updateBookingSchema = bookingUpdateBodySchema.merge(
   }),
 );
 
-export type CancelBookingSchema = BookingCancellationBody & BookingCancellationRequest_uuid;
+export type CancelBookingSchema = BookingCancellationBody & { uuid: BookingCancellationRequest_uuid };
 
 export const cancelBookingSchema = bookingCancellationBodySchema.merge(
   z.object({
