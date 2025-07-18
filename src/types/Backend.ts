@@ -95,7 +95,7 @@ export const getBookingsSchema = z.object({
   'content-language': requestHeadersContentSchema.optional(),
 });
 
-export type CreateBookingSchema = BookingReservationBody & RequestHeaders_octoCapabilities & RequestHeadersContent;
+export type CreateBookingSchema = z.infer<typeof createBookingSchema>;
 
 export const createBookingSchema = bookingReservationBodySchema.merge(
   z.object({
