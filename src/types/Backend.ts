@@ -60,10 +60,7 @@ export interface BackendParams extends CoreParams {
   useRawUnits?: boolean;
 }
 
-export type GetBookingSchema = {
-  uuid: GetBookingRequest_uuid;
-} & RequestHeaders_octoCapabilities &
-  RequestHeadersContent;
+export type GetBookingSchema = z.infer<typeof getBookingSchema>;
 
 export const getBookingSchema = z.object({
   uuid: getBookingRequest_uuidSchema,
