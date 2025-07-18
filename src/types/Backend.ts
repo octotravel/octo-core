@@ -104,7 +104,7 @@ export const createBookingSchema = bookingReservationBodySchema.merge(
   }),
 );
 
-export type ConfirmBookingSchema = BookingConfirmationBody & { uuid: BookingConfirmationRequest_uuid };
+export type ConfirmBookingSchema = BookingConfirmationBody & { bookingUuid: BookingConfirmationRequest_uuid };
 
 export const confirmBookingSchema = bookingConfirmationBodySchema.merge(
   z.object({
@@ -112,7 +112,7 @@ export const confirmBookingSchema = bookingConfirmationBodySchema.merge(
   }),
 );
 
-export type UpdateBookingSchema = BookingUpdateBody & { uuid: BookingUpdateRequest_uuid };
+export type UpdateBookingSchema = BookingUpdateBody & { bookingUuid: BookingUpdateRequest_uuid };
 
 export const updateBookingSchema = bookingUpdateBodySchema.merge(
   z.object({
@@ -120,7 +120,7 @@ export const updateBookingSchema = bookingUpdateBodySchema.merge(
   }),
 );
 
-export type CancelBookingSchema = BookingCancellationBody & { uuid: BookingCancellationRequest_uuid };
+export type CancelBookingSchema = BookingCancellationBody & { bookingUuid: BookingCancellationRequest_uuid };
 
 export const cancelBookingSchema = bookingCancellationBodySchema.merge(
   z.object({
