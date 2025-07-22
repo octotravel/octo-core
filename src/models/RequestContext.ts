@@ -243,13 +243,6 @@ export class RequestContext {
       environment: this.environment,
     };
 
-    if (this.error) {
-      if (this.error instanceof HttpError) {
-        metaData.status = this.error.statusLog;
-        metaData.success = this.error.statusLog >= 200 && this.error.statusLog < 300;
-      }
-    }
-
     const requestData = new RequestData({
       id,
       request: this.getRequest(),
