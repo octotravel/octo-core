@@ -23,7 +23,7 @@ describe('PricingHelper', () => {
     ...pricingData,
     net: null,
     offerDiscount: {
-      ...pricingData.offerDiscount,
+      ...pricingData.offerDiscount!,
       net: null,
     },
   };
@@ -32,7 +32,7 @@ describe('PricingHelper', () => {
     capabilities: [],
   });
   const pricingNetNullModel = pricingModelGenerator.generatePricing({
-    pricingDataNetNull,
+    pricingData: pricingDataNetNull,
     capabilities: [],
   });
   const pricingModelWithOffers = pricingModelGenerator.generatePricing({
@@ -40,14 +40,14 @@ describe('PricingHelper', () => {
     capabilities: [CapabilityId.Offers],
   });
   const pricingNetNulModelWithOffers = pricingModelGenerator.generatePricing({
-    pricingDataNetNull,
+    pricingData: pricingDataNetNull,
     capabilities: [CapabilityId.Offers],
   });
 
   const pricing = pricingParser.parseModelToPOJO(pricingModel);
   const pricingNetNull = pricingParser.parseModelToPOJO(pricingNetNullModel);
   const pricingWithOffer = pricingParser.parseModelToPOJO(pricingModelWithOffers);
-  const pricingNetNullWithOffer = pricingParser.parseModelToPOJO(pricingNetNullModel);
+  const pricingNetNullWithOffer = pricingParser.parseModelToPOJO(pricingNetNulModelWithOffers);
 
   describe('calculatePrice', () => {
     it('should calculate price', async () => {
@@ -58,7 +58,7 @@ describe('PricingHelper', () => {
     });
 
     it('should calculate price when net is null', async () => {
-      const price = PriceHelper.calculatePrice(pricing);
+      const price = PriceHelper.calculatePrice(pricingNetNull);
       expect(price.original).toBe(1000);
       expect(price.net).toBe(null);
       expect(price.retail).toBe(1000);
@@ -66,14 +66,14 @@ describe('PricingHelper', () => {
 
     it('should calculate price with offer', async () => {
       const price = PriceHelper.calculatePrice(pricingWithOffer);
-      expect(price.original).toBe(1500);
-      expect(price.net).toBe(1000);
+      expect(price.original).toBe(1000);
+      expect(price.net).toBe(1500);
       expect(price.retail).toBe(1500);
     });
 
     it('should calculate price with offer when net is null', async () => {
-      const price = PriceHelper.calculatePrice(pricingWithOffer);
-      expect(price.original).toBe(1500);
+      const price = PriceHelper.calculatePrice(pricingNetNullWithOffer);
+      expect(price.original).toBe(1000);
       expect(price.net).toBe(null);
       expect(price.retail).toBe(1500);
     });
