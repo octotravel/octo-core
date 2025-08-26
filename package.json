@@ -1,6 +1,6 @@
 {
   "name": "@octocloud/core",
-  "version": "1.0.78",
+  "version": "1.0.79",
   "license": "ISC",
   "author": "",
   "exports": {
@@ -32,7 +32,7 @@
   },
   "types": "./dist/index.d.ts",
   "dependencies": {
-    "@octocloud/types": "^1.5.34",
+    "@octocloud/types": "^1.5.41",
     "@dinero.js/currencies": "2.0.0-alpha.8",
     "date-fns": "^2.30.0",
     "date-fns-tz": "^2.0.0",
@@ -43,7 +43,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
-    "@octocloud/generators": "^1.0.11",
+    "@octocloud/generators": "^1.0.14",
     "@types/uuid": "^9.0.0",
     "@types/node": "^22.9.0",
     "typescript": "^5.7.2",
