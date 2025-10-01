@@ -150,7 +150,9 @@ export class RequestContext {
   }
 
   public enableAlert(alertData: AlertData = new AlertData()): void {
-    this.alertData = alertData;
+    if (this.alertData === null) {
+      this.alertData = alertData;
+    }
     this.enableLogs();
   }
 
