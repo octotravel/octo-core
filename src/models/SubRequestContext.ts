@@ -1,4 +1,5 @@
 import { DataGenerationService } from '../services/DataGenerationService';
+import { LogicError } from './Error';
 import { SubRequestData, SubrequestMetaData } from './SubRequestData';
 import { SubRequestRetryData } from './SubRequestRetryData';
 
@@ -18,6 +19,10 @@ export class SubRequestContext {
   private readonly generateRequestId = (): string => this.dataGenerationService.generateUUID();
 
   public constructor({ request, accountId, requestId }: { request: Request; accountId: string; requestId: string }) {
+    if (request.bodyUsed) {
+      throw new LogicError('Response body is already used');
+    }
+
     this.subRequestId = this.generateRequestId();
     this.accountId = accountId;
     this.requestId = requestId;
@@ -30,6 +35,10 @@ export class SubRequestContext {
   }
 
   public setResponse(response: Response | null): void {
+    if (response?.bodyUsed) {
+      throw new LogicError('Response body is already used');
+    }
+
     if (response !== null) {
       this.response = response.clone();
     } else {

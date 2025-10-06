@@ -2,7 +2,7 @@ import { DataGenerationService } from '../services/DataGenerationService';
 import { BaseConnection } from '../types/Connection';
 import { AlertData } from './AlertData';
 import { Environment } from './Config';
-import { HttpError } from './Error';
+import { LogicError } from './Error';
 import { ConnectionMetaData, RequestData, RequestMetaData } from './RequestData';
 import { SubRequestData } from './SubRequestData';
 
@@ -40,6 +40,10 @@ export class RequestContext {
     accountId?: string;
     environment?: Environment;
   }) {
+    if (request.bodyUsed) {
+      throw new LogicError('Request body is already used');
+    }
+
     this.requestId = this.dataGenerationService.generateUUID();
     this.request = request.clone();
     this.date = new Date();
@@ -66,6 +70,10 @@ export class RequestContext {
   };
 
   public setResponse(response: Response | null): void {
+    if (response?.bodyUsed) {
+      throw new LogicError('Response body is already used');
+    }
+
     this.response = response?.clone() ?? null;
   }
 
@@ -153,6 +161,7 @@ export class RequestContext {
     if (this.alertData === null) {
       this.alertData = alertData;
     }
+
     this.enableLogs();
   }
 

@@ -1,4 +1,5 @@
 import { DataGenerationService } from '../services/DataGenerationService';
+import { LogicError } from './Error';
 import { SubRequestRetryData, SubrequestRetryMetaData } from './SubRequestRetryData';
 
 export class SubRequestRetryContext {
@@ -27,6 +28,10 @@ export class SubRequestRetryContext {
     requestId: string;
     subRequestId: string;
   }) {
+    if (request?.bodyUsed) {
+      throw new LogicError('Request body is already used');
+    }
+
     this.id = this.generateRequestId();
     this.request = request.clone();
     this.accountId = accountId;
@@ -40,6 +45,10 @@ export class SubRequestRetryContext {
   }
 
   public setResponse(response: Response | null): void {
+    if (response?.bodyUsed) {
+      throw new LogicError('Response body is already used');
+    }
+
     if (response !== null) {
       this.response = response.clone();
     } else {
