@@ -1,6 +1,6 @@
 import { BaseRequestData } from './BaseRequestData';
 import { BaseRequestMetaData } from './BaseRequestMetaData';
-import { Environment } from './Config';
+import { Environment } from './Environment';
 import { SubRequestData } from './SubRequestData';
 
 export interface ConnectionMetaData {
