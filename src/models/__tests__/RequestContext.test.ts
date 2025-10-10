@@ -28,6 +28,7 @@ describe('RequestContext', () => {
   beforeEach(() => {
     requestDataDataProvider = new RequestDataDataProvider();
     requestContext = new RequestContext({
+      environment: Environment.LOCAL,
       request: requestDataDataProvider.request,
     });
 
