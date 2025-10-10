@@ -1,5 +1,5 @@
 import { DataGenerationService } from '../../../services/DataGenerationService';
-import { Environment } from '../../Config';
+import { Environment } from '../../Environment';
 import { RequestData, RequestMetaData } from '../../RequestData';
 import { SubRequestDataDataProvider } from './SubRequestDataDataProvider';
 

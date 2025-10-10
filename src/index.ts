@@ -3,7 +3,7 @@ export * from './models/AlertLogger';
 export * from './models/AuthCore';
 export * from './models/AvailabilityHelper';
 export * from './models/BookingHelper';
-export * from './models/Config';
+export * from './models/Environment';
 export * from './models/ConnectionUpdater';
 export * from './models/DateHelper';
 export * from './models/Error';

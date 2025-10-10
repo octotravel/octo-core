@@ -2,7 +2,7 @@ import { addSeconds } from 'date-fns';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { DataGenerationService } from '../../services/DataGenerationService';
 import { AlertData } from '../AlertData';
-import { Environment } from '../Config';
+import { Environment } from '../Environment';
 import { RequestContext } from '../RequestContext';
 import { RequestData } from '../RequestData';
 import { RequestDataDataProvider } from './dataProviders/RequestDataDataProvider';
