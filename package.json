@@ -1,6 +1,6 @@
 {
   "name": "@octocloud/core",
-  "version": "1.0.85",
+  "version": "1.0.86",
   "license": "ISC",
   "author": "",
   "exports": {
@@ -35,7 +35,7 @@
   "types": "./dist/index.d.ts",
   "dependencies": {
     "@dinero.js/currencies": "2.0.0-alpha.8",
-    "@octocloud/types": "2.0.1",
+    "@octocloud/types": "2.0.2",
     "date-fns": "^2.30.0",
     "date-fns-tz": "^2.0.0",
     "dinero.js": "^2.0.0-alpha.14",
