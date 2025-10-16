@@ -1,5 +1,3 @@
-import { Unit } from '@octocloud/types';
-
 export const STATUS_SUCCESS = 200;
 export const STATUS_BAD_REQUEST = 400;
 export const STATUS_UNAUTHORIZED = 401;
@@ -49,30 +47,6 @@ export class InternalError extends Error implements BaseError {
 export class NoAvailabilityError extends InternalError {
   public constructor() {
     super(MESSAGE_NO_AVAILABILITY_ERROR);
-  }
-}
-export class OptionRestrictionsError extends InternalError {
-  public readonly minUnits: number | null;
-  public readonly maxUnits: number | null;
-  public readonly unit: Unit | null;
-  public readonly isAccompaniedByOk: boolean;
-
-  public constructor({
-    minUnits,
-    maxUnits,
-    unit,
-    isAccompaniedByOk = true,
-  }: {
-    minUnits: number | null;
-    maxUnits: number | null;
-    unit?: Unit;
-    isAccompaniedByOk?: boolean;
-  }) {
-    super(MESSAGE_OPTION_RESTRICTIONS_ERROR);
-    this.minUnits = minUnits;
-    this.maxUnits = maxUnits;
-    this.unit = unit ?? null;
-    this.isAccompaniedByOk = isAccompaniedByOk;
   }
 }
 

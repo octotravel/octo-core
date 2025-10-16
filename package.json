@@ -35,7 +35,7 @@
   "types": "./dist/index.d.ts",
   "dependencies": {
     "@dinero.js/currencies": "2.0.0-alpha.8",
-    "@octocloud/types": "github:octotravel/octo-types#spike/openapi-types-generation",
+    "@octocloud/types": "2.0.1",
     "date-fns": "^2.30.0",
     "date-fns-tz": "^2.0.0",
     "dinero.js": "^2.0.0-alpha.14",
@@ -48,12 +48,12 @@
     "@biomejs/biome": "2.0.0",
     "@octocloud/generators": "^1.0.11",
     "@types/node": "^22.9.0",
-    "typescript": "^5.7.2",
     "@types/uuid": "^9.0.0",
     "@vitest/coverage-v8": "3.0.9",
     "audit-ci": "7.1.0",
     "lefthook": "1.10.10",
     "tsup": "8.3.5",
+    "typescript": "^5.7.2",
     "vitest": "3.0.9",
     "vitest-mock-extended": "3.0.1"
   },
