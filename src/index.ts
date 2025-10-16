@@ -2,6 +2,8 @@ export * from './models/AlertData';
 export * from './models/AlertLogger';
 export * from './models/AuthCore';
 export * from './models/BackendError';
+export * from './models/BaseRequestData';
+export * from './models/BaseRequestMetaData';
 export * from './models/ConnectionUpdater';
 export * from './models/DateHelper';
 export * from './models/DefaultResponseHandler';
