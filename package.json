@@ -45,7 +45,7 @@
     "zod": "^3.25.61"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.9.4",
+    "@biomejs/biome": "2.1.0",
     "@octocloud/generators": "^1.0.14",
     "@types/node": "^22.9.0",
     "@types/uuid": "^9.0.0",
