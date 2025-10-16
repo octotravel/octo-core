@@ -1,8 +1,7 @@
 import { DataGenerationService } from '../services/DataGenerationService';
 import { BaseConnection } from '../types/Connection';
 import { AlertData } from './AlertData';
-import { Environment } from './Config';
-import { HttpError } from './Error';
+import { Environment } from './Environment';
 import { ConnectionMetaData, RequestData, RequestMetaData } from './RequestData';
 import { SubRequestData } from './SubRequestData';
 
@@ -22,23 +21,23 @@ export class RequestContext {
   private alertData: AlertData | null = null;
   private corsEnabled = false;
   private readonly subRequests: SubRequestData[] = [];
-  private readonly environment: Environment;
+  private environment: Environment;
   private productIds: string[] = [];
   private error: Error | null = null;
   private _redirectURL: string | null = null;
 
   public constructor({
     request,
+    environment,
     connection = null,
     channel,
     accountId,
-    environment,
   }: {
     request: Request;
+    environment: Environment;
     connection?: BaseConnection | null;
     channel?: string;
     accountId?: string;
-    environment?: Environment;
   }) {
     this.requestId = this.dataGenerationService.generateUUID();
     this.request = request.clone();
@@ -46,7 +45,7 @@ export class RequestContext {
     this.accountId = connection?.accountId ?? accountId ?? null;
     this.connection = connection ?? null;
     this.channel = channel ?? null;
-    this.environment = environment ?? Environment.LOCAL;
+    this.environment = environment;
   }
 
   public getRequest = (): Request => {
@@ -150,7 +149,9 @@ export class RequestContext {
   }
 
   public enableAlert(alertData: AlertData = new AlertData()): void {
-    this.alertData = alertData;
+    if (this.alertData === null) {
+      this.alertData = alertData;
+    }
     this.enableLogs();
   }
 
@@ -182,6 +183,10 @@ export class RequestContext {
 
   public getEnvironment(): Environment {
     return this.environment;
+  }
+
+  public setEnvironment(environment: Environment): void {
+    this.environment = environment;
   }
 
   private getDuration(start: Date, end: Date): number {
@@ -242,13 +247,6 @@ export class RequestContext {
       duration: this.getDuration(this.date, new Date()),
       environment: this.environment,
     };
-
-    if (this.error) {
-      if (this.error instanceof HttpError) {
-        metaData.status = this.error.statusLog;
-        metaData.success = this.error.statusLog >= 200 && this.error.statusLog < 300;
-      }
-    }
 
     const requestData = new RequestData({
       id,
