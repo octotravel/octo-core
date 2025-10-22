@@ -126,7 +126,7 @@ export async function fetchRetry(
 
     const status = res.status;
 
-    if (options.retryOnStatus.includes(status)) {
+    if (options.retryOnStatus.includes(status) && request.signal.aborted === false) {
       const retryAfter = HeaderParser.getRetryAfterInSeconds(res);
 
       if (retryAfter > 0) {
