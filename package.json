@@ -4,9 +4,9 @@
   "license": "ISC",
   "author": "",
   "repository": {
-    "type": "git",
-    "url": "git+https://github.com/octotravel/octo-core.git"
-  },
+	  "type": "git",
+	  "url": "git+https://github.com/octotravel/octo-core.git"
+	},
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -16,7 +16,9 @@
   },
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts --clean",
     "build:dry": "tsc --noEmit",
