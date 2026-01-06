@@ -1,8 +1,12 @@
 {
   "name": "@octocloud/core",
-  "version": "1.0.90",
+  "version": "1.0.91",
   "license": "ISC",
   "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/octotravel/octo-core.git"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
