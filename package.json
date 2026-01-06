@@ -4,9 +4,9 @@
   "license": "ISC",
   "author": "",
   "repository": {
-	  "type": "git",
-	  "url": "git+https://github.com/octotravel/octo-core.git"
-	},
+    "type": "git",
+    "url": "git+https://github.com/octotravel/octo-core.git"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
