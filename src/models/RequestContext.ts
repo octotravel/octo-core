@@ -11,7 +11,8 @@ export class RequestContext {
   private readonly request: Request;
   private requestId: string;
   private response: Response | null = null;
-  private readonly date: Date;
+  private readonly startDate: Date;
+  private endDate: Date | null = null;
   private connection: BaseConnection | null = null;
   private accountId: string | null = null;
   private channel: string | null = null;
@@ -41,7 +42,8 @@ export class RequestContext {
   }) {
     this.requestId = this.dataGenerationService.generateUUID();
     this.request = request.clone();
-    this.date = new Date();
+    this.startDate = new Date();
+    this.endDate = new Date();
     this.accountId = connection?.accountId ?? accountId ?? null;
     this.connection = connection ?? null;
     this.channel = channel ?? null;
@@ -189,25 +191,41 @@ export class RequestContext {
     this.environment = environment;
   }
 
-  private getDuration(start: Date, end: Date): number {
-    return (end.getTime() - start.getTime()) / 1000;
+  public getStartDate(): Date {
+    return this.startDate;
   }
 
-  public getDate(): Date {
-    return new Date(this.date.getTime());
-  }
-
-  public getRequestDuration(date: Date): number {
-    return this.getDuration(this.date, date);
-  }
-
-  public getRequestDurationInMs(date: Date): number {
-    const milliseconds = Math.ceil(this.getRequestDuration(date) * 1000);
-    if (milliseconds < 1) {
-      return 1;
-    } else {
-      return milliseconds;
+  public setEndDate(endDate: Date): void {
+    if (this.endDate !== null) {
+      throw new Error('endDate is already set');
     }
+
+    if (endDate < this.startDate) {
+      throw new Error('endDate cannot be before startDate');
+    }
+
+    this.endDate = endDate;
+  }
+
+  public getEndDate(): Date | null {
+    return this.endDate;
+  }
+
+  public getRequestDuration(): number {
+    if (this.endDate === null) {
+      throw new Error('endDate is not set');
+    }
+
+    return this.getDuration(this.startDate, this.endDate);
+  }
+
+  private getDuration(startDate: Date, endDate: Date): number {
+    return (endDate.getTime() - startDate.getTime()) / 1000;
+  }
+
+  public getRequestDurationInMs(): number {
+    const milliseconds = Math.ceil(this.getRequestDuration() * 1000);
+    return milliseconds < 1 ? 1 : milliseconds;
   }
 
   public addSubrequest(data: SubRequestData): void {
@@ -237,14 +255,14 @@ export class RequestContext {
 
     const metaData: RequestMetaData = {
       id: this.getRequestId(),
-      date: this.date,
+      date: this.startDate,
       connection: connectionMetaData,
       action: this.getAction(),
       url: this.getRequest().url,
       method: this.getRequest().method,
       status: reponse.status,
       success: reponse.ok,
-      duration: this.getDuration(this.date, new Date()),
+      duration: this.getRequestDuration(),
       environment: this.environment,
     };
 

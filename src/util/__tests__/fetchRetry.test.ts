@@ -249,12 +249,12 @@ describe('fetchRetry', () => {
           subRequestContext,
           retryDelayMultiplierInMs: RETRY_DELAY_MULTIPLIER_IN_MS,
           shouldForceRetry: async (response: Response): Promise<ShouldForceRetryResult> => {
+            const jsonResponse = await response.json();
+
             try {
               if (response.status !== 400) {
                 return { forceRetry: false, retryAfter: 0 };
               }
-
-              const jsonResponse = await response.json();
 
               if (
                 jsonResponse.error &&
