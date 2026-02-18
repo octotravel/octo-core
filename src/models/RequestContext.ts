@@ -44,7 +44,6 @@ export class RequestContext {
     this.requestId = this.dataGenerationService.generateUUID();
     this.request = request.clone();
     this.startDate = new Date();
-    this.endDate = new Date();
     this.accountId = connection?.accountId ?? accountId ?? null;
     this.connection = connection ?? null;
     this.channel = channel ?? null;
