@@ -23,4 +23,9 @@ export abstract class DateHelper {
       timeZone,
     });
   };
+
+  public static toPositiveMs(diffMs: number): number {
+    const ms = Math.ceil(diffMs);
+    return ms < 1 ? 1 : ms;
+  }
 }

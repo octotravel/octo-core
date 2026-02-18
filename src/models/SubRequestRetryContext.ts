@@ -1,4 +1,5 @@
 import { DataGenerationService } from '../services/DataGenerationService';
+import { DateHelper } from './DateHelper';
 import { SubRequestRetryData, SubrequestRetryMetaData } from './SubRequestRetryData';
 
 export class SubRequestRetryContext {
@@ -81,7 +82,7 @@ export class SubRequestRetryContext {
       throw new Error('endDate is already set');
     }
 
-    if (endDate < this.startDate) {
+    if (endDate.getTime() < this.startDate.getTime()) {
       throw new Error('endDate cannot be before startDate');
     }
 
@@ -97,16 +98,19 @@ export class SubRequestRetryContext {
       throw new Error('endDate is not set');
     }
 
-    return this.getDuration(this.startDate, this.endDate);
-  }
-
-  private getDuration(startDate: Date, endDate: Date): number {
-    return (endDate.getTime() - startDate.getTime()) / 1000;
+    return (this.endDate.getTime() - this.startDate.getTime()) / 1000;
   }
 
   public getRequestDurationInMs(): number {
-    const milliseconds = Math.ceil(this.getRequestDuration() * 1000);
-    return milliseconds < 1 ? 1 : milliseconds;
+    if (this.endDate === null) {
+      throw new Error('endDate is not set');
+    }
+
+    return DateHelper.toPositiveMs(this.endDate.getTime() - this.startDate.getTime());
+  }
+
+  public getRequestDurationForDateInMs(date: Date): number {
+    return DateHelper.toPositiveMs(date.getTime() - this.startDate.getTime());
   }
 
   public getAccountId(): string {
