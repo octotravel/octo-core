@@ -5,9 +5,10 @@ import { SubRequestRetryContext } from '../models/SubRequestRetryContext';
 const DEFAULT_MAX_RETRY_ATTEMPTS = 3;
 const DEFAULT_RETRY_AFTER = 0;
 const DEFAULT_RETRY_DELAY_MULTIPLIER_IN_MS = 1000;
-const DEFAULT_RETRY_ON_STATUS = [429, 500, 502, 503, 504, 506, 507, 508, 510, 511];
+const DEFAULT_RETRY_ON_STATUS = [500, 502, 503, 504, 506, 507, 508, 510, 511];
 const FETCH_RETRY_DEFAULT_OPTIONS: Required<FetchRetryOptions> = {
   subRequestContext: null,
+  timeoutInMs: null,
   currentRetryAttempt: 0,
   maxRetryAttempts: DEFAULT_MAX_RETRY_ATTEMPTS,
   retryAfter: DEFAULT_RETRY_AFTER,
@@ -28,6 +29,7 @@ const FETCH_RETRY_DEFAULT_OPTIONS: Required<FetchRetryOptions> = {
 
 export interface FetchRetryOptions {
   subRequestContext?: SubRequestContext | null;
+  timeoutInMs?: number | null;
   currentRetryAttempt?: number;
   maxRetryAttempts?: number;
   retryAfter?: number;
@@ -76,7 +78,16 @@ export async function fetchRetry(
   let error: Error | null = null;
 
   try {
-    res = await options.fetchImplementation(request.clone());
+    let fetchRequest = request.clone();
+
+    if (options.timeoutInMs !== null && options.timeoutInMs !== undefined) {
+      const timeoutSignal = AbortSignal.timeout(options.timeoutInMs);
+      fetchRequest = new Request(fetchRequest, {
+        signal: AbortSignal.any([fetchRequest.signal, timeoutSignal]),
+      });
+    }
+
+    res = await options.fetchImplementation(fetchRequest);
   } catch (e: unknown) {
     res = new Response(
       JSON.stringify({ error: 'Unable to retrieve a response from the server. Please try again later.' }),
@@ -125,10 +136,12 @@ export async function fetchRetry(
     }
 
     const status = res.status;
+    const retryAfter = HeaderParser.getRetryAfterInSeconds(res);
 
-    if (options.retryOnStatus.includes(status) && request.signal.aborted === false) {
-      const retryAfter = HeaderParser.getRetryAfterInSeconds(res);
-
+    if (
+      (options.retryOnStatus.includes(status) || (status === 429 && retryAfter > 0)) &&
+      request.signal.aborted === false
+    ) {
       if (retryAfter > 0) {
         options.retryAfter = retryAfter;
       }
