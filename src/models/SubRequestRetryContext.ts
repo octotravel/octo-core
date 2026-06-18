@@ -1,4 +1,5 @@
 import { DataGenerationService } from '../services/DataGenerationService';
+import { DateHelper } from './DateHelper';
 import { SubRequestRetryData, SubrequestRetryMetaData } from './SubRequestRetryData';
 
 export class SubRequestRetryContext {
@@ -13,6 +14,7 @@ export class SubRequestRetryContext {
   private response: Response | null = null;
   private error: Error | null = null;
   private logsEnabled = true;
+  private endDate: Date | null = null;
 
   private readonly generateRequestId = (): string => this.dataGenerationService.generateUUID();
 
@@ -71,9 +73,45 @@ export class SubRequestRetryContext {
     return this.logsEnabled;
   }
 
-  private readonly getDuration = (start: Date, end: Date): number => {
-    return (end.getTime() - start.getTime()) / 1000;
-  };
+  public getStartDate(): Date {
+    return this.startDate;
+  }
+
+  public setEndDate(endDate: Date): void {
+    if (this.endDate !== null) {
+      throw new Error('endDate is already set');
+    }
+
+    if (endDate.getTime() < this.startDate.getTime()) {
+      throw new Error('endDate cannot be before startDate');
+    }
+
+    this.endDate = endDate;
+  }
+
+  public getEndDate(): Date | null {
+    return this.endDate;
+  }
+
+  public getRequestDuration(): number {
+    if (this.endDate === null) {
+      throw new Error('endDate is not set');
+    }
+
+    return (this.endDate.getTime() - this.startDate.getTime()) / 1000;
+  }
+
+  public getRequestDurationInMs(): number {
+    if (this.endDate === null) {
+      throw new Error('endDate is not set');
+    }
+
+    return DateHelper.toPositiveMs(this.endDate.getTime() - this.startDate.getTime());
+  }
+
+  public getRequestDurationForDateInMs(date: Date): number {
+    return DateHelper.toPositiveMs(date.getTime() - this.startDate.getTime());
+  }
 
   public getAccountId(): string {
     return this.accountId;
@@ -106,7 +144,7 @@ export class SubRequestRetryContext {
       method: this.getRequest().method,
       status: this.response.status,
       success: this.response.ok,
-      duration: this.getDuration(this.startDate, new Date()),
+      duration: this.getRequestDuration(),
     };
     const requestData = new SubRequestRetryData({
       id,

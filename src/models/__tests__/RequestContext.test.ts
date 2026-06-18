@@ -160,15 +160,15 @@ describe('RequestContext', () => {
 
   describe('getRequestDuration', () => {
     it('should return duration', () => {
-      const date = addSeconds(requestContext.getDate(), 1);
-      expect(requestContext.getRequestDuration(date)).toBe(1);
+      const date = addSeconds(requestContext.getStartDate(), 1);
+      expect(requestContext.getRequestDurationForDateInMs(date)).toBe(1);
     });
   });
 
   describe('getRequestDurationInMs', () => {
     it('should return duration in ms', () => {
-      const date = addSeconds(requestContext.getDate(), 1);
-      expect(requestContext.getRequestDurationInMs(date)).toBe(1000);
+      const date = addSeconds(requestContext.getStartDate(), 1);
+      expect(requestContext.getRequestDurationForDateInMs(date)).toBe(1000);
     });
   });
 

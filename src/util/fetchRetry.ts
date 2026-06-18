@@ -106,6 +106,7 @@ export async function fetchRetry(
     options.subRequestContext !== null &&
     options.subRequestContext !== undefined
   ) {
+    options.subRequestContext.setEndDate(new Date());
     options.subRequestContext.setResponse(res);
     options.subRequestContext.setError(error);
   } else if (
@@ -114,6 +115,7 @@ export async function fetchRetry(
     options.subRequestContext !== undefined &&
     subRequestRetryContext !== null
   ) {
+    subRequestRetryContext.setEndDate(new Date());
     subRequestRetryContext.setResponse(res);
     subRequestRetryContext.setError(error);
     const requestData = subRequestRetryContext.getRequestData();
