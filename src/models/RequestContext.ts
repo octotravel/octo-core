@@ -27,23 +27,25 @@ export class RequestContext {
   private _redirectURL: string | null = null;
 
   public constructor({
+    requestId = null,
     request,
     environment,
     connection = null,
     channel,
     accountId,
-    date,
+    date = null,
   }: {
+    requestId: string | null;
     request: Request;
     environment: Environment;
     connection?: BaseConnection | null;
     channel?: string;
     accountId?: string;
-    date?: string;
+    date?: Date | null;
   }) {
-    this.requestId = this.dataGenerationService.generateUUID();
+    this.requestId = requestId ?? this.dataGenerationService.generateUUID();
     this.request = request.clone();
-    this.date = date ? new Date(date) : new Date();
+    this.date = date ? date : new Date();
     this.accountId = connection?.accountId ?? accountId ?? null;
     this.connection = connection ?? null;
     this.channel = channel ?? null;
