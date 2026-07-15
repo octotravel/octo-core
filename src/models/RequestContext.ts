@@ -32,16 +32,18 @@ export class RequestContext {
     connection = null,
     channel,
     accountId,
+    date,
   }: {
     request: Request;
     environment: Environment;
     connection?: BaseConnection | null;
     channel?: string;
     accountId?: string;
+    date?: string;
   }) {
     this.requestId = this.dataGenerationService.generateUUID();
     this.request = request.clone();
-    this.date = new Date();
+    this.date = date ? new Date(date) : new Date();
     this.accountId = connection?.accountId ?? accountId ?? null;
     this.connection = connection ?? null;
     this.channel = channel ?? null;

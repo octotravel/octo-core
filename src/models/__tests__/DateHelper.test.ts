@@ -34,4 +34,17 @@ describe('DateHelper', () => {
       // expect(DateHelper.availabilityIdFormat(new Date(date), timeZone)).toStrictEqual(dateTimeWithTimeZone);
     });
   });
+
+  describe('parseUnixTimestampToDate', () => {
+    const expectedDate = new Date('2026-07-14T19:00:47.268Z');
+    const timestamp = expectedDate.getTime() / 1000;
+
+    it('should parse a numeric Unix timestamp in seconds', () => {
+      expect(DateHelper.parseUnixTimestampToDate(timestamp)).toEqual(expectedDate);
+    });
+
+    it('should parse a Unix timestamp string in seconds', () => {
+      expect(DateHelper.parseUnixTimestampToDate(timestamp.toString())).toEqual(expectedDate);
+    });
+  });
 });
