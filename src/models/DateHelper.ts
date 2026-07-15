@@ -1,4 +1,5 @@
 import { format, toDate } from 'date-fns-tz';
+
 export abstract class DateHelper {
   public static getTime(dateTime: string): string {
     return dateTime.split('T')[1].slice(0, 5);
@@ -23,4 +24,8 @@ export abstract class DateHelper {
       timeZone,
     });
   };
+
+  public static parseUnixTimestampToDate(timestamp: string | number): Date {
+    return new Date(Number(timestamp) * 1000);
+  }
 }
