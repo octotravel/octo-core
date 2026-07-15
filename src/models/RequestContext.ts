@@ -35,7 +35,7 @@ export class RequestContext {
     accountId,
     date = null,
   }: {
-    requestId: string | null;
+    requestId?: string | null;
     request: Request;
     environment: Environment;
     connection?: BaseConnection | null;
