@@ -309,7 +309,7 @@ describe('fetchRetry', () => {
       expect(response.status).toBe(200);
       expect(subrequestData.getResponse().status).toBe(500);
       expect(await subrequestData.getResponse().clone().json()).toStrictEqual({
-        error: 'Unable to retrieve a response from the server. Please try again later.',
+        error: 'Unable to retrieve a response from the server. Please try again later. (Error: Unknown error)',
       });
       expect(subrequestData.getRetries().length).toBe(1);
       expect(subrequestData.getRetries()[0].getResponse().status).toBe(200);
