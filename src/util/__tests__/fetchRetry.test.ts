@@ -326,4 +326,42 @@ describe('fetchRetry', () => {
       error = unknownError;
     });
   });
+
+  describe('connection management', () => {
+    // Build a response whose body is a stream that never resolves on its own —
+    // it can only complete by being read to the end or cancelled. The `cancel`
+    // spy stands in for undici returning the socket to the pool.
+    const makeStreamingResponse = (status: number): { response: Response; cancel: ReturnType<typeof vi.fn> } => {
+      const cancel = vi.fn();
+      const stream = new ReadableStream({
+        pull() {
+          // Intentionally never enqueue/close: the body stays "open" until the
+          // caller either fully reads it or cancels it.
+        },
+        cancel,
+      });
+      return { response: new Response(stream, { status }), cancel };
+    };
+
+    it('cancels the body of every discarded response so the connection is released', async () => {
+      const first = makeStreamingResponse(503);
+      const second = makeStreamingResponse(503);
+      globalFetchResponse.push(first.response);
+      globalFetchResponse.push(second.response);
+      globalFetchResponse.push(new Response('{}', { status: 200 }));
+
+      response = await fetchRetry(request, {
+        retryDelayMultiplierInMs: RETRY_DELAY_MULTIPLIER_IN_MS,
+        // A predicate that inspects nothing and never consumes the body — the
+        // realistic case that used to leak the connection on every retry.
+        shouldForceRetry: async (): Promise<ShouldForceRetryResult> => ({ forceRetry: false, retryAfter: 0 }),
+      });
+
+      expect(response.status).toBe(200);
+      // Both retried-away responses must have had their underlying source
+      // cancelled (all tee branches released), not left dangling.
+      expect(first.cancel).toHaveBeenCalledTimes(1);
+      expect(second.cancel).toHaveBeenCalledTimes(1);
+    });
+  });
 });
