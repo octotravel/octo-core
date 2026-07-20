@@ -90,7 +90,7 @@ export async function fetchRetry(
     res = await options.fetchImplementation(fetchRequest);
   } catch (e: unknown) {
     res = new Response(
-      JSON.stringify({ error: 'Unable to retrieve a response from the server. Please try again later.' }),
+      JSON.stringify({ error: `Unable to retrieve a response from the server. Please try again later. (${e})` }),
       {
         status: 500,
       },
