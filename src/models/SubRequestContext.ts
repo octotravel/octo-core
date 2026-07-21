@@ -1,44 +1,145 @@
-import { DataGenerationService } from '../services/DataGenerationService';
-import { SubRequestData, SubrequestMetaData } from './SubRequestData';
-import { SubRequestRetryData } from './SubRequestRetryData';
+import { v4 as uuid } from 'uuid';
+import { RequestMethod } from '../types/Request';
+import { DateHelper } from './DateHelper';
+import { RuntimeError } from './Error';
 
 export class SubRequestContext {
-  private readonly dataGenerationService = new DataGenerationService();
-  private readonly accountId: string;
-  private readonly request: Request;
+  private readonly parentRequestId: string;
   private readonly requestId: string;
-  private readonly subRequestId: string;
-  private readonly startDate: Date = new Date();
-  private readonly retries: SubRequestRetryData[] = [];
+  private readonly startDate: Date;
+  private endDate: Date | null = null;
 
-  private response: Response | null = null;
+  private requestMethod: string | undefined;
+  private requestUrl: string | undefined;
+  private requestHeaders: Record<string, string> = {};
+  private requestBody: string | undefined;
+
+  private responseHeaders: Record<string, string> = {};
+  private responseBody: string | undefined;
+  private responseStatus: number | undefined;
+
   private error: Error | null = null;
-  private logsEnabled = true;
 
-  private readonly generateRequestId = (): string => this.dataGenerationService.generateUUID();
+  private readonly subRequestRetries: SubRequestContext[] = [];
 
-  public constructor({ request, accountId, requestId }: { request: Request; accountId: string; requestId: string }) {
-    this.subRequestId = this.generateRequestId();
-    this.accountId = accountId;
+  public static Create({
+    parentRequestId,
+    requestId,
+  }: {
+    parentRequestId: string;
+    requestId: string | undefined;
+  }): SubRequestContext {
+    return new SubRequestContext({
+      parentRequestId,
+      requestId: requestId ?? uuid(),
+      startDate: new Date(),
+    });
+  }
+
+  private constructor({
+    parentRequestId,
+    requestId,
+    startDate,
+  }: {
+    parentRequestId: string;
+    requestId: string;
+    startDate: Date;
+  }) {
+    this.parentRequestId = parentRequestId;
     this.requestId = requestId;
-    this.request = request.clone();
-    this.startDate = new Date();
+    this.startDate = startDate;
   }
 
-  public getRequest(): Request {
-    return this.request;
+  public getParentRequestId(): string {
+    return this.parentRequestId;
   }
 
-  public setResponse(response: Response | null): void {
-    if (response !== null) {
-      this.response = response.clone();
-    } else {
-      this.response = null;
+  public getRequestId(): string {
+    return this.requestId;
+  }
+
+  public getStartDate(): Date {
+    return this.startDate;
+  }
+
+  public setEndDate(endDate: Date): void {
+    if (this.endDate !== null) {
+      throw new RuntimeError('endDate is already set');
     }
+
+    if (endDate.getTime() < this.startDate.getTime()) {
+      throw new RuntimeError('endDate cannot be before startDate');
+    }
+
+    this.endDate = endDate;
   }
 
-  public getResponse(): Response | null {
-    return this.response;
+  public getEndDate(): Date | null {
+    return this.endDate;
+  }
+
+  public setRequestMethod(requestMethod: RequestMethod | string): void {
+    this.requestMethod = requestMethod;
+  }
+
+  public getRequestMethod(): string {
+    if (this.requestMethod === undefined) {
+      throw new RuntimeError('requestMethod is not set');
+    }
+
+    return this.requestMethod;
+  }
+
+  public setRequestUrl(requestUrl: string): void {
+    this.requestUrl = requestUrl;
+  }
+
+  public getRequestUrl(): string {
+    if (this.requestUrl === undefined) {
+      throw new RuntimeError('requestUrl is not set');
+    }
+
+    return this.requestUrl;
+  }
+
+  public setRequestHeaders(requestHeaders: Record<string, string>): void {
+    this.requestHeaders = requestHeaders;
+  }
+
+  public getRequestHeaders(): Record<string, string> {
+    return this.requestHeaders;
+  }
+
+  public setRequestBody(requestBody: string | undefined): void {
+    this.requestBody = requestBody;
+  }
+
+  public getRequestBody(): string | undefined {
+    return this.requestBody;
+  }
+
+  public setResponseHeaders(responseHeaders: Record<string, string>): void {
+    this.responseHeaders = responseHeaders;
+  }
+
+  public getResponseHeaders(): Record<string, string> {
+    return this.responseHeaders;
+  }
+
+  public setResponseBody(responseBody: string | undefined): void {
+    this.responseBody = responseBody;
+  }
+
+  public getResponseBody(): string | undefined {
+    return this.responseBody;
+  }
+
+  public setResponseStatus(responseStatus: number | undefined): void {
+    this.responseStatus = responseStatus;
+  }
+
+  public getResponseStatus(): number | undefined {
+    return this.responseStatus;
   }
 
   public setError(error: Error | null): void {
@@ -49,70 +150,31 @@ export class SubRequestContext {
     return this.error;
   }
 
-  public enableLogs(): void {
-    this.logsEnabled = true;
+  public addSubRequestRetry(subRequestContext: SubRequestContext): void {
+    this.subRequestRetries.push(subRequestContext);
   }
 
-  public disableLogs(): void {
-    this.logsEnabled = false;
+  public getSubRequestRetries(): SubRequestContext[] {
+    return this.subRequestRetries;
   }
 
-  public areLogsEnabled(): boolean {
-    return this.logsEnabled;
-  }
-
-  public addRetry(data: SubRequestRetryData): void {
-    this.retries.push(data);
-  }
-
-  public getRetries(): SubRequestRetryData[] {
-    return this.retries;
-  }
-
-  private readonly getDuration = (start: Date, end: Date): number => {
-    return (end.getTime() - start.getTime()) / 1000;
-  };
-
-  public getAccountId(): string {
-    return this.accountId;
-  }
-
-  public getId(): string {
-    return this.subRequestId;
-  }
-
-  public getRequestId(): string {
-    return this.requestId;
-  }
-
-  public getRequestData(): SubRequestData {
-    const response = this.getResponse();
-
-    if (response === null) {
-      throw new Error('Response is not set');
+  public getRequestDuration(): number {
+    if (this.endDate === null) {
+      throw new RuntimeError('endDate is not set');
     }
 
-    const id = `${this.accountId}/${this.requestId}/${this.subRequestId}`;
-    const metaData: SubrequestMetaData = {
-      id: this.subRequestId,
-      requestId: this.requestId,
-      date: this.startDate,
-      url: this.getRequest().url,
-      method: this.getRequest().method,
-      status: response.status,
-      success: response.ok,
-      duration: this.getDuration(this.startDate, new Date()),
-    };
-    const requestData = new SubRequestData({
-      id,
-      request: this.getRequest(),
-      response,
-      retries: this.retries,
-      error: this.error,
-      metaData,
-      logsEnabled: this.logsEnabled,
-    });
+    return (this.endDate.getTime() - this.startDate.getTime()) / 1000;
+  }
 
-    return requestData;
+  public getRequestDurationInMs(): number {
+    if (this.endDate === null) {
+      throw new RuntimeError('endDate is not set');
+    }
+
+    return DateHelper.toPositiveMs(this.endDate.getTime() - this.startDate.getTime());
+  }
+
+  public getRequestDurationForDateInMs(date: Date): number {
+    return DateHelper.toPositiveMs(date.getTime() - this.startDate.getTime());
   }
 }

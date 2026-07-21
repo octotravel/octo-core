@@ -1,6 +1,5 @@
 import { HeaderParser } from '../models/HeaderParser';
 import { SubRequestContext } from '../models/SubRequestContext';
-import { SubRequestRetryContext } from '../models/SubRequestRetryContext';
 
 const DEFAULT_MAX_RETRY_ATTEMPTS = 3;
 const DEFAULT_RETRY_AFTER = 0;
@@ -96,7 +95,6 @@ export async function fetchRetry(
     if (options.subRequestContext !== null && options.subRequestContext !== undefined) {
       subRequestRetryContext = new SubRequestRetryContext({
         request,
-        accountId: options.subRequestContext.getAccountId(),
         requestId: options.subRequestContext.getRequestId(),
         subRequestId: options.subRequestContext.getId(),
       });

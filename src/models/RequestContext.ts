@@ -1,60 +1,63 @@
-import { DataGenerationService } from '../services/DataGenerationService';
+import { v4 as uuid } from 'uuid';
 import { BaseConnection } from '../types/Connection';
+import { RequestMethod } from '../types/Request';
 import { AlertData } from './AlertData';
+import { DateHelper } from './DateHelper';
 import { Environment } from './Environment';
-import { ConnectionMetaData, RequestData, RequestMetaData } from './RequestData';
-import { SubRequestData } from './SubRequestData';
+import { RuntimeError } from './Error';
+import { SubRequestContext } from './SubRequestContext';
 
 export class RequestContext {
-  private readonly dataGenerationService = new DataGenerationService();
-
-  private readonly request: Request;
-  private requestId: string;
-  private response: Response | null = null;
-  private readonly date: Date;
-  private connection: BaseConnection | null = null;
-  private accountId: string | null = null;
-  private channel: string | null = null;
-  private action = '';
-  private logsEnabled = true;
-  private _isRequestImportant = false;
-  private alertData: AlertData | null = null;
-  private corsEnabled = false;
-  private readonly subRequests: SubRequestData[] = [];
   private environment: Environment;
-  private productIds: string[] = [];
-  private error: Error | null = null;
-  private _redirectURL: string | null = null;
+  private readonly startDate: Date;
+  private endDate: Date | null = null;
 
-  public constructor({
-    requestId = null,
-    request,
-    environment,
-    connection = null,
-    channel,
-    accountId,
-    date = null,
-  }: {
-    requestId?: string | null;
-    request: Request;
-    environment: Environment;
-    connection?: BaseConnection | null;
-    channel?: string;
-    accountId?: string;
-    date?: Date | null;
-  }) {
-    this.requestId = requestId ?? this.dataGenerationService.generateUUID();
-    this.request = request.clone();
-    this.date = date ? date : new Date();
-    this.accountId = connection?.accountId ?? accountId ?? null;
-    this.connection = connection ?? null;
-    this.channel = channel ?? null;
-    this.environment = environment;
+  private requestId: string;
+  private requestMethod: string | undefined;
+  private requestUrl: string | undefined;
+  private requestHeaders: Record<string, string> = {};
+  private requestBody: string | undefined;
+  private responseHeaders: Record<string, string> = {};
+  private responseBody: string | undefined;
+  private responseStatus: string | undefined;
+  private error: Error | null = null;
+
+  private service: string | null = null;
+  private action = '';
+  private connection: BaseConnection | null = null;
+
+  private redirectUrl: string | null = null;
+  private logsEnabled = true;
+  private alertData: AlertData | null = null;
+  private readonly subRequests: SubRequestContext[] = [];
+
+  public static Create(environment: Environment): RequestContext {
+    return new RequestContext({
+      requestId: uuid(),
+      environment,
+      startDate: new Date(),
+    });
   }
 
-  public getRequest = (): Request => {
-    return this.request;
-  };
+  public static CreateForOcto(environment: Environment) {
+    const requestContext = RequestContext.Create(environment);
+    requestContext.setRequestMethod(RequestMethod.Get);
+    requestContext.setRequestUrl('https://octo.ventrata.com');
+  }
+
+  public constructor({
+    environment,
+    requestId,
+    startDate,
+  }: {
+    environment: Environment;
+    requestId: string;
+    startDate: Date;
+  }) {
+    this.environment = environment;
+    this.requestId = requestId;
+    this.startDate = startDate;
+  }
 
   public setRequestId(requestId: string): void {
     this.requestId = requestId;
@@ -64,12 +67,68 @@ export class RequestContext {
     return this.requestId;
   }
 
-  public getResponse = (): Response | null => {
-    return this.response;
-  };
+  public setRequestMethod(requestMethod: string): void {
+    this.requestMethod = requestMethod;
+  }
 
-  public setResponse(response: Response | null): void {
-    this.response = response?.clone() ?? null;
+  public getRequestMethod(): string {
+    if (this.requestMethod === undefined) {
+      throw new RuntimeError('requestMethod is not set');
+    }
+
+    return this.requestMethod;
+  }
+
+  public setRequestUrl(requestUrl: string): void {
+    this.requestUrl = requestUrl;
+  }
+
+  public getRequestUrl(): string {
+    if (this.requestUrl === undefined) {
+      throw new RuntimeError('requestUrl is not set');
+    }
+
+    return this.requestUrl;
+  }
+
+  public setRequestHeaders(requestHeaders: Record<string, string>): void {
+    this.requestHeaders = requestHeaders;
+  }
+
+  public getRequestHeaders(): Record<string, string> {
+    return this.requestHeaders;
+  }
+
+  public setRequestBody(requestBody: string | undefined): void {
+    this.requestBody = requestBody;
+  }
+
+  public getRequestBody(): string | undefined {
+    return this.requestBody;
+  }
+
+  public setResponseHeaders(responseHeaders: Record<string, string>): void {
+    this.responseHeaders = responseHeaders;
+  }
+
+  public getResponseHeaders(): Record<string, string> {
+    return this.responseHeaders;
+  }
+
+  public setResponseBody(responseBody: string | undefined): void {
+    this.responseBody = responseBody;
+  }
+
+  public getResponseBody(): string | undefined {
+    return this.responseBody;
+  }
+
+  public setResponseStatus(responseStatus: string | undefined): void {
+    this.responseStatus = responseStatus;
+  }
+
+  public getResponseStatus(): string | undefined {
+    return this.responseStatus;
   }
 
   public getConnection = <T extends BaseConnection>(): T => {
@@ -84,28 +143,16 @@ export class RequestContext {
     this.connection = connection;
   };
 
-  public getAccountId(): string {
-    if (this.accountId === null) {
-      throw new Error('accountId is not set');
-    }
-
-    return this.accountId;
+  public setService(channel: string): void {
+    this.service = channel;
   }
 
-  public setAccountId = (accountId: string): void => {
-    this.accountId = accountId;
-  };
-
-  public setChannel(channel: string): void {
-    this.channel = channel;
-  }
-
-  public getChannel(): string {
-    if (this.channel === null) {
-      throw new Error('channel is not set');
+  public getService(): string {
+    if (this.service === null) {
+      throw new Error('service is not set');
     }
 
-    return this.channel;
+    return this.service;
   }
 
   public setAction(action: string): void {
@@ -128,28 +175,12 @@ export class RequestContext {
     return this.logsEnabled;
   }
 
-  public setRequestAsImportant(): void {
-    this._isRequestImportant = true;
+  public setRedirectUrl(url: string): void {
+    this.redirectUrl = url;
   }
 
-  public isRequestImportant = (): boolean => {
-    return this._isRequestImportant;
-  };
-
-  public setRedirectURL(url: string): void {
-    this._redirectURL = url;
-  }
-
-  public get redirectURL(): string | null {
-    return this._redirectURL;
-  }
-
-  public enableCors(): void {
-    this.corsEnabled = true;
-  }
-
-  public areCorsEnabled(): boolean {
-    return this.corsEnabled;
+  public getRedirectUrl(): string | null {
+    return this.redirectUrl;
   }
 
   public enableAlert(alertData: AlertData = new AlertData()): void {
@@ -171,18 +202,12 @@ export class RequestContext {
     return this.alertData;
   }
 
-  public getError = (): Error | null => this.error;
+  public getError(): Error | null {
+    return this.error;
+  }
 
-  public setError = (error: Error | null): void => {
+  public setError(error: Error | null): void {
     this.error = error;
-  };
-
-  public setProductIds = (productIds: string[]): void => {
-    this.productIds = productIds;
-  };
-
-  public getProductIds(): string[] {
-    return this.productIds;
   }
 
   public getEnvironment(): Environment {
@@ -193,76 +218,51 @@ export class RequestContext {
     this.environment = environment;
   }
 
-  private getDuration(start: Date, end: Date): number {
-    return (end.getTime() - start.getTime()) / 1000;
+  public getStartDate(): Date {
+    return this.startDate;
   }
 
-  public getDate(): Date {
-    return new Date(this.date.getTime());
-  }
-
-  public getRequestDuration(date: Date): number {
-    return this.getDuration(this.date, date);
-  }
-
-  public getRequestDurationInMs(date: Date): number {
-    const milliseconds = Math.ceil(this.getRequestDuration(date) * 1000);
-    if (milliseconds < 1) {
-      return 1;
-    } else {
-      return milliseconds;
+  public setEndDate(endDate: Date): void {
+    if (this.endDate !== null) {
+      throw new Error('endDate is already set');
     }
+
+    if (endDate.getTime() < this.startDate.getTime()) {
+      throw new Error('endDate cannot be before startDate');
+    }
+
+    this.endDate = endDate;
   }
 
-  public addSubrequest(data: SubRequestData): void {
-    this.subRequests.push(data);
+  public getEndDate(): Date | null {
+    return this.endDate;
   }
 
-  public getSubRequests(): SubRequestData[] {
+  public getRequestDuration(): number {
+    if (this.endDate === null) {
+      throw new Error('endDate is not set');
+    }
+
+    return (this.endDate.getTime() - this.startDate.getTime()) / 1000;
+  }
+
+  public getRequestDurationInMs(): number {
+    if (this.endDate === null) {
+      throw new Error('endDate is not set');
+    }
+
+    return DateHelper.toPositiveMs(this.endDate.getTime() - this.startDate.getTime());
+  }
+
+  public getRequestDurationForDateInMs(date: Date): number {
+    return DateHelper.toPositiveMs(date.getTime() - this.startDate.getTime());
+  }
+
+  public addSubrequest(subRequestContext: SubRequestContext): void {
+    this.subRequests.push(subRequestContext);
+  }
+
+  public getSubRequests(): SubRequestContext[] {
     return this.subRequests;
   }
-
-  public getRequestData = (): RequestData => {
-    const reponse = this.getResponse();
-
-    if (reponse === null) {
-      throw new Error('Response is not set');
-    }
-
-    const id = `${this.accountId}/${this.requestId}`;
-    const connectionMetaData: ConnectionMetaData = {
-      id: this.connection?.id ?? null,
-      channel: this.channel ?? null,
-      name: this.connection?.name ?? null,
-      endpoint: this.connection?.endpoint ?? null,
-      account: this.accountId,
-      environment: this.environment,
-    };
-
-    const metaData: RequestMetaData = {
-      id: this.getRequestId(),
-      date: this.date,
-      connection: connectionMetaData,
-      action: this.getAction(),
-      url: this.getRequest().url,
-      method: this.getRequest().method,
-      status: reponse.status,
-      success: reponse.ok,
-      duration: this.getDuration(this.date, new Date()),
-      environment: this.environment,
-    };
-
-    const requestData = new RequestData({
-      id,
-      request: this.getRequest(),
-      metaData,
-      response: this.getResponse()!,
-      error: this.error,
-      logsEnabled: this.logsEnabled,
-      subRequests: this.subRequests,
-      productIds: this.productIds,
-    });
-
-    return requestData;
-  };
 }
