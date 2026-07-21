@@ -130,7 +130,11 @@ export class SubRequestContext {
     this.responseBody = responseBody;
   }
 
-  public getResponseBody(): string | undefined {
+  public getResponseBody(): string {
+    if (this.responseBody === undefined) {
+      throw new RuntimeError('responseBody is not set.');
+    }
+
     return this.responseBody;
   }
 
@@ -138,7 +142,11 @@ export class SubRequestContext {
     this.responseStatus = responseStatus;
   }
 
-  public getResponseStatus(): number | undefined {
+  public getResponseStatus(): number {
+    if (this.responseStatus === undefined) {
+      throw new RuntimeError('responseStatus is not set.');
+    }
+
     return this.responseStatus;
   }
 

@@ -120,6 +120,10 @@ export class RequestContext {
   }
 
   public getResponseBody(): string | undefined {
+    if (this.responseBody === undefined) {
+      throw new RuntimeError('responseBody is not set');
+    }
+
     return this.responseBody;
   }
 
@@ -127,13 +131,17 @@ export class RequestContext {
     this.responseStatus = responseStatus;
   }
 
-  public getResponseStatus(): string | undefined {
+  public getResponseStatus(): string {
+    if (this.responseStatus === undefined) {
+      throw new RuntimeError('responseStatus is not set');
+    }
+
     return this.responseStatus;
   }
 
   public getConnection = <T extends BaseConnection>(): T => {
     if (this.connection === null) {
-      throw new Error('connection is not set');
+      throw new RuntimeError('connection is not set');
     }
 
     return this.connection as T;
@@ -149,7 +157,7 @@ export class RequestContext {
 
   public getService(): string {
     if (this.service === null) {
-      throw new Error('service is not set');
+      throw new RuntimeError('service is not set');
     }
 
     return this.service;
@@ -224,11 +232,11 @@ export class RequestContext {
 
   public setEndDate(endDate: Date): void {
     if (this.endDate !== null) {
-      throw new Error('endDate is already set');
+      throw new RuntimeError('endDate is already set');
     }
 
     if (endDate.getTime() < this.startDate.getTime()) {
-      throw new Error('endDate cannot be before startDate');
+      throw new RuntimeError('endDate cannot be before startDate');
     }
 
     this.endDate = endDate;
@@ -240,7 +248,7 @@ export class RequestContext {
 
   public getRequestDuration(): number {
     if (this.endDate === null) {
-      throw new Error('endDate is not set');
+      throw new RuntimeError('endDate is not set');
     }
 
     return (this.endDate.getTime() - this.startDate.getTime()) / 1000;
@@ -248,7 +256,7 @@ export class RequestContext {
 
   public getRequestDurationInMs(): number {
     if (this.endDate === null) {
-      throw new Error('endDate is not set');
+      throw new RuntimeError('endDate is not set');
     }
 
     return DateHelper.toPositiveMs(this.endDate.getTime() - this.startDate.getTime());
