@@ -1,9 +1,23 @@
 export enum RequestMethod {
-  Get = 'GET',
-  Post = 'POST',
-  Put = 'PUT',
-  Patch = 'PATCH',
+  Connect = 'CONNECT',
   Delete = 'DELETE',
+  Get = 'GET',
   Head = 'HEAD',
   Options = 'OPTIONS',
+  Patch = 'PATCH',
+  Post = 'POST',
+  Put = 'PUT',
+  Trace = 'TRACE',
 }
+
+export const AllRequestMethods: readonly RequestMethod[] = [
+  RequestMethod.Connect,
+  RequestMethod.Delete,
+  RequestMethod.Get,
+  RequestMethod.Head,
+  RequestMethod.Options,
+  RequestMethod.Patch,
+  RequestMethod.Post,
+  RequestMethod.Put,
+  RequestMethod.Trace,
+];
