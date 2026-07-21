@@ -19,7 +19,7 @@ export class RequestContext {
   private requestBody: string | undefined;
   private responseHeaders: Record<string, string> = {};
   private responseBody: string | undefined;
-  private responseStatus: string | undefined;
+  private responseStatus: number | undefined;
   private error: Error | null = null;
 
   private service: string | null = null;
@@ -127,11 +127,11 @@ export class RequestContext {
     return this.responseBody;
   }
 
-  public setResponseStatus(responseStatus: string | undefined): void {
+  public setResponseStatus(responseStatus: number | undefined): void {
     this.responseStatus = responseStatus;
   }
 
-  public getResponseStatus(): string {
+  public getResponseStatus(): number {
     if (this.responseStatus === undefined) {
       throw new RuntimeError('responseStatus is not set');
     }
