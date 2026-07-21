@@ -10,7 +10,7 @@ export enum RequestMethod {
   Trace = 'TRACE',
 }
 
-export const AllRequestMethods: readonly RequestMethod[] = [
+export const AllRequestMethods: string[] = [
   RequestMethod.Connect,
   RequestMethod.Delete,
   RequestMethod.Get,
