@@ -24,7 +24,7 @@ export class SubRequestContext {
 
   public static Create({
     parentRequestId,
-    requestId,
+    requestId = undefined,
   }: {
     parentRequestId: string;
     requestId?: string | undefined;
