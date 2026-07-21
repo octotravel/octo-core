@@ -89,15 +89,18 @@ export async function fetchRetry(
     ...defaultOptions,
   };
 
-  let subRequestRetryContext: SubRequestRetryContext | null = null;
+  let subRequestRetryContext: SubRequestContext | null = null;
 
   if (options.currentRetryAttempt > 0) {
     if (options.subRequestContext !== null && options.subRequestContext !== undefined) {
-      subRequestRetryContext = new SubRequestRetryContext({
-        request,
+      subRequestRetryContext = SubRequestContext.Create({
+        parentRequestId: options.subRequestContext.getParentRequestId(),
         requestId: options.subRequestContext.getRequestId(),
-        subRequestId: options.subRequestContext.getId(),
       });
+      subRequestRetryContext.setRequestUrl(request.url);
+      subRequestRetryContext.setRequestMethod(request.method);
+      subRequestRetryContext.setRequestHeaders({});
+      subRequestRetryContext.setRequestBody('');
     }
 
     let retryDelayInMs = (options.currentRetryAttempt + 1) * options.retryDelayMultiplierInMs;
@@ -141,7 +144,9 @@ export async function fetchRetry(
     options.subRequestContext !== null &&
     options.subRequestContext !== undefined
   ) {
-    options.subRequestContext.setResponse(res);
+    options.subRequestContext.setResponseHeaders({});
+    options.subRequestContext.setResponseBody('');
+    options.subRequestContext.setResponseStatus(res.status);
     options.subRequestContext.setError(error);
   } else if (
     options.currentRetryAttempt > 0 &&
@@ -149,10 +154,11 @@ export async function fetchRetry(
     options.subRequestContext !== undefined &&
     subRequestRetryContext !== null
   ) {
-    subRequestRetryContext.setResponse(res);
+    subRequestRetryContext.setResponseHeaders({});
+    subRequestRetryContext.setResponseBody('');
+    subRequestRetryContext.setResponseStatus(res.status);
     subRequestRetryContext.setError(error);
-    const requestData = subRequestRetryContext.getRequestData();
-    options.subRequestContext.addRetry(requestData);
+    options.subRequestContext.addSubRequestRetry(subRequestRetryContext);
   }
 
   options.currentRetryAttempt++;
