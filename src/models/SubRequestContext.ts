@@ -27,7 +27,7 @@ export class SubRequestContext {
     requestId,
   }: {
     parentRequestId: string;
-    requestId: string | undefined;
+    requestId?: string | undefined;
   }): SubRequestContext {
     return new SubRequestContext({
       parentRequestId,
