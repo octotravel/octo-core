@@ -1,4 +1,5 @@
 import { v4 as uuid } from 'uuid';
+import { RequestMethod } from '../types/Request';
 import { DateHelper } from './DateHelper';
 import { RuntimeError } from './Error';
 
@@ -8,8 +9,14 @@ export class SubRequestContext {
   private readonly startDate: Date;
   private endDate: Date | null = null;
 
-  private request: Request | null = null;
-  private response: Response | null = null;
+  private requestMethod: string | undefined;
+  private requestUrl: string | undefined;
+  private requestHeaders: Record<string, string> = {};
+  private requestBody: string | undefined;
+
+  private responseHeaders: Record<string, string> = {};
+  private responseBody: string | undefined;
+  private responseStatus: number | undefined;
 
   private error: Error | null = null;
 
@@ -71,27 +78,76 @@ export class SubRequestContext {
     return this.endDate;
   }
 
-  public getRequest(): Request | null {
-    if (this.request === null) {
-      throw new RuntimeError('request is not set');
-    }
-
-    return this.request;
+  public setRequestMethod(requestMethod: RequestMethod | string): void {
+    this.requestMethod = requestMethod;
   }
 
-  public setRequest(request: Request | null): void {
-    this.request = request;
+  public getRequestMethod(): string {
+    if (this.requestMethod === undefined) {
+      throw new RuntimeError('requestMethod is not set');
+    }
+
+    return this.requestMethod;
   }
 
-  public getResponse = (): Response | null => {
-    if (this.response === null) {
-      throw new RuntimeError('response is not set');
-    }
-    return this.response;
-  };
+  public setRequestUrl(requestUrl: string): void {
+    this.requestUrl = requestUrl;
+  }
 
-  public setResponse(response: Response | null): void {
-    this.response = response;
+  public getRequestUrl(): string {
+    if (this.requestUrl === undefined) {
+      throw new RuntimeError('requestUrl is not set');
+    }
+
+    return this.requestUrl;
+  }
+
+  public setRequestHeaders(requestHeaders: Record<string, string>): void {
+    this.requestHeaders = requestHeaders;
+  }
+
+  public getRequestHeaders(): Record<string, string> {
+    return this.requestHeaders;
+  }
+
+  public setRequestBody(requestBody: string | undefined): void {
+    this.requestBody = requestBody;
+  }
+
+  public getRequestBody(): string | undefined {
+    return this.requestBody;
+  }
+
+  public setResponseHeaders(responseHeaders: Record<string, string>): void {
+    this.responseHeaders = responseHeaders;
+  }
+
+  public getResponseHeaders(): Record<string, string> {
+    return this.responseHeaders;
+  }
+
+  public setResponseBody(responseBody: string | undefined): void {
+    this.responseBody = responseBody;
+  }
+
+  public getResponseBody(): string {
+    if (this.responseBody === undefined) {
+      throw new RuntimeError('responseBody is not set.');
+    }
+
+    return this.responseBody;
+  }
+
+  public setResponseStatus(responseStatus: number | undefined): void {
+    this.responseStatus = responseStatus;
+  }
+
+  public getResponseStatus(): number {
+    if (this.responseStatus === undefined) {
+      throw new RuntimeError('responseStatus is not set.');
+    }
+
+    return this.responseStatus;
   }
 
   public setError(error: Error | null): void {

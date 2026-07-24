@@ -97,7 +97,10 @@ export async function fetchRetry(
         parentRequestId: options.subRequestContext.getParentRequestId(),
         requestId: options.subRequestContext.getRequestId(),
       });
-      subRequestRetryContext.setRequest(request.clone());
+      subRequestRetryContext.setRequestUrl(request.url);
+      subRequestRetryContext.setRequestMethod(request.method);
+      subRequestRetryContext.setRequestHeaders({});
+      subRequestRetryContext.setRequestBody('');
     }
 
     let retryDelayInMs = (options.currentRetryAttempt + 1) * options.retryDelayMultiplierInMs;
@@ -141,7 +144,9 @@ export async function fetchRetry(
     options.subRequestContext !== null &&
     options.subRequestContext !== undefined
   ) {
-    options.subRequestContext.setResponse(res.clone());
+    options.subRequestContext.setResponseHeaders({});
+    options.subRequestContext.setResponseBody('');
+    options.subRequestContext.setResponseStatus(res.status);
     options.subRequestContext.setError(error);
   } else if (
     options.currentRetryAttempt > 0 &&
@@ -149,7 +154,9 @@ export async function fetchRetry(
     options.subRequestContext !== undefined &&
     subRequestRetryContext !== null
   ) {
-    subRequestRetryContext.setResponse(res.clone());
+    subRequestRetryContext.setResponseHeaders({});
+    subRequestRetryContext.setResponseBody('');
+    subRequestRetryContext.setResponseStatus(res.status);
     subRequestRetryContext.setError(error);
     options.subRequestContext.addSubRequestRetry(subRequestRetryContext);
   }
