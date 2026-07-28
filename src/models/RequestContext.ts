@@ -122,10 +122,6 @@ export class RequestContext {
   }
 
   public getResponseBody(): string | undefined {
-    if (this.responseBody === undefined) {
-      throw new RuntimeError('responseBody is not set');
-    }
-
     return this.responseBody;
   }
 

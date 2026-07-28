@@ -130,11 +130,7 @@ export class SubRequestContext {
     this.responseBody = responseBody;
   }
 
-  public getResponseBody(): string {
-    if (this.responseBody === undefined) {
-      throw new RuntimeError('responseBody is not set.');
-    }
-
+  public getResponseBody(): string | undefined {
     return this.responseBody;
   }
 
