@@ -39,10 +39,12 @@ export class RequestContext {
     });
   }
 
-  public static CreateForOcto(environment: Environment) {
+  public static CreateForOcto(environment: Environment): RequestContext {
     const requestContext = RequestContext.Create(environment);
     requestContext.setRequestMethod(RequestMethod.Get);
     requestContext.setRequestUrl('https://octo.ventrata.com');
+
+    return requestContext;
   }
 
   public constructor({
