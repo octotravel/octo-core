@@ -64,11 +64,15 @@ export class SubRequestContext {
 
   public setEndDate(endDate: Date): void {
     if (this.endDate !== null) {
-      throw new RuntimeError('endDate is already set');
+      throw new RuntimeError(
+        `endDate is already set (requestId: ${this.requestId}, parentRequestId: ${this.parentRequestId}`,
+      );
     }
 
     if (endDate.getTime() < this.startDate.getTime()) {
-      throw new RuntimeError('endDate cannot be before startDate');
+      throw new RuntimeError(
+        `endDate cannot be before startDate (requestId: ${this.requestId}, parentRequestId: ${this.parentRequestId}`,
+      );
     }
 
     this.endDate = endDate;
@@ -84,7 +88,9 @@ export class SubRequestContext {
 
   public getRequestMethod(): string {
     if (this.requestMethod === undefined) {
-      throw new RuntimeError('requestMethod is not set');
+      throw new RuntimeError(
+        `requestMethod is not set (requestId: ${this.requestId}, parentRequestId: ${this.parentRequestId}`,
+      );
     }
 
     return this.requestMethod;
@@ -96,7 +102,9 @@ export class SubRequestContext {
 
   public getRequestUrl(): string {
     if (this.requestUrl === undefined) {
-      throw new RuntimeError('requestUrl is not set');
+      throw new RuntimeError(
+        `requestUrl is not set (requestId: ${this.requestId}, parentRequestId: ${this.parentRequestId}`,
+      );
     }
 
     return this.requestUrl;
@@ -140,7 +148,9 @@ export class SubRequestContext {
 
   public getResponseStatus(): number {
     if (this.responseStatus === undefined) {
-      throw new RuntimeError('responseStatus is not set.');
+      throw new RuntimeError(
+        `responseStatus is not set (requestId: ${this.requestId}, parentRequestId: ${this.parentRequestId}`,
+      );
     }
 
     return this.responseStatus;
@@ -164,7 +174,9 @@ export class SubRequestContext {
 
   public getRequestDuration(): number {
     if (this.endDate === null) {
-      throw new RuntimeError('endDate is not set');
+      throw new RuntimeError(
+        `endDate is not set (requestId: ${this.requestId}, parentRequestId: ${this.parentRequestId}`,
+      );
     }
 
     return (this.endDate.getTime() - this.startDate.getTime()) / 1000;
@@ -172,7 +184,9 @@ export class SubRequestContext {
 
   public getRequestDurationInMs(): number {
     if (this.endDate === null) {
-      throw new RuntimeError('endDate is not set');
+      throw new RuntimeError(
+        `endDate is not set (requestId: ${this.requestId}, parentRequestId: ${this.parentRequestId}`,
+      );
     }
 
     return DateHelper.toPositiveMs(this.endDate.getTime() - this.startDate.getTime());
