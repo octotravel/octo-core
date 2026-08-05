@@ -19,7 +19,6 @@ export * from './models/SubRequestContext';
 export * from './services/DataGenerationService';
 export * from './types/Account';
 export * from './types/Auth';
-export * from './types/Channel';
 export * from './types/Connection';
 export * from './types/Params';
 export * from './types/Repository';

@@ -1,11 +1,11 @@
 import * as dineroCurrencies from '@dinero.js/currencies';
-import { add, Currency, Dinero, dinero, subtract, toDecimal, toSnapshot } from 'dinero.js';
+import { add, type Dinero, type DineroCurrency, dinero, subtract, toDecimal, toSnapshot } from 'dinero.js';
 
-const currencies: Record<string, Currency<number>> = dineroCurrencies;
+const currencies: Record<string, DineroCurrency<number>> = dineroCurrencies;
 
 export class Money {
   public currency: string;
-  private readonly internalCurrency: Currency<number>;
+  private readonly internalCurrency: DineroCurrency<number>;
   private internal: Dinero<number>;
 
   public constructor(n: number, currency: string) {
@@ -20,7 +20,7 @@ export class Money {
   /**
    * @throws {Error}
    */
-  private readonly getCurrency = (code: string): Currency<number> => {
+  private readonly getCurrency = (code: string): DineroCurrency<number> => {
     const currency = currencies[code.toUpperCase()];
     if (currency) {
       return currency;
