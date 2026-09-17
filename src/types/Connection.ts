@@ -1,6 +1,9 @@
 import * as yup from 'yup';
 import { HttpBadRequest } from '../models/Error';
 
+const UUID_REGEX =
+  /^(?:00000000-0000-0000-0000-000000000000|[0-9a-f]{8}-[0-9a-f]{4}-[1-7][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})$/i;
+
 export enum BackendType {
   octo = 'octo',
   anchor = 'anchor',
@@ -109,10 +112,19 @@ const cityconnectBackendPatchSchema: yup.SchemaOf<CityConnectBackendPatch> = yup
 
 export const createConnectionSchema: yup.SchemaOf<BaseConnection> = yup.object().shape({
   id: yup.string().defined(),
-  supplierId: yup.string().uuid().required(),
-  apiKey: yup.string().uuid().required(),
+  supplierId: yup
+    .string()
+    .matches(UUID_REGEX, ({ path }) => `${path} must be a valid UUID`)
+    .required(),
+  apiKey: yup
+    .string()
+    .matches(UUID_REGEX, ({ path }) => `${path} must be a valid UUID`)
+    .required(),
   endpoint: yup.string().required(),
-  accountId: yup.string().uuid().required(),
+  accountId: yup
+    .string()
+    .matches(UUID_REGEX, ({ path }) => `${path} must be a valid UUID`)
+    .required(),
   name: yup.string().required(),
 });
 
@@ -122,8 +134,14 @@ export const getConnectionSchema = yup.string().required();
 
 export const patchConnectionSchema: yup.SchemaOf<BaseConnectionPatch> = yup.object().shape({
   id: yup.string().required(),
-  supplierId: yup.string().uuid().optional(),
-  apiKey: yup.string().uuid().optional(),
+  supplierId: yup
+    .string()
+    .matches(UUID_REGEX, ({ path }) => `${path} must be a valid UUID`)
+    .optional(),
+  apiKey: yup
+    .string()
+    .matches(UUID_REGEX, ({ path }) => `${path} must be a valid UUID`)
+    .optional(),
   endpoint: yup.string().optional(),
   name: yup.string().optional(),
 });
