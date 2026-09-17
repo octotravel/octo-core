@@ -28,4 +28,9 @@ export abstract class DateHelper {
   public static parseUnixTimestampToDate(timestamp: string | number): Date {
     return new Date(Number(timestamp) * 1000);
   }
+
+  public static toPositiveMs(diffMs: number): number {
+    const ms = Math.ceil(diffMs);
+    return ms < 1 ? 1 : ms;
+  }
 }

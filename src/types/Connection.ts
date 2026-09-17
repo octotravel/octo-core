@@ -1,3 +1,4 @@
+import { validate as validateUUID } from 'uuid';
 import * as yup from 'yup';
 import { HttpBadRequest } from '../models/Error';
 
@@ -107,12 +108,18 @@ const cityconnectBackendPatchSchema: yup.SchemaOf<CityConnectBackendPatch> = yup
   password: yup.string().optional(),
 });
 
+const uuidSchema = yup.string().test({
+  name: 'uuid',
+  message: ({ path }) => `${path} must be a valid UUID`,
+  test: (value) => value == null || validateUUID(value),
+});
+
 export const createConnectionSchema: yup.SchemaOf<BaseConnection> = yup.object().shape({
   id: yup.string().defined(),
-  supplierId: yup.string().uuid().required(),
-  apiKey: yup.string().uuid().required(),
+  supplierId: uuidSchema.required(),
+  apiKey: uuidSchema.required(),
   endpoint: yup.string().required(),
-  accountId: yup.string().uuid().required(),
+  accountId: uuidSchema.required(),
   name: yup.string().required(),
 });
 
@@ -122,8 +129,8 @@ export const getConnectionSchema = yup.string().required();
 
 export const patchConnectionSchema: yup.SchemaOf<BaseConnectionPatch> = yup.object().shape({
   id: yup.string().required(),
-  supplierId: yup.string().uuid().optional(),
-  apiKey: yup.string().uuid().optional(),
+  supplierId: uuidSchema.optional(),
+  apiKey: uuidSchema.optional(),
   endpoint: yup.string().optional(),
   name: yup.string().optional(),
 });

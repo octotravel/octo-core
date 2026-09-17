@@ -13,17 +13,12 @@ export * from './models/Logger';
 export * from './models/Money';
 export * from './models/PhoneParser';
 export * from './models/RequestContext';
-export * from './models/RequestData';
 export * from './models/RequestLogger';
 export * from './models/SubRequestContext';
-export * from './models/SubRequestData';
-export * from './models/SubRequestRetryContext';
-export * from './models/SubRequestRetryData';
 
 export * from './services/DataGenerationService';
 export * from './types/Account';
 export * from './types/Auth';
-export * from './types/Channel';
 export * from './types/Connection';
 export * from './types/Params';
 export * from './types/Repository';
