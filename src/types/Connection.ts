@@ -67,6 +67,15 @@ export interface BaseConnectionPatch {
   supplierId?: string;
 }
 
+const UUID_V1_TO_V7_OR_NIL_REGEX =
+  /^(?:00000000-0000-0000-0000-000000000000|[0-9a-f]{8}-[0-9a-f]{4}-[1-7][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})$/i;
+
+const uuidSchema = () =>
+  yup.string().matches(UUID_V1_TO_V7_OR_NIL_REGEX, {
+    excludeEmptyString: true,
+    message: ({ path }) => `${path} must be a valid UUID`,
+  });
+
 const octoBackendSchema: yup.SchemaOf<OctoBackend> = yup.object().shape({
   type: yup.mixed().oneOf(Object.values(BackendType)).required(),
   endpoint: yup.string().url().required(),
@@ -109,10 +118,10 @@ const cityconnectBackendPatchSchema: yup.SchemaOf<CityConnectBackendPatch> = yup
 
 export const createConnectionSchema: yup.SchemaOf<BaseConnection> = yup.object().shape({
   id: yup.string().defined(),
-  supplierId: yup.string().uuid().required(),
-  apiKey: yup.string().uuid().required(),
+  supplierId: uuidSchema().required(),
+  apiKey: uuidSchema().required(),
   endpoint: yup.string().required(),
-  accountId: yup.string().uuid().required(),
+  accountId: uuidSchema().required(),
   name: yup.string().required(),
 });
 
@@ -122,8 +131,8 @@ export const getConnectionSchema = yup.string().required();
 
 export const patchConnectionSchema: yup.SchemaOf<BaseConnectionPatch> = yup.object().shape({
   id: yup.string().required(),
-  supplierId: yup.string().uuid().optional(),
-  apiKey: yup.string().uuid().optional(),
+  supplierId: uuidSchema().optional(),
+  apiKey: uuidSchema().optional(),
   endpoint: yup.string().optional(),
   name: yup.string().optional(),
 });
