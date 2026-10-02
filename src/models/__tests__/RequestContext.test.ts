@@ -17,6 +17,7 @@ describe('RequestContext', () => {
   const connection = {
     id: connectionId,
     supplierId: 'supplierId',
+    apiKey: 'apiKey',
     endpoint: 'endpoint',
     accountId,
     name: 'name',

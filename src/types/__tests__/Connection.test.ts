@@ -6,6 +6,7 @@ const uuid = '01929f47-6e9a-7d12-8c34-123456789abc';
 const connection = {
   id: 'connection-id',
   supplierId: uuid,
+  apiKey: uuid,
   accountId: uuid,
   endpoint: 'https://example.com',
   name: 'Connection',
@@ -77,7 +78,7 @@ describe.each([
 });
 
 describe('UUID field requirements', () => {
-  it.each(['supplierId', 'accountId'])('requires %s on creation', async (field) => {
+  it.each(['supplierId', 'apiKey', 'accountId'])('requires %s on creation', async (field) => {
     await expect(createConnectionSchema.validate({ ...connection, [field]: undefined })).rejects.toThrow(
       `${field} is a required field`,
     );
@@ -92,5 +93,19 @@ describe('UUID field requirements', () => {
     await expect(patchConnectionSchema.validate({ id: 'connection-id', supplierId: 'invalid' })).rejects.toThrow(
       'supplierId must be a valid UUID',
     );
+  });
+});
+
+describe('separate API keys', () => {
+  it.each([uuid, 'o7KdFsmXkPv2RqWcAH9aJ3eZ', 'existing-public-key'])('accepts the string key %s', async (apiKey) => {
+    await expect(createConnectionSchema.validate({ ...connection, apiKey })).resolves.toEqual({
+      ...connection,
+      apiKey,
+    });
+    await expect(patchConnectionSchema.validate({ id: uuid, apiKey })).resolves.toEqual({ id: uuid, apiKey });
+  });
+
+  it.each(['', null, undefined])('requires an API key on creation: %s', async (apiKey) => {
+    await expect(createConnectionSchema.validate({ ...connection, apiKey })).rejects.toThrow();
   });
 });
