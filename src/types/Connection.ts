@@ -54,7 +54,6 @@ type ConnectionBackendPatch = OctoBackendPatch | AnchorBackendPatch | CityConnec
 export interface BaseConnection {
   id: string;
   supplierId: string;
-  apiKey: string;
   endpoint: string;
   accountId: string;
   name: string;
@@ -64,7 +63,6 @@ export interface BaseConnectionPatch {
   id: string;
   name?: string;
   endpoint?: string;
-  apiKey?: string;
   supplierId?: string;
 }
 
@@ -117,7 +115,6 @@ const uuidSchema = yup.string().test({
 export const createConnectionSchema: yup.SchemaOf<BaseConnection> = yup.object().shape({
   id: yup.string().defined(),
   supplierId: uuidSchema.required(),
-  apiKey: uuidSchema.required(),
   endpoint: yup.string().required(),
   accountId: uuidSchema.required(),
   name: yup.string().required(),
@@ -130,7 +127,6 @@ export const getConnectionSchema = yup.string().required();
 export const patchConnectionSchema: yup.SchemaOf<BaseConnectionPatch> = yup.object().shape({
   id: yup.string().required(),
   supplierId: uuidSchema.optional(),
-  apiKey: uuidSchema.optional(),
   endpoint: yup.string().optional(),
   name: yup.string().optional(),
 });
