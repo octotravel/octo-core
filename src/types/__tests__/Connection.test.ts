@@ -6,7 +6,6 @@ const uuid = '01929f47-6e9a-7d12-8c34-123456789abc';
 const connection = {
   id: 'connection-id',
   supplierId: uuid,
-  apiKey: uuid,
   accountId: uuid,
   endpoint: 'https://example.com',
   name: 'Connection',
@@ -48,8 +47,8 @@ const invalidUUIDs = [
 ];
 
 describe.each([
-  { name: 'createConnectionSchema', schema: createConnectionSchema, fields: ['supplierId', 'apiKey', 'accountId'] },
-  { name: 'patchConnectionSchema', schema: patchConnectionSchema, fields: ['supplierId', 'apiKey'] },
+  { name: 'createConnectionSchema', schema: createConnectionSchema, fields: ['supplierId', 'accountId'] },
+  { name: 'patchConnectionSchema', schema: patchConnectionSchema, fields: ['supplierId'] },
 ])('$name UUID validation', ({ schema, fields }) => {
   for (const field of fields) {
     describe(field, () => {
@@ -78,7 +77,7 @@ describe.each([
 });
 
 describe('UUID field requirements', () => {
-  it.each(['supplierId', 'apiKey', 'accountId'])('requires %s on creation', async (field) => {
+  it.each(['supplierId', 'accountId'])('requires %s on creation', async (field) => {
     await expect(createConnectionSchema.validate({ ...connection, [field]: undefined })).rejects.toThrow(
       `${field} is a required field`,
     );
@@ -90,8 +89,8 @@ describe('UUID field requirements', () => {
   });
 
   it('preserves the UUID validation error message', async () => {
-    await expect(patchConnectionSchema.validate({ id: 'connection-id', apiKey: 'invalid' })).rejects.toThrow(
-      'apiKey must be a valid UUID',
+    await expect(patchConnectionSchema.validate({ id: 'connection-id', supplierId: 'invalid' })).rejects.toThrow(
+      'supplierId must be a valid UUID',
     );
   });
 });
